@@ -7,7 +7,7 @@
 ## What it does
 
 - Build a roster with full-time, part-time, fixed, casual and overtime lines
-- Set your own shift times and rules (runs in a row, rest between shifts, days off)
+- Set your own shift times and rules (no.of days in a row, rest hours between shifts,min no. of days off)
 - Optimise a rotation, then check a scorecard showing what improved and what didn't
 - Compare against the starting roster and see which shifts changed
 - Export to print or spreadsheet
