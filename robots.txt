@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mswarty1.github.io/shiftsketch/sitemap.xml
