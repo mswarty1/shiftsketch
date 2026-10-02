@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ShiftSketch</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1f4e79">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/icon-192.png">
+<meta name="description" content="ShiftSketch is a free roster proposal tool. Sketch shift rosters, fill vacant shifts, check rest rules and export. Works offline, no sign-up.">
+<meta property="og:title" content="ShiftSketch - roster proposal tool">
+<meta property="og:description" content="Free roster proposal tool. Sketch shift rosters, fill vacant shifts, check rest rules and export. Works offline, no sign-up.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="icons/icon-512.png">
+<style>
+:root{
+  --bg:#f3f5f6; --panel:#ffffff; --ink:#1d2a31; --muted:#5f6d75; --line:#d7dde0; --soft:#e9eef0;
+  --brand:#1f4e79; --accent:#f5a623; --accent-ink:#8a5200; --flag:#f5a623;
+  --ok:#2f7d4f; --ok-bg:#e3f2e8; --warn:#9a6700; --warn-bg:#fdf1d8; --bad:#b3261e; --bad-bg:#fbe4e3;
+  --s0630:#d9ead3; --s0730:#cfe2f3; --s0830:#e3e3e3; --s1200:#e4dfec; --s1030:#fce4d6; --gap:#f8c9c9;
+  --cellink:#1d2a31;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  color-scheme:dark; --bg:#141a1d; --panel:#1c2429; --ink:#e6ecef; --muted:#9aa8b0; --line:#2f3a40; --soft:#243037;
+  --brand:#8fb8de; --accent:#f5b84a; --accent-ink:#f7c56f; --flag:#ff5a5b;
+  --ok:#6fcf97; --ok-bg:#16301f; --warn:#f2c14e; --warn-bg:#352a10; --bad:#ff8a8a; --bad-bg:#3a1c1c;
+  --s0630:#2e4a2b; --s0730:#24405c; --s0830:#3a4247; --s1200:#3d3552; --s1030:#553a28; --gap:#5a2626; --cellink:#e6ecef;}}
+:root[data-theme="dark"]{
+  color-scheme:dark; --bg:#141a1d; --panel:#1c2429; --ink:#e6ecef; --muted:#9aa8b0; --line:#2f3a40; --soft:#243037;
+  --brand:#8fb8de; --accent:#f5b84a; --accent-ink:#f7c56f; --flag:#ff5a5b;
+  --ok:#6fcf97; --ok-bg:#16301f; --warn:#f2c14e; --warn-bg:#352a10; --bad:#ff8a8a; --bad-bg:#3a1c1c;
+  --s0630:#2e4a2b; --s0730:#24405c; --s0830:#3a4247; --s1200:#3d3552; --s1030:#553a28; --gap:#5a2626; --cellink:#e6ecef;}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:15px;line-height:1.45;margin:0;padding-inline:16px;padding-block:20px 48px}
+.wrap{max-width:1560px;margin:0 auto;display:grid;gap:18px}
+h1,h2,h3{font-family:"Barlow Semi Condensed","Barlow",system-ui,sans-serif;margin:0;text-wrap:balance}
+h1{font-size:30px;font-weight:700;letter-spacing:.2px}
+h2{font-size:19px;font-weight:600}
+.kicker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-ink);font-weight:600}
+.sub{color:var(--muted);max-width:70ch;margin:4px 0 0}
+header.top{display:grid;gap:6px;border-bottom:3px solid var(--accent);padding-bottom:12px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:grid;gap:12px;min-width:0}
+.controls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:end}
+.field{display:grid;gap:4px}
+.field label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+select,button,input{font:inherit;color:var(--ink)}
+select.big{padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel)}
+.toggle{display:flex;gap:8px;align-items:center;font-size:14px}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:8px 14px;cursor:pointer;font-weight:600}
+.btn:hover{border-color:var(--brand)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:var(--panel)}
+.btn.ghost{background:transparent}
+.modal-back{position:fixed;inset:0;background:rgba(20,26,29,.55);display:flex;align-items:flex-start;justify-content:center;padding:32px 16px;overflow:auto;z-index:50}
+.modal-back[hidden]{display:none}
+.modal{background:var(--panel);border:1px solid var(--line);border-radius:10px;max-width:760px;width:100%;padding:22px 26px 26px;display:grid;gap:10px;box-shadow:0 12px 40px rgba(0,0,0,.25)}
+.modal-head{display:flex;justify-content:space-between;align-items:start;gap:12px;border-bottom:3px solid var(--accent);padding-bottom:10px}
+.modal h2{color:var(--brand)}
+.modal h3{font-family:"Barlow Semi Condensed","Barlow",system-ui,sans-serif;font-size:15px;font-weight:700;color:var(--brand);border-bottom:1px solid var(--line);padding-bottom:3px;margin-top:6px}
+.modal ul{margin:4px 0 8px;padding-left:20px}
+.modal li{margin-bottom:5px}
+.modal table{width:100%;border-collapse:collapse;font-size:13.5px;margin:4px 0 8px}
+.modal td{border:1px solid var(--line);padding:5px 8px;vertical-align:top}
+.modal td:first-child{font-weight:600;white-space:nowrap;background:var(--soft)}
+.modal .close{border:none;background:transparent;font-size:22px;line-height:1;cursor:pointer;color:var(--muted);padding:2px 6px}
+.modal .close:hover{color:var(--ink)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.btn[disabled]{opacity:.55;cursor:progress}
+.main{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;align-items:start}
+.strip .kpis{grid-template-columns:repeat(8,minmax(0,1fr))}
+.stripcols{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:14px;align-items:start}
+.stripcols h3{margin:0 0 6px;font-size:15px}
+.stripcols ul{margin:0;padding-left:18px;font-size:13.5px;line-height:1.55}
+.stripcols .pos h3{color:var(--ok)} .stripcols .neg h3{color:var(--bad)}
+.chkh{margin:14px 0 6px;font-size:15px}
+.strip .checks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 22px}
+@media (max-width:1100px){.stripcols{grid-template-columns:1fr}.strip .checks{grid-template-columns:repeat(2,minmax(0,1fr))}.strip .kpis{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{border:1px solid var(--line);padding:4px 5px;text-align:center;font-size:13px}
+#grid,#cover{table-layout:fixed;min-width:900px}
+#grid input.lbl,#grid input.lbl.ptoname{width:100%;box-sizing:border-box;min-width:0}
+#grid td.lab,#cover td.lab{overflow:hidden;text-overflow:ellipsis}
+th.pad,td.pad{border:0!important;background:transparent!important}
+.cmpgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+.cmpgrid h3{margin:0 0 6px;font-size:15px}
+#cmpL,#cmpR{table-layout:fixed;width:100%;min-width:0}
+#cmpL tr,#cmpR tr{height:36px}
+#cmpL td,#cmpR td{height:36px;padding:0 4px;box-sizing:border-box;overflow:hidden;white-space:nowrap}
+#cmpR select.cell{height:30px;padding:0 2px;box-sizing:border-box;min-width:0}
+#cmpL td.cmpnew{color:var(--muted);font-style:italic}
+.impact{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.impact h3{margin:0 0 4px;font-size:15px}
+.impact ul{margin:0;padding-left:18px;font-size:13.5px;line-height:1.55}
+.impact .pos h3{color:var(--ok)} .impact .neg h3{color:var(--bad)}
+@media (max-width:900px){.cmpgrid,.impact{grid-template-columns:1fr}}
+th{background:var(--brand);color:var(--panel);font-family:"Barlow Semi Condensed",sans-serif;font-weight:600;letter-spacing:.03em}
+tr.sec td{background:var(--soft);font-weight:600;text-align:left;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+td.lab{text-align:left;white-space:nowrap}
+tr.spotdim td{opacity:.22;transition:opacity .15s}
+tr.spot td{box-shadow:inset 0 2px 0 var(--accent),inset 0 -2px 0 var(--accent)}
+.dragh{display:inline-block;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;padding:6px 6px;margin:-6px 2px -6px -6px;color:var(--muted,#667);font-size:16px;line-height:1;letter-spacing:-3px;font-weight:700}
+.dragh:active{cursor:grabbing}
+#bpt tr.dragging{opacity:.45}
+#bpt tr.dropbefore td{box-shadow:inset 0 3px 0 var(--accent,#1a56db)}
+#bpt tr.dropafter td{box-shadow:inset 0 -3px 0 var(--accent,#1a56db)}
+#grid tr.dragging{opacity:.45;background:var(--accentSoft,#e8f0ff)}
+#grid tr.dropbefore td{box-shadow:inset 0 3px 0 var(--accent,#1a56db)}
+#grid tr.dropafter td{box-shadow:inset 0 -3px 0 var(--accent,#1a56db)}
+body.dragmode,body.dragmode *{cursor:grabbing!important;user-select:none!important}
+.ver{font-size:12px;font-weight:600;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:6px;vertical-align:middle}
+.nbtn{position:absolute;top:1px;right:1px;width:20px;height:20px;padding:0;border:0;border-radius:4px;background:transparent;color:var(--muted);font-size:13px;line-height:20px;cursor:pointer;opacity:.35;z-index:1}
+td:hover .nbtn,.nbtn:focus-visible{opacity:1;background:var(--panel)}
+.nbtn.has{opacity:1;background:#ffd84d;color:#5a4300;font-size:10px;border:1px solid #c9a400}
+@media (pointer:coarse){.nbtn{width:28px;height:28px;line-height:28px;font-size:16px;opacity:.55}.nbtn.has{font-size:12px}}
+#grid td{position:relative}
+.notebox{position:fixed;z-index:60;width:300px;background:#fff8cc;color:#3b3200;border:1px solid #c9a400;border-radius:8px;padding:10px;box-shadow:0 8px 24px rgba(0,0,0,.28)}
+.notebox[hidden]{display:none}
+.notebox .nt{font-weight:700;font-size:13px;margin-bottom:6px}
+.notebox textarea{width:100%;box-sizing:border-box;font:inherit;font-size:14px;padding:6px;border:1px solid #c9a400;border-radius:6px;background:#fffdf0;color:#3b3200;resize:vertical}
+.linkbtn{background:none;border:0;padding:0;color:var(--accent-ink);cursor:pointer;font:inherit;text-decoration:underline}
+body.present .pres-hide{display:none!important}
+body.present .wrap{max-width:none}
+body.present #grid select.cell,body.present #cmpR select.cell{font-size:16px;height:38px}
+body.present #grid td,body.present #grid th,body.present #cover td,body.present #cover th{font-size:15px}
+body.present #grid input.lbl{font-size:15px}
+body.present .stripcols ul,body.present .check{font-size:15px}
+body.present .kpi .n{font-size:26px}
+body.present .top{padding-bottom:0}
+body.present .status{font-size:15px}
+#presExit{position:fixed;right:14px;bottom:14px;z-index:70;box-shadow:0 4px 14px rgba(0,0,0,.3);opacity:.85}
+#presExit[hidden]{display:none}
+@media print{#presExit,.notebox,.nbtn,.dragh{display:none!important}}
+.fold>summary{cursor:pointer;display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;list-style:none;min-height:34px}
+.fold>summary::-webkit-details-marker{display:none}
+.fold>summary::before{content:"\25B8";font-size:18px;color:var(--muted);transition:transform .15s}
+.fold[open]>summary::before{transform:rotate(90deg)}
+.fold .sch{font-family:"Barlow Semi Condensed",sans-serif;font-size:20px;font-weight:700}
+.strip .ssum{display:flex;flex-wrap:wrap;gap:6px;font-size:13px}
+.strip .sp{border:1px solid var(--line);border-radius:12px;padding:2px 9px;background:var(--soft);color:var(--ink)}
+.strip .sp.ok{color:var(--ok)} .strip .sp.warn{color:#9a6700} .strip .sp.bad{color:var(--bad);font-weight:700}
+.fold[open]>summary{margin-bottom:10px}
+.ctlstatus{margin:-8px 4px 12px}
+.spotbtn{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:50%;width:26px;height:26px;padding:0;margin-left:4px;cursor:pointer;font-size:14px;line-height:1}
+.spotbtn[aria-pressed=true]{background:var(--accent);color:#1d2a31;border-color:var(--accent)}
+td.lab small{color:var(--muted)}
+select.cell{width:100%;min-width:64px;border:0;border-radius:4px;padding:4px 2px;font-size:13px;text-align:center;background:transparent;color:var(--cellink);cursor:pointer}
+select.cell[data-v="06:30"]{background:var(--s0630)} select.cell[data-v="07:30"]{background:var(--s0730)}
+select.cell[data-v="08:30"]{background:var(--s0830)} select.cell[data-v="12:00"]{background:var(--s1200)} select.cell[data-v="10:30"]{background:var(--s1030)}
+select.cell[disabled]{cursor:not-allowed;opacity:.9}
+td.changed{box-shadow:inset 0 0 0 2px var(--flag)}
+tr.tot td{font-weight:600;background:var(--soft)}
+td.short{background:var(--bad-bg);color:var(--bad);font-weight:700}
+td.over{background:var(--warn-bg);color:var(--warn)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;font-size:12px;color:var(--muted)}
+.sw{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:5px;border:1px solid var(--line)}
+.checks{display:grid;gap:8px}
+.check{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start}
+.chip{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:999px;white-space:nowrap}
+.chip.ok{background:var(--ok-bg);color:var(--ok)} .chip.warn{background:var(--warn-bg);color:var(--warn)} .chip.bad{background:var(--bad-bg);color:var(--bad)}
+.check b{display:block;font-weight:600}
+.check span{color:var(--muted);font-size:13px}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.kpi{border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:var(--bg)}
+.kpi .n{font-family:"Barlow Semi Condensed",sans-serif;font-size:24px;font-weight:700;font-variant-numeric:tabular-nums}
+.kpi .l{font-size:12px;color:var(--muted)}
+.log{font-size:13px;color:var(--muted);max-height:220px;overflow:auto;border-top:1px solid var(--line);padding-top:8px}
+.log li{margin:2px 0}
+.note{font-size:13px;color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+.status{font-size:13px;color:var(--muted);min-height:1.2em}
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;counter-reset:s}
+@media (max-width:700px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.step{border-left:3px solid var(--brand);padding:2px 0 2px 10px;font-size:13px;color:var(--muted)}
+.step b{display:block;color:var(--ink);font-family:"Barlow Semi Condensed",sans-serif;font-size:15px}
+textarea{width:100%;min-height:90px;font:12px/1.4 ui-monospace,Menlo,Consolas,monospace;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);padding:8px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+:root{--c0:#d9ead3;--c1:#cfe2f3;--c2:#e3e3e3;--c3:#fce4d6;--c4:#e4dfec;--c5:#fff2cc;--c6:#d0e0e3;--c7:#f4cccc}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){--c0:#2e4a2b;--c1:#24405c;--c2:#3a4247;--c3:#553a28;--c4:#3d3552;--c5:#4d4420;--c6:#23444a;--c7:#4d2626}}
+:root[data-theme="dark"]{--c0:#2e4a2b;--c1:#24405c;--c2:#3a4247;--c3:#553a28;--c4:#3d3552;--c5:#4d4420;--c6:#23444a;--c7:#4d2626}
+.k0{background:var(--c0)!important}.k1{background:var(--c1)!important}.k2{background:var(--c2)!important}.k3{background:var(--c3)!important}
+.k4{background:var(--c4)!important}.k5{background:var(--c5)!important}.k6{background:var(--c6)!important}.k7{background:var(--c7)!important}
+input.tm{width:92px;padding:3px 4px;border:1px solid var(--line);border-radius:4px;background:var(--panel)}
+input.num{width:46px;padding:3px 2px;border:1px solid var(--line);border-radius:4px;background:var(--panel);text-align:center}
+input.lbl{width:64px;padding:3px 4px;border:1px solid var(--line);border-radius:4px;background:transparent}
+input.lbl.ptoname{width:96px}
+select.sm{padding:3px 4px;border:1px solid var(--line);border-radius:4px;background:var(--panel);font-size:13px}
+.x{border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:16px;line-height:1;padding:2px 6px;border-radius:4px}
+.x:hover{color:var(--bad);background:var(--bad-bg)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.altrow{padding:6px 8px;border:1px solid var(--line);border-radius:6px;margin:4px 0;display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:13px}.altrow.cur{background:var(--soft)}
+.bpbar{display:flex;gap:8px;align-items:center;padding-top:4px;border-top:1px solid var(--line)}
+.bpsp{flex:1}
+.setgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.setcard{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:grid;gap:8px;align-content:start}
+.setcard h4{margin:0;font-family:"Barlow Semi Condensed",sans-serif;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--brand)}
+.setcard .note{margin:0}
+.setrow{display:flex;justify-content:space-between;align-items:center;gap:6px 10px;flex-wrap:wrap}
+.tabs{display:flex;gap:6px;border-bottom:1px solid var(--line)}
+.tab{border:0;background:transparent;font:inherit;font-weight:600;font-size:16px;padding:10px 20px;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1px}
+.tab[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent)}
+.tab:focus-visible{outline:2px solid var(--brand);outline-offset:-2px}
+body:not(.on-settings) .settab{display:none!important}
+body.on-settings .rostab,body.on-score .rostab,body.on-export .rostab{display:none!important}
+body:not(.on-score):not(.present) .scoretab{display:none!important}
+body:not(.on-export) .exptab{display:none!important}
+.lockrule{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--muted);white-space:nowrap}
+.setcard input.num[disabled]{opacity:.55;cursor:not-allowed}
+.ptbl.fx{table-layout:fixed}
+.ptbl.fx td,.ptbl.fx th{height:22px;text-align:center;vertical-align:middle;overflow:hidden}
+.ptbl.fx td.l,.ptbl.fx th.l{text-align:left}
+.setrow .pair{display:flex;align-items:center;gap:6px}
+.setcard input.num{width:56px;padding:5px 4px}
+.setcard input.tm{padding:5px 6px;width:118px}
+
+input.txt{padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel);min-width:180px}
+details{border-top:1px solid var(--line);padding-top:10px}
+summary{cursor:pointer;font-family:"Barlow Semi Condensed",sans-serif;font-weight:600;font-size:17px}
+td.zero{background:var(--bad-bg);color:var(--bad);font-weight:700}
+select.steer{box-shadow:inset 0 0 0 2px var(--warn);background:var(--warn-bg)}
+#printArea{display:none}
+.ptbl{width:100%;border-collapse:collapse;font-size:11px;margin:0 0 16px}
+.ptbl th,.ptbl td{border:1px solid #999;padding:3px 7px;text-align:left;color:#1d2a31}
+.ptbl th{background:#1f4e79;color:#fff;font-family:"Barlow Semi Condensed",sans-serif}
+.pchip{display:inline-block;padding:1px 9px;border-radius:10px;font-size:10px;font-weight:700;color:#fff}
+@media print{
+  body *{visibility:hidden}
+  #printArea, #printArea *{visibility:visible}
+  #printArea{display:block;position:absolute;left:0;top:0;width:100%}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact;color-adjust:exact}
+}
+td.out{color:var(--muted);background:var(--soft)}
+td.dim{color:var(--muted)}
+td.worstgap{box-shadow:inset 0 0 0 2px var(--flag)!important;position:relative}
+.section-gap{height:2px;background:var(--soft);border:none;margin:2px 0}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header class="top">
+    <div class="row" style="justify-content:space-between;align-items:start">
+      <div>
+        <div class="kicker">Roster proposal · Master roster</div>
+        <h1>ShiftSketch <span class="ver" title="Build v3.18, 2 Oct 2026">v3.18</span></h1>
+      </div>
+      <div class="row" style="gap:8px"><button class="btn" id="presBtn" title="Clean, enlarged view for a projector or meeting-room screen (Esc to leave)">Present</button><button class="btn ghost" id="helpBtn" aria-haspopup="dialog" aria-controls="helpModal">Help</button></div>
+    </div>
+    <p class="sub pres-hide">Build and test master rosters against the blueprint and the rules you set: a minimum rest between shifts, a cap on shifts in a row, contracted hours only, and weekends spread out. Start from a blank roster, set your own shift times, edit any shift, or let the optimiser suggest changes.</p>
+  </header>
+
+  <nav class="tabs pres-hide" role="tablist" aria-label="ShiftSketch sections"><button class="tab" id="tabRoster" role="tab" aria-selected="true" aria-controls="rosterPane">Roster</button><button class="tab" id="tabSet" role="tab" aria-selected="false" aria-controls="setBox">Settings</button><button class="tab" id="tabScore" role="tab" aria-selected="false" aria-controls="scoreBox">Scorecard</button><button class="tab" id="tabExp" role="tab" aria-selected="false" aria-controls="expPanel">Export</button></nav>
+
+  <div class="modal-back" id="helpModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+      <div class="modal-head">
+        <div>
+          <div class="kicker">ShiftSketch</div>
+          <h2 id="helpTitle">Quick reference</h2>
+        </div>
+        <button class="close" id="helpClose" aria-label="Close">&times;</button>
+      </div>
+
+      <h3>How to use</h3>
+      <ul>
+        <li><b>1. Choose a starting roster.</b> The Starting roster dropdown: a blank roster, or one you saved earlier. Add your own lines and set your shift times.</li>
+        <li><b>2. Set your roster settings, shift times and blueprint.</b> Roster settings holds cover hours, shifts per week, minimum rest, max shifts in a row and the unpaid break. Then pick a template or edit each shift&rsquo;s start/finish time and how many lines are needed per day. This changes every rostered shift of that type at once.</li>
+        <li><b>3. Edit or optimise.</b> Change any cell directly, add or remove lines, tick Lock to protect a line, or click Optimise for suggested changes (review before keeping).</li>
+        <li><b>4. Review, save, export.</b> Check the scorecard, Save the roster under a name, and export a CSV for Excel or a file to keep or share.</li>
+      </ul>
+
+      <h3>Key controls</h3>
+      <table>
+        <tr><td>Roster / Settings tabs</td><td>Roster is the build view. Settings holds the cover hours, roster rules, paid hours, shift types, times and the blueprint. Each roster rule has a <b>default</b> tick box: ticked fixes it at the standard value, unticked lets you enter your own for your workplace agreement.</td></tr>
+        <tr><td>Include the scorecard in print and exports</td><td>Under the Export tab. Off by default, so the PDF, Word and Excel files hold the roster, coverage and changes only. Tick it to add the scorecard.</td></tr>
+        <tr><td>Reload</td><td>Reverts to the starting roster, discarding unsaved edits.</td></tr>
+        <tr><td>Optimise</td><td>Suggests shift changes to reduce gaps and rule breaks. The dropdown beside it sets the search effort: Quick (one search, a couple of seconds), Standard (best of 5 searches, the default) or Thorough (best of 6 longer searches). It keeps the best result and lists the top three underneath, so you can switch to another option with one tap. Undo brings back the previous roster.</td></tr>
+        <tr><td>Undo / Redo</td><td>Steps back (or forward) through everything you do, one step at a time: cell edits, added or removed lines, Lock, line and staff names, notes, dragging, shift times, staff-per-day numbers, priorities and weights, adding or removing shift types, every setting in Roster settings, applying a template, loading, reloading, importing or saving a roster, Clear all and Optimise. Keyboard: Ctrl+Z and Ctrl+Y.</td></tr>
+        <tr><td>Present</td><td>Clean, enlarged view for a projector or meeting-room screen: hides the settings, help text and export panel. Press Esc or use Exit presentation to come back.</td></tr>
+        <tr><td>Cover against the blueprint / Scorecard</td><td>Cover against the blueprint sits directly under the roster, with the Scorecard below it. Both can be opened and closed.</td></tr>
+        <tr><td>Drag handle (&#8942;&#8942;)</td><td>Press and drag a line to move it up or down within its group (full-time, part-time and so on). The order sets the rotation, so moving a line changes which weeks pair up. Undo reverses it. The same handle on each row of the Shift times and blueprint table moves a shift type up or down.</td></tr>
+        <tr><td>Note (small + in a cell)</td><td>Jot a concern against a specific shift. Notes show as a yellow dot, are listed under the roster, saved with the roster, and printed in the PDF.</td></tr>
+        <tr><td>Compare / Back to build</td><td>Switches the roster into two side-by-side panes: the current (starting) roster on the left, locked, and your proposal on the right, still editable. Rows line up so you can read across, and any cell that differs from the current roster is outlined on both sides. Below the panes, a Positives and Negatives summary shows how the proposal measures up against the current roster (shifts covered, isolated single days off, longest runs, weekend days worked, longest stretches off, rest breaks and hours spread), and the scorecard sits underneath at full width. Press the button again to return to the normal view.</td></tr>
+        <tr><td>What changed</td><td>Below the coverage table: a plain-English list of every change against the starting roster, per line (for example &ldquo;Tue: 07:30 &rarr; off&rdquo;), with weekend days gained or lost and paid hours before and after. The same list is printed at the top of the PDF, so the reader sees the proposal before the grid.</td></tr>
+        <tr><td>Tabs</td><td><b>Roster</b> holds the grid, cover and changes. <b>Settings</b> holds cover hours, rules and shift times. <b>Scorecard</b> holds the checks, positives and negatives. <b>Export</b> holds the print, Excel, Word and file options. Presentation view keeps the scorecard under the roster.</td></tr>
+        <tr><td>Collapsible panels</td><td>Panels open and close when you tap their heading, so you can keep just what you need on screen.</td></tr>
+        <tr><td>Roster settings panel (Cover hours, Roster rules, Paid hours)</td><td>Sits under Roster controls. Three cards: Cover hours (weekday and weekend start and end), Roster rules (FT and PT shifts per week, minimum rest, max shifts in a row) and Paid hours (unpaid break and the shift length it applies to). A one-line summary shows when the panel is closed. Set minimum rest or max shifts in a row to 0 to switch that rule off. The unpaid break is taken off shifts of the length you set. Cover hours are the hours the roster must always have someone on.</td></tr>
+        <tr><td>Line structure</td><td>Set in Settings. <b>Average across the rotation</b> (default): all full-time lines together, and all part-time lines together, add up to the shifts-per-week target times the number of lines, so individual lines can differ. <b>Every line</b>: each line has exactly the target. <b>Off</b>: not checked. No pairing of lines is assumed.</td></tr>
+        <tr><td>&#9678; Spotlight</td><td>Tap the &#9678; button on a line to dim every other line, so the team can focus on one person&rsquo;s pattern. Tap it again, or press Esc, to clear.</td></tr>
+        <tr><td>Minimise changes when optimising</td><td>When ticked, the optimiser weighs disruption more heavily and prefers the smallest set of edits to today&rsquo;s roster over a lower-scoring but more disruptive rewrite. Off by default, since a roster with real gaps often needs bigger changes.</td></tr>
+        <tr><td>Save this roster as / Delete saved</td><td>Stores the current roster under a name in the dropdown; Delete removes a saved one.</td></tr>
+        <tr><td>Starting roster presets</td><td>The Starting roster dropdown lists Preloaded rosters (Sample roster A and 2, Sample current roster, Options A, B, C1 and C2), Blank roster, and any rosters you have saved.</td></tr>
+        <tr><td>Set as my default / Reset default</td><td>Under the blueprint table. Remembers your shift times and blueprint so a new blank roster starts from them next time.</td></tr>
+        <tr><td>+ Full-time / Part-time / Fixed line, Clear all shifts</td><td>Add or remove roster lines. Fixed lines (FWA) do not rotate.</td></tr>
+        <tr><td>+ Vacant line</td><td>Adds a line for a rostered position with no staff member yet (the staff name starts as &ldquo;Vacant&rdquo;). Any line typed as Vacant, or with a staff name starting &ldquo;Vacant&rdquo;, is treated as unfilled: its shifts do <b>not</b> count as cover, so they stay on the overtime offer list and show as &ldquo;Vacant line&rdquo; there. Optimise looks after unlocked vacant lines for you: shifts real staff can now cover are taken off them, and anything still uncovered is parked on them (a new vacant line is added only if none has room). Lock a vacant line to keep it exactly as you set it. When you edit the roster by hand, a shift you take off or change on a staffed line, or a line you delete, is added to a vacant line automatically; if you then cover a shift that sits on a vacant line it comes off it. Undo reverses both together.</td></tr>
+        <tr><td>+ Casual line / + Overtime line</td><td>Each adds a pool line with no fixed shift count &mdash; assign it directly in the grid to record a casual or overtime pickup against a vacant shift. Optimise never moves or assigns these lines.</td></tr>
+        <tr><td>Overtime offer list</td><td>Below the coverage table: every shift the blueprint still needs, ready to offer out. Copy offer text puts it in a plain-text block (day, shift, staff needed) to paste into Teams, email or SMS. A row drops off once a line covers it.</td></tr>
+        <tr><td>Staff name (column on each line)</td><td>A free-text field to record which person is currently on that line &mdash; separate from the Line number, which is the rotation position. Included in CSV, Excel and Word exports.</td></tr>
+        <tr><td>+ Add shift type / Weight ×</td><td>Adds a new shift time to the blueprint. Weight × scales how much a gap in that shift counts against the score &mdash; raise it above 1 to have the optimiser fill that shift&rsquo;s gaps ahead of other shifts at the same priority.</td></tr>
+        <tr><td>Lock (checkbox on a line)</td><td>Stops the optimiser moving that line.</td></tr>
+        <tr><td>Export roster file / Import file / Import from text</td><td>Saves or loads a complete roster and blueprint as a file, to keep or send to someone else.</td></tr>
+        <tr><td>Copy CSV / Download CSV</td><td>Gets the roster as a spreadsheet-ready table.</td></tr>
+        <tr><td>Export to Excel / Export to Word</td><td>Full-colour master roster, shift coverage and scorecard as an .xls or .doc file &mdash; matches the on-screen shift colours, with a generated-on date and time in the footer. Opens directly in Excel/Word (a one-time format warning is normal &mdash; choose Open anyway).</td></tr>
+        <tr><td>Print / Save as PDF</td><td>Opens your browser&rsquo;s print dialog with the same colour-formatted tables. Choose &ldquo;Save as PDF&rdquo; as the destination instead of a printer. The report opens with the What changed summary, then the scorecard and roster.</td></tr>
+      </table>
+
+      <h3>What Optimise checks</h3>
+      <ul>
+        <li>Fills blueprint gaps first, weighted so high-priority shifts are covered before low-priority ones.</li>
+        <li>Caps runs at your maximum shifts in a row, and limits how many weekends in a row part-time and full-time lines can work.</li>
+        <li>Requires at least your minimum rest (hours) between the end of one shift and the start of the next.</li>
+        <li>Limits part-time Sunday work, and checks that every half-hour of your set &ldquo;cover hours&rdquo; has someone on.</li>
+        <li>Favours grouping days off together: a lone rest day boxed in by working days on both sides (across the whole rotation, wrapping week to week) counts against a roster, so runs of 2+ days off are preferred where the blueprint allows it.</li>
+        <li>Weighs each shift type&rsquo;s gaps by its Weight × setting on top of its priority, so you can push the optimiser to close one shift&rsquo;s shortfalls before another&rsquo;s.</li>
+        <li>Favours an even spread of paid hours across lines of the same type this printed week &mdash; a line running noticeably heavier or lighter than the others counts against the roster.</li>
+        <li>Tries direct swaps between two lines (one gives up a shift it doesn&rsquo;t need that day, another picks it up on a day it does) as well as moving a single line&rsquo;s own shifts &mdash; swaps usually clear a vacancy faster than a chain of one-line moves.</li>
+        <li>Makes the smallest set of changes that still improves the roster &mdash; it won&rsquo;t reshuffle lines that don&rsquo;t need to move. Tick &ldquo;Minimise changes when optimising&rdquo; to weigh this much more heavily, for a smaller, gentler suggestion.</li>
+        <li>Keeps shifts matching inside a run of working days, with the latest shift last: 07:30, 07:30, 08:30, 12:00 is ideal. Starting earlier the day after a later shift counts against a roster, and so does hopping between different shifts.</li>
+        <li>Keeps the line structure you chose in Settings (rotation average, every line, or off).</li>
+        <li>Never moves Locked, Casual or Overtime lines.</li>
+        <li>Fills gaps from the vacant lines where it can: when real staff can pick up a shift that was sitting on a vacant line, it moves it across. Whatever it can&rsquo;t cover with your rostered lines is parked on a vacant line (existing ones first, a new one only if needed), so it shows on the overtime offer list ready to offer out. Vacant shifts never count as cover.</li>
+      </ul>
+
+      <h3>Tips</h3>
+      <ul>
+        <li>The roster grid hard-blocks your minimum rest rule: after you assign a shift, the next day&rsquo;s dropdown for that line only shows shifts that leave enough of a break (e.g. with 10.5 hours of rest, after a 12:00&ndash;22:00 shift only 08:30 or later is offered the next day). Hover a restricted cell to see why options are missing.</li>
+        <li>Empty cells are also steered toward open <b>core</b> coverage gaps (amber highlight): if the scorecard&rsquo;s Core cover check is failing for a day, blank cells that day only offer the shift(s) still short &mdash; fill that gap (here or on another line) to unlock the rest of the shift menu again. Soft/low-priority shortfalls don&rsquo;t restrict, since those are expected to sometimes go unfilled. Untick &ldquo;Steer empty cells toward coverage gaps&rdquo; above the roster to turn this off and get the full shift menu everywhere.</li>
+        <li>When a scorecard check shows Review or Fails, its detail names the specific lines and days behind it (for example which line breaks the rest rule, or which day is a lone day off), so you know where to look in the grid.</li>
+        <li>Set the &ldquo;Cover hours&rdquo; (in the Roster settings panel) to the hours you need covered &mdash; this drives the cover check in the scorecard.</li>
+        <li>The Shift coverage table marks the single costliest unfilled gap with a star (&#9733;) &mdash; the one shortfall doing the most damage to the score, worth fixing first if you&rsquo;re editing by hand.</li>
+        <li>To fill a vacant shift with a casual or overtime pickup: add a Casual or Overtime line, check the overtime offer list for what&rsquo;s still open, then assign that shift to the new line directly in the grid and type the person&rsquo;s name into its Staff name column.</li>
+        <li>For a fully custom roster: start from &ldquo;Blank roster&rdquo;, set your shift times and blueprint, then add lines.</li>
+        <li>Nothing is saved automatically except what you Save or Set as default (stored in this browser only) &mdash; use Export roster file for a backup you can keep or move to another computer.</li>
+      </ul>
+    </div>
+  </div>
+
+  <section class="steps pres-hide rostab" aria-label="How to use">
+    <div class="step"><b>1. Choose a starting roster</b>A blank roster, or one you saved earlier.</div>
+    <div class="step"><b>2. Set rules, shift times and blueprint</b>Set cover hours and roster rules, then pick a template or edit shift times and staff per day.</div>
+    <div class="step"><b>3. Edit or optimise</b>Add or remove lines, change any shift, lock lines, or run the optimiser.</div>
+    <div class="step"><b>4. Review, save, export</b>Check the scorecard, save the roster, and export CSV for Excel.</div>
+  </section>
+
+  <details class="panel fold rostab" id="ctlBox" open>
+    <summary><span class="sch">Roster controls</span> <span class="ssum"><span class="sp" id="ctlName"></span></span></summary>
+    <div class="controls">
+      <div class="field pres-hide"><label for="preset">Starting roster</label><select id="preset" class="big"></select></div>
+      <div class="actions">
+        <button class="btn" id="reset">Reload</button>
+        <button class="btn primary" id="opt">Optimise</button><select id="optMode" class="sm" aria-label="Search effort" title="Quick: one search. Standard: best of 5 searches. Thorough: best of 6 longer searches."><option value="quick">Quick</option><option value="standard" selected>Standard (best of 5)</option><option value="thorough">Thorough (best of 6, longer)</option></select>
+        <button class="btn" id="undo" disabled title="Undo the last change (Ctrl+Z)">Undo</button>
+        <button class="btn" id="redo" disabled title="Redo the change you undid (Ctrl+Y)">Redo</button>
+        <button class="btn" id="cmpBtn" aria-pressed="false" title="Show the current roster and your proposed roster side by side">Compare</button>
+      </div>
+      <div class="field pres-hide"><label for="saveName">Save this roster as</label>
+        <div class="row"><input id="saveName" class="txt" placeholder="e.g. Option D – 07:00 start"><button class="btn" id="save">Save</button><button class="btn" id="delSaved" disabled>Delete saved</button></div>
+      </div>
+    </div>
+  </details>
+  <div class="status ctlstatus" id="status" role="status" aria-live="polite"></div>
+
+  <details class="panel fold pres-hide settab" id="setBox" open>
+    <summary><span class="sch">Roster settings</span> <span class="note" id="setSum"></span></summary>
+    <div class="setgrid">
+      <div class="setcard">
+        <h4>Cover hours</h4>
+        <p class="note">Someone must be on during these hours. Nothing is checked outside them.</p>
+        <div class="setrow"><label class="note" for="cwS">Weekdays</label><span class="pair"><input type="time" id="cwS" class="tm" step="1800"><span class="note">to</span><input type="time" id="cwE" class="tm" step="1800" aria-label="Weekday service end"></span></div>
+        <div class="setrow"><label class="note" for="ceS">Weekends</label><span class="pair"><input type="time" id="ceS" class="tm" step="1800"><span class="note">to</span><input type="time" id="ceE" class="tm" step="1800" aria-label="Weekend service end"></span></div>
+      </div>
+      <div class="setcard">
+        <h4>Roster rules</h4>
+        <p class="note">Tick <b>default</b> to fix a rule at its standard value (4 and 2 shifts a week, 10.5 hours rest, 4 in a row). Untick it to enter your own number for your workplace agreement. Set rest or max in a row to 0 to switch that rule off.</p>
+        <div class="setrow"><label class="note" for="ftN">Shifts per week, full-time</label><span class="pair"><label class="lockrule"><input type="checkbox" data-rl="ft" aria-label="Use default for Shifts per week, full-time"> default</label><input type="number" id="ftN" class="num" min="1" max="7"></span></div>
+        <div class="setrow"><label class="note" for="ptN">Shifts per week, part-time</label><span class="pair"><label class="lockrule"><input type="checkbox" data-rl="pt" aria-label="Use default for Shifts per week, part-time"> default</label><input type="number" id="ptN" class="num" min="1" max="7"></span></div>
+        <div class="setrow"><label class="note" for="restH">Minimum rest between shifts (hours)</label><span class="pair"><label class="lockrule"><input type="checkbox" data-rl="rest" aria-label="Use default for Minimum rest between shifts (hours)"> default</label><input type="number" id="restH" class="num" min="0" max="24" step="0.5"></span></div>
+        <div class="setrow"><label class="note" for="runN">Max shifts in a row</label><span class="pair"><label class="lockrule"><input type="checkbox" data-rl="maxRun" aria-label="Use default for Max shifts in a row"> default</label><input type="number" id="runN" class="num" min="0" max="14"></span></div>
+        <div class="setrow"><label class="note" for="lineModeSel">Line structure check</label><select id="lineModeSel"><option value="avg">Average across the rotation</option><option value="each">Every line hits the target</option><option value="off">Off</option></select></div>
+      </div>
+      <div class="setcard">
+        <h4>Staff lines</h4>
+        <p class="note">Lines are added and removed on the Roster tab, under the roster grid. A new roster starts blank and you add your own lines.</p>
+        <div class="setrow"><span class="note">Full-time lines</span><b id="stFT">0</b></div>
+        <div class="setrow"><span class="note">Part-time lines</span><b id="stPT">0</b></div>
+        <div class="setrow"><span class="note">Fixed, vacant, casual and overtime lines</span><b id="stOther">0</b></div>
+      </div>
+      <div class="setcard">
+        <h4>Paid hours</h4>
+        <p class="note">Paid hours = finish &minus; start, less the unpaid break.</p>
+        <div class="setrow"><label class="note" for="brkM">Unpaid break (minutes)</label><input type="number" id="brkM" class="num" min="0" max="120" step="5"></div>
+        <div class="setrow"><label class="note" for="brkH">Applies to shifts of (hours or more)</label><input type="number" id="brkH" class="num" min="1" max="24" step="0.5"></div>
+      </div>
+    </div>
+  </details>
+
+  <details class="panel fold pres-hide settab" id="shiftBox" open>
+      <summary><span class="sch">Shift types, times and blueprint</span></summary>
+    <div style="display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap">
+      <div><p class="note" style="margin:2px 0 0">Number of lines (staff) needed each day for each shift &mdash; one line is one person. Starter times are loaded by default; change a start or finish time and every rostered shift of that type moves with it. Set as my default keeps your times for future rosters.</p></div>
+      <div class="row"><select id="tpl" class="big" aria-label="Blueprint template"></select><button class="btn" id="applyTpl">Apply template</button></div>
+    </div>
+    <div class="scroll"><table id="bpt"></table></div>
+    <div class="row bpbar">
+      <button class="btn" id="addShift">+ Add shift type</button>
+      <span class="bpsp"></span>
+      <button class="btn" id="setDef">Set as my default</button><button class="btn" id="clrDef">Reset default</button>
+    </div>
+  </details>
+
+  <div class="main rostab" id="rosterPane">
+    <section class="panel">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap">
+        <h2>Master roster (one week of the rotation)</h2>
+        <div class="row" style="gap:16px">
+          <label class="toggle" for="steerToggle" title="When on, an empty cell on a day with an unfilled core shift only offers the shift(s) still needed, until that gap is filled."><input type="checkbox" id="steerToggle" checked>Steer empty cells toward coverage gaps</label>
+          <label class="toggle" for="minChangeToggle" title="When on, the optimiser weighs disruption more heavily and prefers the smallest set of changes to today's roster over a lower-scoring but more disruptive rewrite."><input type="checkbox" id="minChangeToggle">Minimise changes when optimising</label>
+        </div>
+        <div class="legend" id="legend"></div>
+      </div>
+      <div class="scroll" id="gridScroll"><table id="grid"></table></div>
+      <div id="cmpWrap" hidden>
+        <div class="cmpgrid">
+          <div><h3>Current roster <span class="note">(the starting roster &mdash; locked)</span></h3><div class="scroll"><table id="cmpL"></table></div></div>
+          <div><h3>Proposed roster <span class="note">(editable &mdash; changes are outlined)</span></h3><div class="scroll"><table id="cmpR"></table></div></div>
+        </div>
+      </div>
+      <div class="row">
+        <button class="btn" id="addFT">+ Full-time line</button>
+        <button class="btn" id="addPT">+ Part-time line</button>
+        <button class="btn" id="addFX">+ Fixed line (FWA)</button>
+        <button class="btn" id="addVAC" title="A line for a rostered position with no staff member yet. Give it shifts like any other line; they count toward cover and are listed as vacant in the offer list. Never touched by Optimise.">+ Vacant line</button>
+        <button class="btn" id="addCAS" title="A pool line with no fixed shifts — assign it to a vacant shift to record a casual pickup. Never touched by Optimise.">+ Casual line</button>
+        <button class="btn" id="addOT" title="A pool line with no fixed shifts — assign it to a vacant shift to record an overtime pickup. Never touched by Optimise.">+ Overtime line</button>
+        <button class="btn" id="clearAll">Clear all shifts</button>
+      </div>
+      <p class="note">Full-time and part-time lines rotate weekly in the order listed (top to bottom). Fixed lines, such as a flexible work arrangement, do not rotate. Casual and Overtime lines are pools with no fixed shift count — Optimise never moves or assigns them; use them to record who picks up a shift from the overtime offer list below. Tick the lock box to stop the optimiser moving a line. Rename a line by editing its label, and type the rostered person's name into the Staff name column.</p>
+    </section>
+
+    <div id="optlog"></div>
+
+    <details class="panel fold" open>
+      <summary><span class="sch">Cover against the blueprint</span></summary>
+      <div class="scroll"><table id="cover"></table></div>
+    </details>
+
+
+    <section class="panel">
+      <details id="otBox">
+        <summary>Overtime offer list &mdash; <span id="otCount">0</span> vacant shift(s) to offer</summary>
+        <p class="note">Every shift the blueprint still needs, unfilled by the lines above &mdash; ready to offer out as overtime or to a casual. Add a Casual or Overtime line and assign it directly in the grid once someone accepts a shift; it will drop off this list.</p>
+        <div class="scroll"><table id="ot"></table></div>
+        <div class="actions" style="margin-top:6px"><button class="btn" id="copyOT">Copy offer text</button></div>
+      </details>
+      <details id="notesBox" open>
+        <summary>Notes on cells &mdash; <span id="noteCount">0</span></summary>
+        <p class="note">Concerns jotted against a specific shift in the grid. Tap a note's name to edit it. Notes are saved with the roster and printed in the PDF.</p>
+        <ul id="noteList" class="log" style="max-height:none"></ul>
+      </details>
+      <details id="chgBox" open>
+        <summary>What changed from the starting roster &mdash; <span id="chgCount">0</span> shift(s)</summary>
+        <p class="note">A plain-English summary of every change against the starting roster. It is also printed at the top of the PDF, so the reader sees the proposal before the grid.</p>
+        <ul id="chgList" class="log" style="max-height:none"></ul>
+      </details>
+    </section>
+
+  </div>
+  <div class="scoretab">
+    <details class="panel strip fold" id="scoreBox" open aria-label="Scorecard and impact">
+      <summary><span class="sch">Scorecard</span> <span class="ssum" id="scoreSum"></span></summary>
+      <div class="kpis" id="kpis"></div>
+      <div class="stripcols">
+        <div class="pos"><h3>Positives of the proposal</h3><ul id="impPos"></ul></div>
+        <div class="neg"><h3>Negatives of the proposal</h3><ul id="impNeg"></ul></div>
+      </div>
+      <p class="note" id="impNote" style="margin-top:8px"></p>
+      <h3 class="chkh">Checks</h3>
+      <div class="checks" id="checks"></div>
+    </details>
+  </div>
+  <div class="exptab pres-hide">
+    <details class="panel fold pres-hide" id="expPanel" open>
+      <summary><span class="sch">Save and export</span></summary>
+      <div class="actions"><button class="btn" id="copy">Copy CSV</button><button class="btn" id="dlcsv">Download CSV</button></div>
+      <label class="note" for="csv">CSV (select all and copy if the buttons do not work)</label>
+      <textarea id="csv" readonly></textarea>
+      <label class="toggle" for="incScore" style="margin-top:6px"><input type="checkbox" id="incScore">Include the scorecard in print and exports (off by default so the roster prints clean)</label>
+      <div class="actions" style="margin-top:4px">
+        <button class="btn" id="expXlsx" title="A colour-coded Excel workbook: master roster, shift coverage and scorecard">Export to Excel</button>
+        <button class="btn" id="expDoc" title="A colour-coded Word document with the same tables">Export to Word</button>
+        <button class="btn primary" id="printPdf" title="Opens the print dialog — choose &quot;Save as PDF&quot; as the destination">Print / Save as PDF</button>
+      </div>
+      <p class="note" style="margin-top:2px">Excel and Word files may show a one-time "format doesn't match extension" warning &mdash; choose Yes/Open anyway; it's expected for a colour-formatted export like this.</p>
+      <details>
+        <summary>Export or import a roster</summary>
+        <p class="note">Export saves the roster, shift times and blueprint as a file you can keep, email or load on another computer.</p>
+        <div class="actions"><button class="btn" id="exp">Export roster file</button><label class="btn" for="impFile" style="font-weight:600">Import file</label><input type="file" id="impFile" accept=".json,application/json" hidden><button class="btn" id="impText">Import from text</button></div>
+        <textarea id="json" aria-label="Roster JSON" placeholder="Exported roster text appears here. Paste roster text here and press Import from text."></textarea>
+      </details>
+    </details>
+  </div>
+</div>
+
+<button class="btn primary" id="presExit" hidden>Exit presentation</button>
+<div id="noteBox" class="notebox" role="dialog" aria-labelledby="noteTitle" hidden>
+  <div id="noteTitle" class="nt"></div>
+  <textarea id="noteText" maxlength="400" rows="4" placeholder="e.g. Sarah can't do early starts on school days" aria-label="Note text"></textarea>
+  <div class="actions"><button class="btn primary" id="noteSave">Save note</button><button class="btn" id="noteDel">Delete</button><button class="btn" id="noteCancel">Close</button></div>
+</div>
+<div id="printArea" aria-hidden="true"></div>
+<p class="note pres-hide" style="text-align:center;margin:24px 0 8px"><a href="privacy.html">Privacy</a> &middot; ShiftSketch works offline and keeps everything on your device only.</p>
+
+<script>
+const PRESETS={"Sample roster A": {"FT": [["1", {"Mon": "12:00", "Tue": "12:00", "Sat": "08:30", "Sun": "08:30"}], ["8", {"Mon": "07:30", "Tue": "07:30", "Sat": "08:30", "Sun": "08:30"}], ["15", {"Wed": "07:30", "Thu": "07:30", "Fri": "07:30", "Sat": "07:30"}], ["22", {"Tue": "07:30", "Wed": "12:00", "Thu": "12:00", "Fri": "12:00"}], ["29", {"Mon": "08:30", "Tue": "08:30", "Fri": "08:30", "Sat": "08:30", "Sun": "07:30"}], ["36", {"Thu": "08:30", "Fri": "08:30", "Sat": "08:30"}], ["43", {"Tue": "08:30", "Wed": "08:30", "Thu": "07:30", "Fri": "08:30"}], ["50", {"Tue": "08:30", "Wed": "12:00", "Thu": "12:00", "Fri": "12:00"}], ["57", {"Mon": "07:30", "Tue": "12:00", "Wed": "08:30", "Thu": "08:30"}]], "PT": [["1", {"Wed": "08:30", "Sun": "07:30"}], ["2", {"Mon": "12:00", "Fri": "06:30"}], ["3", {"Thu": "08:30", "Fri": "07:30"}], ["4", {"Wed": "08:30", "Thu": "06:30"}], ["5", {"Mon": "08:30", "Wed": "07:30"}], ["6", {"Thu": "06:30", "Fri": "06:30"}], ["7", {"Fri": "08:30", "Sat": "07:30"}], ["8", {"Mon": "08:30", "Tue": "06:30"}]], "FWA": {"Mon": "08:30", "Tue": "08:30", "Thu": "08:30"}, "CAS": [["1", {"Mon": "06:30", "Tue": "06:30", "Wed": "06:30"}, ""]], "OT": [["1", {"Mon": "06:30", "Tue": "06:30"}, "Vacant Offer"], ["2", {"Mon": "06:30", "Tue": "06:30", "Wed": "06:30"}, "Vacant offer"]], "late": true, "FWAlabel": "FWA 1"}, "Sample roster B": {"FT": [["1", {"Mon": "12:00", "Tue": "12:00", "Sat": "08:30", "Sun": "08:30"}], ["8", {"Mon": "07:30", "Tue": "07:30", "Sat": "08:30", "Sun": "08:30"}], ["15", {"Wed": "07:30", "Thu": "07:30", "Fri": "08:30", "Sat": "07:30"}], ["22", {"Tue": "07:30", "Wed": "12:00", "Thu": "12:00", "Fri": "12:00"}], ["29", {"Mon": "08:30", "Tue": "08:30", "Fri": "08:30", "Sat": "08:30", "Sun": "07:30"}], ["36", {"Thu": "08:30", "Fri": "07:30", "Sat": "08:30"}], ["43", {"Tue": "08:30", "Wed": "08:30", "Thu": "07:30", "Fri": "08:30"}], ["50", {"Tue": "08:30", "Wed": "12:00", "Thu": "12:00", "Fri": "12:00"}], ["57", {"Mon": "07:30", "Tue": "12:00", "Wed": "08:30", "Thu": "08:30"}]], "PT": [["1", {"Wed": "08:30", "Sun": "07:30"}], ["2", {"Mon": "12:00", "Fri": "06:30"}], ["3", {"Thu": "08:30", "Fri": "07:30"}], ["4", {"Wed": "08:30", "Thu": "06:30"}], ["5", {"Mon": "08:30", "Wed": "07:30"}], ["6", {"Thu": "06:30", "Fri": "06:30"}], ["7", {"Fri": "08:30", "Sat": "07:30"}], ["8", {"Mon": "08:30", "Tue": "06:30"}]], "FWA": {"Mon": "08:30", "Tue": "08:30", "Thu": "08:30"}, "CAS": [["1", {"Mon": "06:30", "Tue": "06:30", "Wed": "06:30"}, ""]], "OT": [["1", {"Mon": "06:30", "Tue": "06:30"}, "Vacant Offer"], ["2", {"Mon": "06:30", "Tue": "06:30", "Wed": "06:30"}, "Vacant offer"]], "late": true, "FWAlabel": "FWA 1"}, "Sample current roster": {"FT": [["1", {"Mon": "08:30", "Tue": "08:30", "Wed": "08:30", "Thu": "08:30"}], ["8", {"Tue": "07:30", "Wed": "08:30", "Sat": "08:30", "Sun": "08:30"}], ["15", {"Mon": "08:30", "Tue": "08:30", "Wed": "08:30", "Thu": "08:30"}], ["22", {"Tue": "08:30", "Wed": "08:30", "Thu": "08:30", "Fri": "08:30"}], ["29", {"Tue": "06:30", "Wed": "06:30", "Sat": "07:30", "Sun": "07:30"}], ["36", {"Mon": "08:30", "Tue": "08:30", "Sat": "07:30", "Sun": "07:30"}], ["43", {"Tue": "06:30", "Wed": "06:30", "Thu": "06:30", "Fri": "06:30"}], ["50", {"Tue": "07:30", "Wed": "07:30", "Thu": "07:30", "Fri": "07:30"}], ["57", {"Tue": "08:30", "Wed": "08:30", "Thu": "08:30", "Fri": "08:30"}]], "PT": [["1", {"Sat": "08:30", "Sun": "08:30"}], ["8", {"Mon": "07:30", "Fri": "08:30"}], ["15", {"Mon": "07:30", "Fri": "08:30"}], ["22", {"Wed": "07:30", "Fri": "06:30"}], ["29", {"Mon": "08:30", "Fri": "08:30"}], ["36", {"Mon": "06:30", "Fri": "08:30"}], ["43", {"Mon": "08:30", "Fri": "07:30"}], ["50", {"Mon": "06:30", "Wed": "08:30"}]], "FWA": {"Mon": "08:30", "Tue": "08:30", "Thu": "08:30"}, "late": false}, "Option A": {"FT": [["1", {"Mon": "08:30", "Tue": "08:30", "Wed": "08:30", "Thu": "08:30"}], ["8", {"Tue": "07:30", "Wed": "08:30", "Sat": "08:30", "Sun": "08:30"}], ["15", {"Mon": "08:30", "Tue": "08:30", "Wed": "08:30", "Thu": "08:30"}], ["22", {"Tue": "08:30", "Wed": "08:30", "Thu": "08:30", "Fri": "08:30"}], ["29", {"Tue": "06:30", "Wed": "06:30", "Sat": "07:30", "Sun": "07:30"}], ["36", {"Mon": "08:30", "Tue": "08:30", "Sat": "07:30", "Sun": "07:30"}], ["43", {"Tue": "06:30", "Wed": "06:30", "Thu": "06:30", "Fri": "06:30"}], ["50", {"Tue": "07:30", "Wed": "07:30", "Thu": "07:30", "Fri": "07:30"}], ["57", {"Tue": "08:30", "Wed": "08:30", "Thu": "08:30", "Fri": "08:30"}]], "PT": [["1", {"Fri": "08:30", "Sat": "08:30"}], ["2", {"Mon": "06:30", "Thu": "06:30"}], ["3", {"Wed": "07:30", "Sat": "08:30"}], ["4", {"Mon": "07:30", "Thu": "07:30"}], ["5", {"Wed": "08:30", "Sat": "08:30"}], ["6", {"Mon": "06:30", "Fri": "06:30"}], ["7", {"Fri": "08:30", "Sun": "08:30"}], ["8", {"Mon": "07:30", "Fri": "07:30"}]], "FWA": {"Mon": "08:30", "Tue": "08:30", "Thu": "08:30"}, "late": false}, "Option B": {"FT": [["1", {"Mon": "08:30", "Tue": "08:30", "Wed": "08:30", "Fri": "08:30"}], ["8", {"Tue": "07:30", "Wed": "08:30", "Sat": "08:30", "Sun": "08:30"}], ["15", {"Mon": "08:30", "Tue": "08:30", "Thu": "08:30", "Sun": "08:30"}], ["22", {"Tue": "08:30", "Wed": "08:30", "Thu": "08:30", "Fri": "08:30"}], ["29", {"Mon": "06:30", "Wed": "06:30", "Sat": "07:30", "Sun": "07:30"}], ["36", {"Mon": "08:30", "Tue": "08:30", "Sat": "07:30", "Sun": "07:30"}], ["43", {"Tue": "06:30", "Wed": "06:30", "Thu": "06:30", "Fri": "06:30"}], ["50", {"Mon": "07:30", "Wed": "07:30", "Thu": "07:30", "Fri": "07:30"}], ["57", {"Wed": "08:30", "Thu": "08:30", "Fri": "08:30", "Sat": "08:30"}]], "PT": [["1", {"Wed": "07:30", "Sat": "08:30"}], ["2", {"Tue": "06:30", "Thu": "06:30"}], ["3", {"Mon": "06:30", "Fri": "06:30"}], ["4", {"Fri": "08:30", "Sat": "08:30"}], ["5", {"Tue": "07:30", "Thu": "07:30"}], ["6", {"Mon": "07:30", "Fri": "07:30"}], ["7", {"Fri": "08:30", "Wed": "08:30"}], ["8", {"Tue": "08:30", "Fri": "08:30"}]], "FWA": {"Mon": "08:30", "Tue": "08:30", "Thu": "08:30"}, "late": false}, "Option C1 (late shift)": {"FT": [["1", {"Mon": "12:00", "Tue": "08:30", "Wed": "08:30", "Fri": "08:30"}], ["8", {"Tue": "07:30", "Wed": "08:30", "Sat": "08:30", "Sun": "08:30"}], ["15", {"Mon": "12:00", "Tue": "12:00", "Thu": "08:30", "Sun": "08:30"}], ["22", {"Tue": "12:00", "Wed": "12:00", "Thu": "12:00", "Fri": "12:00"}], ["29", {"Mon": "06:30", "Wed": "06:30", "Sat": "07:30", "Sun": "07:30"}], ["36", {"Mon": "08:30", "Tue": "08:30", "Sat": "07:30", "Sun": "07:30"}], ["43", {"Tue": "06:30", "Wed": "06:30", "Thu": "06:30", "Fri": "06:30"}], ["50", {"Mon": "07:30", "Wed": "07:30", "Thu": "07:30", "Fri": "07:30"}], ["57", {"Wed": "12:00", "Thu": "12:00", "Fri": "12:00", "Sat": "08:30"}]], "PT": [["1", {"Wed": "07:30", "Sat": "08:30"}], ["2", {"Tue": "06:30", "Thu": "06:30"}], ["3", {"Mon": "06:30", "Fri": "06:30"}], ["4", {"Fri": "08:30", "Sat": "08:30"}], ["5", {"Tue": "07:30", "Thu": "07:30"}], ["6", {"Mon": "07:30", "Fri": "07:30"}], ["7", {"Fri": "08:30", "Wed": "08:30"}], ["8", {"Tue": "08:30", "Fri": "08:30"}]], "FWA": {"Mon": "08:30", "Tue": "08:30", "Thu": "08:30"}, "late": true}, "Option C2 (late shift)": {"FT": [["1", {"Mon": "12:00", "Tue": "08:30", "Wed": "08:30", "Fri": "08:30"}], ["8", {"Tue": "07:30", "Wed": "08:30", "Sat": "08:30", "Sun": "08:30"}], ["15", {"Mon": "12:00", "Tue": "12:00", "Thu": "08:30", "Sun": "08:30"}], ["22", {"Tue": "12:00", "Wed": "12:00", "Thu": "12:00", "Fri": "08:30"}], ["29", {"Mon": "06:30", "Wed": "06:30", "Sat": "07:30", "Sun": "07:30"}], ["36", {"Mon": "08:30", "Tue": "08:30", "Sat": "07:30", "Sun": "07:30"}], ["43", {"Tue": "06:30", "Wed": "06:30", "Thu": "06:30", "Fri": "06:30"}], ["50", {"Mon": "07:30", "Wed": "07:30", "Thu": "07:30", "Fri": "07:30"}], ["57", {"Wed": "12:00", "Thu": "12:00", "Fri": "08:30", "Sat": "08:30"}]], "PT": [["1", {"Wed": "07:30", "Sat": "08:30"}], ["2", {"Tue": "06:30", "Thu": "06:30"}], ["3", {"Mon": "06:30", "Fri": "06:30"}], ["4", {"Fri": "12:00", "Sat": "08:30"}], ["5", {"Tue": "07:30", "Thu": "07:30"}], ["6", {"Mon": "07:30", "Fri": "07:30"}], ["7", {"Fri": "08:30", "Wed": "08:30"}], ["8", {"Tue": "08:30", "Fri": "12:00"}]], "FWA": {"Mon": "08:30", "Tue": "08:30", "Thu": "08:30"}, "late": true}};
+const DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], WD=DAYS.slice(0,5), WE=['Sat','Sun'];
+const DEMAND={Mon:15.0,Tue:17.5,Wed:17.2,Thu:14.5,Fri:17.1,Sat:9.3,Sun:8.3};
+const KEY='rosterWizard2', SKEY='rosterWizardSaved';
+const TIME2ID={'06:30':'S1','07:30':'S2','08:30':'S3','10:30':'S4','12:00':'S5'};
+const $=id=>document.getElementById(id);
+const _t2h=Object.create(null);
+const t2h=t=>{let v=_t2h[t]; if(v===undefined){const [h,m]=t.split(':').map(Number); v=h+m/60; _t2h[t]=v;} return v;};
+const h2t=h=>{h=((h%24)+24)%24;const H=Math.floor(h+1e-9),M=Math.round((h-H)*60);return String(H).padStart(2,'0')+':'+String(M).padStart(2,'0');};
+const clone=o=>JSON.parse(JSON.stringify(o));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const RULE_DEF={ft:4,pt:2,rest:10.5,maxRun:4}, RULE_ID={ft:'ftN',pt:'ptN',rest:'restH',maxRun:'runN'};
+let incScore=false;
+let cfg=null, state=null, base={}, undoStack=[], redoStack=[], cmpOn=false, spotUid=null, addedUids=new Set(), uidN=1, presetName='', steerOn=true, minChangeOn=false;
+const MAX_UNDO=100;
+
+function defaultShifts(){return [
+  {id:'S1',start:'06:30',end:'16:30',pri:'high',wt:1},{id:'S2',start:'07:30',end:'17:30',pri:'high',wt:1},
+  {id:'S3',start:'08:30',end:'18:30',pri:'normal',wt:1},{id:'S4',start:'10:30',end:'18:30',pri:'low',wt:1},
+  {id:'S5',start:'12:00',end:'22:00',pri:'high',wt:1}];}
+function bucket(id){const s=sh(id); if(!s) return null; const h=t2h(s.start); return h<10?'AM':h<12?'Mid':'Late';}
+const TEMPLATES={
+  'Standard week':{late:false,sat:true},
+  'Standard week, Saturday variant':{late:false,sat:false},
+  'Late-shift trial (12:00–22:00)':{late:true,sat:true},
+  'Early start 07:00 (first shift moved to 07:00–17:00)':{late:false,sat:true,s1:'07:00'},
+  'Early start 07:30 (first shift merged into 07:30)':{late:false,sat:true,drop:true},
+  'Late trial + early start 07:00':{late:true,sat:true,s1:'07:00'}
+};
+function makeCfg(t){
+  const shifts=defaultShifts(), req={};
+  if(t.s1){const s=shifts[0]; s.start=t.s1; s.end=h2t(t2h(t.s1)+10);}
+  for(const d of WD) req[d]=t.drop?{S2:4,S3:t.late?4:6}:{S1:2,S2:2,S3:t.late?4:6};
+  for(const d of WD) if(t.late) req[d].S5=2;
+  req.Sat=t.sat?{S2:2,S3:4}:{S2:2,S3:2,S4:2}; req.Sun={S2:2,S3:2};
+  return {shifts,req,ft:4,pt:2,brk:30,brkAfter:6,rest:10.5,maxRun:4,cw:{wd:['06:30','18:30'],we:['07:30','17:30']}};
+}
+let _shA=null,_shN=-1,_shM=null;
+const sh=id=>{const a=cfg.shifts; if(_shA!==a||_shN!==a.length){_shA=a;_shN=a.length;_shM=new Map(a.map(x=>[x.id,x]));} return _shM.get(id);};
+const sIdx=id=>cfg.shifts.findIndex(s=>s.id===id);
+function sEnd(s){let e=t2h(s.end); if(e<=t2h(s.start)) e+=24; return e;}
+function paid(s){const d=sEnd(s)-t2h(s.start); const bm=(cfg.brk==null?30:cfg.brk)/60, ba=cfg.brkAfter==null?6:cfg.brkAfter; return d>=ba?d-bm:d;}
+function lab(id){const s=sh(id); if(!s) return '?'; const dup=cfg.shifts.filter(x=>x.start===s.start).length>1; return dup?s.start+'–'+s.end:s.start;}
+function req(d,id){return (cfg.req[d]&&cfg.req[d][id])||0;}
+function allowed(d){return cfg.shifts.filter(s=>req(d,s.id)>0).map(s=>s.id);}
+function restHrs(prevId,nextId){const ps=sh(prevId),ns=sh(nextId); if(!ps||!ns) return null; return 24+t2h(ns.start)-sEnd(ps);}
+function minRestH(){return cfg&&cfg.rest!=null?cfg.rest:10.5;}
+function maxRunN(){return cfg&&cfg.maxRun!=null?cfg.maxRun:4;}
+function restOK(prevId,nextId){const R=minRestH(); if(R<=0) return true; const r=restHrs(prevId,nextId); return r===null||r>=R-1e-9;}
+// Critical rule (playbook-style hard constraint, not just a scoring penalty): a line cannot be
+// offered a next-day shift that would breach the minimum 10.5h rest against the shift it worked
+// the previous day. Only forward (previous day -> this day) is hard-blocked in the cell picker;
+// the scorecard's Rest-between-shifts check still catches rotation wrap-around and out-of-order edits.
+function restAllowed(d,l){
+  const idx=DAYS.indexOf(d); if(idx<1) return allowed(d);
+  const prevId=l.shifts[DAYS[idx-1]]; if(!prevId) return allowed(d);
+  return allowed(d).filter(o=>restOK(prevId,o));
+}
+function isCore(d,id){const p=(sh(id)||{}).pri; return p==='high'||(WE.includes(d)&&p==='normal');}
+
+function cleanNotes(n){const o={}; if(n&&typeof n==='object') for(const k of DAYS) if(typeof n[k]==='string'&&n[k].trim()) o[k]=n[k].slice(0,400); return o;}
+function newLine(type,label,shifts,lock,pto,notes){return {uid:uidN++,type,label,shifts:shifts||{},lock:!!lock,pto:pto||'',notes:cleanNotes(notes)};}
+function snapBase(){addedUids=new Set(); base={}; state.lines.forEach(l=>base[l.uid]=clone(l.shifts));}
+function loadPreset(name){
+  if(state&&cfg) pushUndo();
+  presetName=name;
+  const saved=getSaved();
+  if(name.startsWith('saved:')){const s=saved[name.slice(6)]; if(!s) return; cfg=clone(s.cfg); state={lines:s.lines.map(l=>newLine(l.type,l.label,l.shifts,l.lock,l.pto,l.notes))};}
+  else if(name==='Blank roster'){
+    const dflt=getDefault(); cfg=dflt?clone(dflt):makeCfg({late:false,sat:true}); const dStaff=cfg.staff; delete cfg.staff; const lines=[];
+    ['1','8','15','22','29','36','43','50','57'].forEach(k=>lines.push(newLine('FT',k)));
+    for(let k=1;k<=8;k++) lines.push(newLine('PT',String(k)));
+    state={lines}; applyStaff(dStaff,false);
+  } else {
+    const p=PRESETS[name]; cfg=makeCfg({late:!!p.late,sat:true}); const lines=[];
+    const conv=o=>{const r={}; for(const [d,t] of Object.entries(o)) r[d]=TIME2ID[t]; return r;};
+    p.FT.forEach(([k,s])=>lines.push(newLine('FT',k,conv(s))));
+    p.PT.forEach(([k,s])=>lines.push(newLine('PT',k,conv(s))));
+    lines.push(newLine('FWA',p.FWAlabel||'FWA',conv(p.FWA),true));
+    (p.VAC||[]).forEach(([k,s,n])=>lines.push(newLine('VAC',k,conv(s),false,n||'Vacant')));
+    (p.CAS||[]).forEach(([k,s,n])=>lines.push(newLine('CAS',k,conv(s),false,n)));
+    (p.OT||[]).forEach(([k,s,n])=>lines.push(newLine('OT',k,conv(s),false,n)));
+    state={lines};
+  }
+  cfg.shifts.forEach(x=>{if(!x.wt) x.wt=1;});
+  snapBase(); $('optlog').innerHTML=''; renderAll();
+}
+const DKEY='rosterWizardDefault', NKEY='rosterWizardNames';
+// carry over anything saved under the old storage names
+function getNames(){try{const a=JSON.parse(localStorage.getItem(NKEY)||'[]'); return Array.isArray(a)?a:[];}catch(e){return [];}}
+function rememberName(nm){nm=(nm||'').trim(); if(!nm||/^vacant$/i.test(nm)) return; try{const a=getNames(); if(!a.some(x=>x.toLowerCase()===nm.toLowerCase())){a.push(nm); a.sort((x,y)=>x.localeCompare(y)); localStorage.setItem(NKEY,JSON.stringify(a));} fillNameList();}catch(e){}}
+function fillNameList(){let dl=document.getElementById('nameList'); if(!dl){dl=document.createElement('datalist'); dl.id='nameList'; document.body.appendChild(dl);} dl.innerHTML=''; getNames().forEach(n=>{const o=document.createElement('option'); o.value=n; dl.appendChild(o);});}
+function staffMap(){const m={}; state.lines.forEach(l=>{if(l.pto&&l.type!=='VAC') m[l.type+'|'+l.label]=l.pto;}); return m;}
+function applyStaff(map,onlyEmpty){let c=0; if(!map) return 0; state.lines.forEach(l=>{const v=map[l.type+'|'+l.label]; if(v&&(!onlyEmpty||!l.pto)){l.pto=v; c++;}}); return c;}
+function getDefault(){try{return JSON.parse(localStorage.getItem(DKEY)||'null');}catch(e){return null;}}
+function fillTemplates(){const sel=$('tpl'); sel.innerHTML=''; if(getDefault()) sel.appendChild(new Option('My default shift times','__mine')); Object.keys(TEMPLATES).forEach(n=>sel.appendChild(new Option(n,n)));}
+function syncUndo(){$('undo').disabled=!undoStack.length; $('redo').disabled=!redoStack.length;}
+function snapAll(){return {s:clone(state),c:clone(cfg),b:clone(base),a:[...addedUids],p:presetName};}
+function restoreAll(o){state=o.s; cfg=o.c; base=o.b; addedUids=new Set(o.a); presetName=o.p;}
+function pushUndo(pre){optAlts=null; const ae=document.getElementById('optAlts'); if(ae) ae.remove(); undoStack.push(pre||snapAll()); if(undoStack.length>MAX_UNDO) undoStack.shift(); redoStack=[]; syncUndo();}
+function resetUndo(){undoStack=[]; redoStack=[]; syncUndo(); $('optlog').innerHTML='';}
+function applyTemplate(name){
+  if(name==='__mine'){const d=getDefault(); if(!d) return; pushUndo(); const keep=new Set(d.shifts.map(x=>x.id)); state.lines.forEach(l=>{for(const k of DAYS) if(l.shifts[k]&&!keep.has(l.shifts[k])) delete l.shifts[k];}); const dst=d.staff; cfg=clone(d); delete cfg.staff; const nn=applyStaff(dst,true); $('optlog').innerHTML=''; renderAll(); $('status').textContent='Applied your default shift times and blueprint'+(nn?' and '+nn+' remembered staff name'+(nn===1?'':'s'):'')+'. Undo puts it back.'; return;}
+  const t=TEMPLATES[name], n=makeCfg(t); pushUndo();
+  if(t.drop) state.lines.forEach(l=>{for(const d of WD) if(l.shifts[d]==='S1') l.shifts[d]='S2';});
+  if(!t.drop&&!t.s1){ /* restore standard S1 time */ }
+  n.ft=cfg.ft; n.pt=cfg.pt; n.rest=cfg.rest; n.maxRun=cfg.maxRun; n.lineMode=cfg.lineMode; n.brk=cfg.brk; n.brkAfter=cfg.brkAfter; n.ruleOpen=clone(cfg.ruleOpen||{}); n.cw=clone(cfg.cw); n.cw.wd[0]=t.drop?'07:30':t.s1?t.s1:'06:30'; cfg=n;
+  const keep=new Set(n.shifts.map(x=>x.id)); state.lines.forEach(l=>{for(const k of DAYS) if(l.shifts[k]&&!keep.has(l.shifts[k])) delete l.shifts[k];});
+  $('optlog').innerHTML=''; renderAll();
+  $('status').textContent='Applied blueprint template: '+name+'. Shift times reset to the template times.'+(t.drop?' Weekday 06:30 shifts moved to 07:30.':'')+(t.s1||t.drop?' Cover hours start at '+cfg.cw.wd[0]+'; earlier times are not checked.':'');
+}
+
+const isVacLine=l=>l.type==='VAC'||(l.type==='OT'&&/^\s*vacant/i.test(l.pto||''));  // lines that hold unfilled shifts: vacant lines and vacant-named overtime offer lines
+const isVac=l=>l.type==='VAC'||/^\s*vacant/i.test(l.pto||'');  // unstaffed lines never count as cover
+function counts(st){const c={}; DAYS.forEach(d=>c[d]={}); st.lines.forEach(l=>{if(isVac(l)) return; for(const [d,s] of Object.entries(l.shifts)) c[d][s]=(c[d][s]||0)+1;}); return c;}  // vacant lines are unstaffed, so they never count as cover
+function rotSeqs(st,type){const ls=st.lines.filter(l=>l.type===type),n=ls.length,out=[]; for(let s=0;s<n;s++){const seq=[];for(let w=0;w<Math.max(2*n,2);w++)seq.push(ls[(s+w)%n].shifts);out.push(seq);} return {ls,seqs:out};}
+function duty(st){
+  // lines on duty per quarter hour (q) and per half hour (lowest in the half hour), including shifts running past midnight from the day before
+  const c=counts(st), q=[], slots=[]; for(let h=0;h<24;h+=0.25) q.push(h); for(let h=0;h<24;h+=0.5) slots.push(h);
+  const at=(d,h)=>{let n=0; const prev=DAYS[(DAYS.indexOf(d)+6)%7];
+    for(const [id,k] of Object.entries(c[d])){const s=sh(id); if(!s) continue; const a=t2h(s.start),b=sEnd(s); if(a<=h&&b>=h+0.25) n+=k;}
+    for(const [id,k] of Object.entries(c[prev])){const s=sh(id); if(!s) continue; const b=sEnd(s)-24; if(b>0&&h+0.25<=b) n+=k;}
+    return n;};
+  const qo={}, out={}; for(const d of DAYS){qo[d]={}; out[d]={}; for(const h of q) qo[d][h]=at(d,h); for(const h of slots) out[d][h]=Math.min(qo[d][h],qo[d][h+0.25]);}
+  return {slots,q,qo,out};
+}
+// Counts isolated single days off (a lone rest day with a worked day on both sides) across a
+// cyclic chain of lines/weeks. `ls` must already be in rotation order; the chain wraps from the
+// last entry's Sunday back to the first entry's Monday, matching how a real person cycles through it.
+function singleOffCount(ls){
+  const days=[]; for(const l of ls) for(const d of DAYS) days.push(l.shifts[d]||null);
+  const n=days.length; if(!n) return 0;
+  let cnt=0;
+  for(let i=0;i<n;i++){ if(days[i]) continue; const prev=days[(i-1+n)%n], next=days[(i+1)%n]; if(prev&&next) cnt++; }
+  return cnt;
+}
+// Line structure (no pairing assumed). Mode set in Settings:
+//  avg  = all lines of a type together average the shifts-per-week target (default)
+//  each = every FT/PT line has exactly the target
+//  off  = not checked
+function lineHdr(n){const m=lineMode(); return m==='off'?'shifts per line not checked':m==='each'?n+' shifts on every line':'average '+n+' shifts a week';}
+function lineMode(){return cfg&&cfg.lineMode?cfg.lineMode:'avg';}
+function lineStatus(st){
+  const out=new Map(), msgs=[], n=l=>Object.keys(l.shifts).length, mode=lineMode();
+  if(mode==='off') return {out,msgs};
+  for(const type of ['FT','PT']){
+    const ls=st.lines.filter(l=>l.type===type), need=type==='FT'?cfg.ft:cfg.pt, tn=type==='FT'?'Full-time':'Part-time';
+    if(!ls.length) continue;
+    if(mode==='each'){ ls.forEach(l=>{const ok=n(l)===need; out.set(l.uid,ok); if(!ok) msgs.push(tn+' line '+l.label+' has '+n(l)+' shifts (needs '+need+')');}); }
+    else { const tot=ls.reduce((a,l)=>a+n(l),0), ok=tot===need*ls.length; ls.forEach(l=>out.set(l.uid,ok));
+      if(!ok) msgs.push(tn+' lines have '+tot+' shifts in total across the rotation (need '+need*ls.length+', an average of '+need+' a week)'); }
+  }
+  return {out,msgs};
+}
+// Shift pattern inside a run of working days: matching start times are best, drifting later is fine
+// (07:30, 07:30, 08:30, 12:00), and the latest shift belongs on the last day of the run. Going back to an
+// earlier start the next day is penalised hardest. Rows are weeks in rotation order; the lap wraps round.
+function patternScan(weeks,m,tn,ls){
+  const dd=[], who=[]; weeks.forEach((w,wi)=>DAYS.forEach(d=>{dd.push(w[d]||null); who.push([ls[wi].label,d]);})); const n=dd.length;
+  if(n<2) return;
+  for(let i=0;i<n;i++){ const a=dd[i], b=dd[(i+1)%n]; if(!a||!b||!sh(a)||!sh(b)) continue;
+    const x=t2h(sh(a).start), y=t2h(sh(b).start);
+    if(y<x-1e-9){m.patDown++; if(m.patWhere.length<40) m.patWhere.push(tn+' line '+who[i][0]+' '+who[i][1]+' '+lab(a)+' then '+who[(i+1)%n][1]+' '+lab(b)+' (earlier start the next day)');}
+    else if(y>x+1e-9) m.patSteps++;
+  }
+}
+// Cover-hour gaps (same answer as scanning duty() quarter by quarter, but fast enough for the optimiser's inner loop).
+function uncovFast(c){
+  const iv={}; for(const s of cfg.shifts) iv[s.id]=[t2h(s.start),sEnd(s)];
+  const out=[];
+  for(let di=0;di<7;di++){
+    const d=DAYS[di], prev=DAYS[(di+6)%7], [a,b]=(WE.includes(d)?cfg.cw.we:cfg.cw.wd).map(t2h);
+    const spans=[]; for(const id in c[d]) if(iv[id]&&c[d][id]>0) spans.push(iv[id]);
+    const carry=[]; for(const id in c[prev]) if(iv[id]&&c[prev][id]>0){const e=iv[id][1]-24; if(e>0) carry.push(e);}
+    let lo=1e9,hi=-1,n=0;
+    for(let h=0;h<24;h+=0.25){ if(h<a||h>=b) continue;
+      let ok=false; for(let k=0;k<spans.length;k++){const sp=spans[k]; if(sp[0]<=h&&sp[1]>=h+0.25){ok=true;break;}}
+      if(!ok) for(let k=0;k<carry.length;k++) if(h+0.25<=carry[k]){ok=true;break;}
+      if(!ok){n++; if(h<lo) lo=h; if(h>hi) hi=h;} }
+    if(n) out.push({d,from:lo,to:hi+0.25,n:n/2});
+  }
+  return out;
+}
+function evaluate(st){
+  const c=counts(st), m={patWhere:[],patDown:0,patSteps:0,gaps:[],over:0,lines:{},wrong:[],runWhere:[],restWhere:[],soWhere:[],spreadWhere:[],wkWhere:[],ptSunWhere:[]}; let covered=0,required=0;
+  for(const d of DAYS){ let t=0;
+    for(const s of cfg.shifts){const n=req(d,s.id); if(!n) continue; const have=c[d][s.id]||0; covered+=Math.min(have,n); required+=n; if(have<n) m.gaps.push({d,id:s.id,n:n-have}); if(have>n) m.over+=have-n; t+=Math.min(have,n);}
+    for(const id of Object.keys(c[d])) if(!req(d,id)) m.wrong.push(d+' '+lab(id)+' is not in the blueprint');
+    m.lines[d]=t;
+  }
+  m.covered=covered; m.required=required;
+  lineStatus(st).msgs.forEach(x=>m.wrong.push(x));
+  const res={};
+  for(const type of ['FT','PT']){
+    const {seqs,ls}=rotSeqs(st,type); let maxRun=0,maxWk=0,minRest=null;
+    const tn=type==='FT'?'Full-time':'Part-time', nL=ls.length, seenW=new Set(), seenR=new Set(), seenB=new Set();
+    for(let sIx=0;sIx<seqs.length;sIx++){ const seq=seqs[sIx]; let run=0,wk=0; const days=[];
+      seq.forEach((w,wI)=>{const we=('Sat' in w)||('Sun' in w); wk=we?wk+1:0; maxWk=Math.max(maxWk,wk); const lim=type==='PT'?1:2;
+        if(wk===lim+1){const lb=ls[(sIx+wI-wk+1)%nL].label; if(!seenW.has(lb)){seenW.add(lb); m.wkWhere.push(tn+' line '+lb+' starts a run of '+(lim+1)+'+ weekends');}}
+        for(const d of DAYS) days.push(w[d]||null);});
+      for(let i=0;i<days.length;i++){run=days[i]?run+1:0; maxRun=Math.max(maxRun,run);
+        const MR=maxRunN(); if(MR>0&&run===MR+1){const st0=i-run+1, lb=ls[(sIx+Math.floor(st0/7))%nL].label, key=lb+'|'+DAYS[st0%7]; if(!seenR.has(key)){seenR.add(key); m.runWhere.push(tn+' line '+lb+' from '+DAYS[st0%7]);}}}
+      for(let i=0;i<days.length;i++){ if(!days[i]||!sh(days[i])) continue; let j=i+1; while(j<days.length&&!days[j]) j++; if(j>=days.length||!sh(days[j])) continue;
+        const r=(j-i)*24+t2h(sh(days[j]).start)-sEnd(sh(days[i])); minRest=minRest===null?r:Math.min(minRest,r);
+        if(minRestH()>0&&r<minRestH()-1e-9){const lb=ls[(sIx+Math.floor(i/7))%nL].label, key=lb+'|'+DAYS[i%7]; if(!seenB.has(key)){seenB.add(key); m.restWhere.push(tn+' line '+lb+' '+DAYS[i%7]+' '+lab(days[i])+' → '+DAYS[j%7]+' '+lab(days[j])+' ('+r.toFixed(1)+'h)');}}}
+    }
+    const lf=ls.filter(l=>Object.keys(l.shifts).length);
+    const hrs=lf.map(l=>Object.values(l.shifts).reduce((a,id)=>a+(sh(id)?paid(sh(id)):0),0));
+    // Single days off: computed over one full lap of the rotation in line order, cyclic (the
+    // last line's Sunday wraps to the first line's Monday) — matches how one person actually
+    // experiences it, cycling through every line in the rotation in turn.
+    // Workload balance: spread between the busiest and quietest line of this type in the
+    // printed week. Every line eventually rotates through every position, but a wide spread
+    // still means some weeks land noticeably heavier than others — flagged so the optimiser
+    // can trim it where the blueprint allows.
+    const hrsSpread=hrs.length>1?Math.max(...hrs)-Math.min(...hrs):0;
+    if(hrsSpread>6){const mx=hrs.indexOf(Math.max(...hrs)), mn=hrs.indexOf(Math.min(...hrs)); m.spreadWhere.push(tn+': line '+lf[mx].label+' '+hrs[mx].toFixed(1)+'h vs line '+lf[mn].label+' '+hrs[mn].toFixed(1)+'h');}
+    patternScan(ls.map(l=>l.shifts),m,tn,ls);
+    { const dd=[]; for(const l of ls) for(const d of DAYS) dd.push(l.shifts[d]||null); const nn=dd.length;
+      for(let i=0;i<nn;i++){ if(dd[i]) continue; if(dd[(i-1+nn)%nn]&&dd[(i+1)%nn]) m.soWhere.push(tn+' line '+ls[Math.floor(i/7)].label+' '+DAYS[i%7]); } }
+    res[type]={maxRun,maxWk,minRest,n:ls.length,weekendLines:ls.filter(l=>('Sat' in l.shifts)||('Sun' in l.shifts)).length,avgHrs:hrs.length?hrs.reduce((a,b)=>a+b,0)/hrs.length:0,singleOffs:singleOffCount(ls),hrsSpread};
+  }
+  // fixed lines repeat the same week: check runs and rest over two weeks
+  let fxRun=0, fxRest=null, fxSingleOffs=0;
+  for(const l of st.lines.filter(l=>l.type==='FWA')){ const days=[...DAYS,...DAYS].map(d=>l.shifts[d]||null); let run=0;
+    for(const x of days){run=x?run+1:0; fxRun=Math.max(fxRun,run);}
+    for(let i=0;i<days.length;i++){ if(!days[i]||!sh(days[i])) continue; let j=i+1; while(j<days.length&&!days[j]) j++; if(j>=days.length||!sh(days[j])) continue;
+      const r=(j-i)*24+t2h(sh(days[j]).start)-sEnd(sh(days[i])); fxRest=fxRest===null?r:Math.min(fxRest,r);}
+    fxSingleOffs+=singleOffCount([l]); }
+  for(const l of st.lines.filter(l=>l.type==='FWA')) patternScan([l.shifts],m,'Fixed',[l]);
+  res.FX={maxRun:fxRun,minRest:fxRest,singleOffs:fxSingleOffs};
+  m.rot=res;
+  m.ptDays=DAYS.filter(d=>st.lines.some(l=>l.type==='PT'&&l.shifts[d]));
+  m.ptSun=st.lines.filter(l=>l.type==='PT'&&l.shifts.Sun).length; m.ptSunWhere=st.lines.filter(l=>l.type==='PT'&&l.shifts.Sun).map(l=>'Part-time line '+l.label+' works Sunday');
+  m.late={FT:0,PT:0,FWA:0}; st.lines.forEach(l=>{for(const id of Object.values(l.shifts)){const s=sh(id); if(s&&sEnd(s)>19) m.late[l.type]++;}});
+  const rs=[res.FT.minRest,res.PT.minRest,res.FX.minRest].filter(x=>x!==null); m.minRest=rs.length?Math.min(...rs):null;
+  m.uncov=uncovFast(c);
+  let score=0;
+  for(const g of m.gaps) score+=g.n*(isCore(g.d,g.id)?120:4*DEMAND[g.d])*(sh(g.id).wt||1);
+  score+=m.over*15+m.wrong.length*500;
+  if(maxRunN()>0){const MR=maxRunN(); score+=Math.max(0,res.FT.maxRun-MR)*80+Math.max(0,res.PT.maxRun-MR)*80+Math.max(0,res.FX.maxRun-MR)*80;}
+  score+=Math.max(0,res.PT.maxWk-1)*60+Math.max(0,res.FT.maxWk-2)*30;
+  if(minRestH()>0&&m.minRest!==null&&m.minRest<minRestH()) score+=400;
+  m.singleOffs=res.FT.singleOffs+res.PT.singleOffs+res.FX.singleOffs;
+  m.hrsSpread=Math.max(res.FT.hrsSpread,res.PT.hrsSpread);
+  score+=Math.max(0,res.FT.hrsSpread-6)*8+Math.max(0,res.PT.hrsSpread-6)*8;
+  score+=m.patDown*25+m.patSteps*3;
+  score+=m.ptSun*8+changes(st)*(minChangeOn?6:2)+m.uncov.reduce((a,u)=>a+u.n,0)*40+m.singleOffs*20;
+  m.score=score; return m;
+}
+// The single unfilled gap contributing the most to the score — the one worth fixing first.
+function worstGap(m){
+  let w=null,wv=-1;
+  for(const g of m.gaps){const v=g.n*(isCore(g.d,g.id)?120:4*DEMAND[g.d])*(sh(g.id).wt||1); if(v>wv){wv=v;w=g;}}
+  return w;
+}
+// Overtime offer list: every blueprint shortfall not yet covered by a rostered line, ready to
+// offer out as overtime or to a casual. Assigning a Casual / overtime line to that day/shift in
+// the grid closes the gap and the row disappears from here on the next render.
+function vacRows(){const r=[]; for(const d of DAYS){const c={}; for(const l of state.lines) if(isVac(l)&&l.shifts[d]&&sh(l.shifts[d])) c[l.shifts[d]]=(c[l.shifts[d]]||0)+1; for(const id of Object.keys(c)) r.push({d,id,n:c[id],vac:true});} return r;}
+function otGaps(m){ const V=vacRows(), rows=m.gaps.map(g=>{const v=V.find(x=>x.d===g.d&&x.id===g.id); return v?Object.assign({},g,{vacN:v.n}):g;}); for(const v of V) if(!m.gaps.some(g=>g.d===v.d&&g.id===v.id)) rows.push(v); return rows.sort((a,b)=>DAYS.indexOf(a.d)-DAYS.indexOf(b.d)||(isCore(b.d,b.id)?1:0)-(isCore(a.d,a.id)?1:0)); }
+function renderOT(m){
+  const rows=otGaps(m);
+  $('otCount').textContent=String(rows.reduce((a,g)=>a+g.n,0));
+  if(!rows.length){ $('ot').innerHTML='<tbody><tr><td class="dim" style="text-align:left;padding:6px 4px">No vacant shifts right now — nothing to offer as overtime.</td></tr></tbody>'; return; }
+  let h='<thead><tr><th>Day</th><th>Shift</th><th>Staff needed</th><th>Priority</th></tr></thead><tbody>';
+  for(const g of rows) h+='<tr><td class="lab">'+esc(g.d)+'</td><td class="lab">'+esc(lab(g.id))+'</td><td'+(isCore(g.d,g.id)&&!g.vac?' class="short"':'')+'>'+g.n+'</td><td>'+(g.vac?'Vacant line':(isCore(g.d,g.id)?'Core':'Standard')+(g.vacN?' · '+g.vacN+' on a vacant line':''))+'</td></tr>';
+  $('ot').innerHTML=h+'</tbody>';
+}
+function otText(){
+  const m=evaluate(state), rows=otGaps(m), now=new Date();
+  let t='Overtime offer — vacant shifts still needing cover\nShiftSketch — '+(presetName||'roster')+' — '+now.toLocaleDateString('en-AU',{day:'2-digit',month:'short',year:'numeric'})+'\n\n';
+  if(!rows.length) return t+'No vacant shifts right now.';
+  for(const g of rows) t+=g.d+'\t'+lab(g.id)+'\t'+g.n+' staff needed'+(g.vac?' (vacant line)':(isCore(g.d,g.id)?' (core)':''))+'\n';
+  return t;
+}
+function changeSummary(){
+  const TNs={FT:'Full-time',PT:'Part-time',FWA:'Fixed',VAC:'Vacant',CAS:'Casual',OT:'Overtime'};
+  const hrsOf=o=>Object.values(o).reduce((a,id)=>a+(sh(id)?paid(sh(id)):0),0);
+  const wkOf=o=>['Sat','Sun'].filter(d=>o[d]).length;
+  const items=[]; let total=0;
+  for(const l of state.lines){
+    const nm=TNs[l.type]+' line '+l.label+(l.pto?' ('+l.pto+')':'');
+    const b=base[l.uid];
+    if(!b||addedUids.has(l.uid)){ items.push({nm,txt:'added to the roster'+(Object.keys(l.shifts).length?' with '+Object.keys(l.shifts).length+' shift(s)':'')+'.'}); continue; }
+    const parts=[]; for(const d of DAYS){const a=b[d]||'', z=l.shifts[d]||''; if(a!==z){total++; parts.push(d+': '+(a?lab(a):'off')+' → '+(z?lab(z):'off'));}}
+    if(!parts.length) continue;
+    const notes=[], wb=wkOf(b), wa=wkOf(l.shifts), hb=hrsOf(b), ha=hrsOf(l.shifts);
+    if(wa<wb) notes.push('gains '+(wb-wa)+' weekend day'+(wb-wa>1?'s':'')+' off');
+    if(wa>wb) notes.push('loses '+(wa-wb)+' weekend day'+(wa-wb>1?'s':'')+' off');
+    if(Math.abs(ha-hb)>=0.05) notes.push('paid hours '+hb.toFixed(1)+' → '+ha.toFixed(1));
+    items.push({nm,txt:parts.join('; ')+'.'+(notes.length?' '+notes.join('; ').replace(/^./,c=>c.toUpperCase())+'.':'')});
+  }
+  const gone=Object.keys(base).filter(u=>!addedUids.has(+u)&&!state.lines.some(l=>String(l.uid)===u)).length;
+  if(gone) items.push({nm:gone+' line'+(gone>1?'s':''),txt:'removed from the starting roster.'});
+  return {items,total};
+}
+function renderChanges(){
+  const c=changeSummary();
+  $('chgCount').textContent=c.total;
+  $('chgList').innerHTML=c.items.length?c.items.map(x=>'<li><b>'+esc(x.nm)+'</b> &mdash; '+esc(x.txt)+'</li>').join(''):'<li>No changes yet &mdash; the roster matches the starting roster.</li>';
+}
+function changes(st){let n=0; st.lines.forEach(l=>{const b=base[l.uid]; if(!b) return; for(const d of DAYS) if((l.shifts[d]||'')!==(b[d]||'')) n++;}); return n;}
+
+function ruleVal(k){return k==='rest'?minRestH():k==='maxRun'?maxRunN():cfg[k];}
+function normRules(){cfg.ruleOpen=cfg.ruleOpen||{}; for(const k in RULE_DEF) if(ruleVal(k)!==RULE_DEF[k]) cfg.ruleOpen[k]=true;}
+function renderBP(){
+  normRules();
+  let h='<thead><tr><th>Shift</th><th>Start</th><th>Finish</th><th>Paid hrs</th><th>Priority</th><th title="Relative weight applied to this shift when scoring an unfilled gap. Raise it to make the optimiser fill this shift&#39;s gaps before others of the same priority.">Weight ×</th>'+DAYS.map(d=>'<th>'+d+'</th>').join('')+'<th>Wk total</th><th></th></tr></thead><tbody>';
+  cfg.shifts.forEach((s,i)=>{
+    const tot=DAYS.reduce((a,d)=>a+req(d,s.id),0);
+    h+='<tr data-sid="'+s.id+'"><td class="lab k'+(i%8)+'"><span class="dragh" data-bdrag="'+s.id+'" title="Drag to move this shift type up or down" role="button" aria-label="Drag to reorder shift '+esc(lab(s.id))+'">&#8942;&#8942;</span>'+esc(lab(s.id))+'</td><td><input type="time" class="tm" step="900" data-f="start" data-s="'+s.id+'" value="'+s.start+'" aria-label="Start '+s.id+'"></td><td><input type="time" class="tm" step="900" data-f="end" data-s="'+s.id+'" value="'+s.end+'" aria-label="Finish '+s.id+'"></td><td>'+paid(s).toFixed(1)+'</td>';
+    h+='<td><select class="sm" data-f="pri" data-s="'+s.id+'" aria-label="Priority">'+[['high','High (core)'],['normal','Normal'],['low','Low (fill last)']].map(([v,t])=>'<option value="'+v+'"'+(s.pri===v?' selected':'')+'>'+t+'</option>').join('')+'</select></td>';
+    h+='<td><input type="number" class="num" min="0.2" max="5" step="0.1" data-f="wt" data-s="'+s.id+'" value="'+(s.wt||1)+'" aria-label="Priority weight for '+s.start+'"></td>';
+    h+=DAYS.map(d=>'<td><input type="number" class="num" min="0" max="20" step="1" data-f="req" data-d="'+d+'" data-s="'+s.id+'" value="'+req(d,s.id)+'" aria-label="'+d+' lines for '+s.start+'"></td>').join('');
+    h+='<td>'+tot+'</td><td><button class="x" data-rm="'+s.id+'" title="Remove shift type" aria-label="Remove shift type">×</button></td></tr>';
+  });
+  h+='<tr class="tot"><td colspan="6" class="lab">Lines needed</td>'+DAYS.map(d=>'<td>'+cfg.shifts.reduce((a,s)=>a+req(d,s.id),0)+'</td>').join('')+'<td>'+DAYS.reduce((a,d)=>a+cfg.shifts.reduce((x,s)=>x+req(d,s.id),0),0)+'</td><td></td></tr></tbody>';
+  $('bpt').innerHTML=h;
+  $('cwS').value=cfg.cw.wd[0]; $('cwE').value=cfg.cw.wd[1]; $('ceS').value=cfg.cw.we[0]; $('ceE').value=cfg.cw.we[1];
+  $('ftN').value=cfg.ft; $('ptN').value=cfg.pt; $('restH').value=minRestH(); $('runN').value=maxRunN(); $('lineModeSel').value=lineMode();
+  for(const k in RULE_ID){const inp=$(RULE_ID[k]), cb=document.querySelector('[data-rl="'+k+'"]'), open=!!cfg.ruleOpen[k]; inp.disabled=!open; if(cb) cb.checked=!open;}
+  { const n=t=>state.lines.filter(l=>l.type===t).length; $('stFT').textContent=n('FT'); $('stPT').textContent=n('PT'); $('stOther').textContent=state.lines.length-n('FT')-n('PT'); } $('brkM').value=cfg.brk==null?30:cfg.brk; $('brkH').value=cfg.brkAfter==null?6:cfg.brkAfter;
+  $('legend').innerHTML=cfg.shifts.map((s,i)=>'<span><i class="sw k'+(i%8)+'"></i>'+s.start+'–'+s.end+'</span>').join('')+'<span><i class="sw" style="box-shadow:inset 0 0 0 2px var(--flag)"></i>changed</span>'+'<span><i class="sw" style="background:var(--warn-bg);box-shadow:inset 0 0 0 2px var(--warn)"></i>steered to fill a gap</span>';
+}
+function renderAll(){renderBP(); render();}
+// Freezes the trailing summary columns (Shifts, Paid hrs, Lock, remove-line) to the right edge
+// of the master roster's scroll area, so the remove button is always reachable without having
+// to scroll past the day columns — widths are measured live, so it stays correct as columns
+// (like Staff name) change width. The Type/Line/Staff/day columns stay in normal scrolling flow.
+function pinGridTail(table){
+  const headRow=table.querySelector('thead tr'); if(!headRow) return;
+  function cellBg(c,fallback){
+    if(c.classList.contains('short')||c.classList.contains('zero')) return 'var(--bad-bg)';
+    if(c.classList.contains('over')) return 'var(--warn-bg)';
+    return fallback;
+  }
+  function pin(cells,bg,shadowColor){
+    let acc=0;
+    for(let i=cells.length-1;i>=0;i--){
+      const c=cells[i]; if(!c) continue;
+      c.style.position='sticky'; c.style.right=acc+'px'; c.style.background=cellBg(c,bg); c.style.zIndex=i===cells.length-1?'3':'2';
+      c.style.boxShadow=i===0?('-3px 0 6px '+shadowColor):'';
+      acc+=c.getBoundingClientRect().width;
+    }
+  }
+  pin([...headRow.children].slice(-4),'var(--brand)','rgba(0,0,0,.18)');
+  for(const row of table.querySelectorAll('tbody tr')){
+    if(row.classList.contains('sec')) continue;
+    if(row.classList.contains('tot')){ const last=row.lastElementChild; if(last){ last.style.position='sticky'; last.style.right='0px'; last.style.background='var(--soft)'; last.style.zIndex='3'; last.style.boxShadow='-3px 0 6px rgba(0,0,0,.12)'; } continue; }
+    pin([...row.children].slice(-4),'var(--panel)','rgba(0,0,0,.10)');
+  }
+}
+// ---------- Compare mode: current (starting) roster vs proposed, side by side ----------
+function baseLines(){return state.lines.filter(l=>base[l.uid]&&!addedUids.has(l.uid));}
+function cmpMetrics(st,m){
+  const r=m.rot; let wk=0, hrs=0;
+  for(const l of st.lines){ if(l.type==='FT'||l.type==='PT') wk+=['Sat','Sun'].filter(d=>l.shifts[d]).length; hrs+=Object.values(l.shifts).reduce((a,id)=>a+(sh(id)?paid(sh(id)):0),0); }
+  const off={FT:0,PT:0};
+  for(const type of ['FT','PT']){
+    const dd=[]; st.lines.filter(l=>l.type===type).forEach(l=>DAYS.forEach(d=>dd.push(!!l.shifts[d]))); const n=dd.length;
+    if(!n||dd.every(x=>x)||!dd.some(x=>x)) continue;
+    let best=0; for(let i=0;i<n;i++){ if(!dd[i]&&dd[(i-1+n)%n]){ let k=0; while(!dd[(i+k)%n]&&k<n) k++; best=Math.max(best,k); } }
+    off[type]=best;
+  }
+  return {covered:m.covered, required:m.required, gaps:m.gaps.reduce((a,g)=>a+g.n,0), single:m.singleOffs, runFT:r.FT.maxRun, runPT:r.PT.maxRun,
+    rest:minRestH()>0?m.restWhere.length:0, wkend:wk, offFT:off.FT, offPT:off.PT, spread:m.hrsSpread, hrs};
+}
+function renderCompare(m){
+  const TNs={FT:'Full-time',PT:'Part-time',FWA:'Fixed',VAC:'Vacant',CAS:'Casual',OT:'Overtime'};
+  const cols='<colgroup><col style="width:11%">'+DAYS.map(()=>'<col style="width:10.5%">').join('')+'<col style="width:15.5%"></colgroup>';
+  const head='<thead><tr><th>Line</th>'+DAYS.map(d=>'<th>'+d+'</th>').join('')+'<th>Paid hrs</th></tr></thead><tbody>';
+  let L=cols+head, R=cols+head;
+  const hrsOf=o=>Object.values(o).reduce((a,id)=>a+(sh(id)?paid(sh(id)):0),0);
+  for(const type of ['FT','PT','FWA','VAC','CAS','OT']){
+    const ls=state.lines.filter(l=>l.type===type); if(!ls.length) continue;
+    const sec='<tr class="sec"><td colspan="9">'+TNs[type]+' lines</td></tr>'; L+=sec; R+=sec;
+    for(const l of ls){
+      const i=state.lines.indexOf(l), b=(addedUids.has(l.uid)||!base[l.uid])?null:base[l.uid];
+      const nm=esc(l.label)+(l.pto?' <small>'+esc(l.pto)+'</small>':'');
+      L+='<tr><td class="lab">'+nm+'</td>';
+      if(!b) L+='<td colspan="8" class="cmpnew">new line &mdash; not in the current roster</td></tr>';
+      else { for(const d of DAYS){ const v=b[d]||'', ch=(l.shifts[d]||'')!==v; L+='<td class="'+(v&&sIdx(v)>=0?'k'+(sIdx(v)%8):'')+(ch?' changed':'')+'">'+(v?esc(lab(v)):'—')+'</td>'; } L+='<td>'+hrsOf(b).toFixed(1)+'</td></tr>'; }
+      R+='<tr><td class="lab">'+nm+'</td>';
+      for(const d of DAYS){
+        const v=l.shifts[d]||'', ch=b?(b[d]||'')!==v:!!v, opts=['',...restAllowed(d,l)]; if(v&&!opts.includes(v)) opts.push(v);
+        const k=v&&sIdx(v)>=0?' k'+(sIdx(v)%8):'';
+        R+='<td'+(ch?' class="changed"':'')+'><select class="cell'+k+'" data-i="'+i+'" data-d="'+d+'" aria-label="'+TNs[type]+' line '+esc(l.label)+' '+d+'"'+(l.lock?' disabled':'')+'>'+opts.map(o=>'<option value="'+o+'"'+(o===v?' selected':'')+'>'+(o?esc(lab(o)):'—')+'</option>').join('')+'</select></td>';
+      }
+      R+='<td>'+hrsOf(l.shifts).toFixed(1)+'</td></tr>';
+    }
+  }
+  $('cmpL').innerHTML=L+'</tbody>'; $('cmpR').innerHTML=R+'</tbody>';
+}
+function renderImpact(m){
+  // impact: same measures on the starting roster and on the proposal
+  const bs={lines:baseLines().map(l=>({uid:l.uid,type:l.type,label:l.label,shifts:clone(base[l.uid]),lock:l.lock,pto:l.pto}))};
+  const b=cmpMetrics(bs,evaluate(bs)), p=cmpMetrics(state,m);
+  const defs=[
+    ['covered','Shifts covered against the blueprint','higher',v=>v],['gaps','Shifts still short of the blueprint','lower',v=>v],
+    ['single','Isolated single days off','lower',v=>v],['runFT','Longest run of shifts, full-time','lower',v=>v+' in a row'],['runPT','Longest run of shifts, part-time','lower',v=>v+' in a row'],
+    ['rest','Breaks shorter than the minimum rest','lower',v=>v],['wkend','Weekend days worked (full- and part-time lines)','lower',v=>v],
+    ['offFT','Longest stretch of days off, full-time','higher',v=>v+' in a row'],['offPT','Longest stretch of days off, part-time','higher',v=>v+' in a row'],
+    ['spread','Widest paid-hours gap between lines of one type','lower',v=>v.toFixed(1)+'h']];
+  const pos=[], neg=[]; let same=0;
+  for(const [k,label,dir,f] of defs){ const x=b[k], y=p[k]; if(Math.abs(x-y)<1e-9){same++; continue;}
+    const good=dir==='higher'?y>x:y<x; (good?pos:neg).push('<li>'+esc(label)+': '+f(x)+' &rarr; '+f(y)+'</li>'); }
+  $('impPos').innerHTML=pos.length?pos.join(''):'<li>None yet.</li>'; $('impNeg').innerHTML=neg.length?neg.join(''):'<li>None yet.</li>';
+  const dh=p.hrs-b.hrs;
+  $('impNote').textContent=same+' measure'+(same===1?'':'s')+' unchanged. Total paid hours '+b.hrs.toFixed(1)+' → '+p.hrs.toFixed(1)+(Math.abs(dh)>=0.05?' ('+(dh>0?'+':'')+dh.toFixed(1)+'h)':'')+'. Compared with the starting roster, using the rules you have set.';
+}
+function setCompare(on){
+  cmpOn=on; document.body.classList.toggle('cmp-on',on); $('cmpBtn').textContent=on?'Back to build':'Compare'; $('cmpBtn').setAttribute('aria-pressed',on?'true':'false');
+  $('gridScroll').hidden=on; $('cmpWrap').hidden=!on; render();
+  $('status').textContent=on?'Compare mode: the current roster (locked) is on the left and your proposal (editable) on the right. Changed cells are outlined.':'Back to the build view.';
+}
+$('cmpBtn').addEventListener('click',()=>setCompare(!cmpOn));
+const DAYW='8.2%';
+const GRID_COLS='<colgroup><col style="width:11.5%"><col style="width:5%"><col style="width:8.5%">'+['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(()=>'<col style="width:'+DAYW+'">').join('')+'<col style="width:5%"><col style="width:5.5%"><col style="width:4%"><col style="width:3%"></colgroup>';
+const COVER_COLS='<colgroup><col style="width:25%">'+['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(()=>'<col style="width:'+DAYW+'">').join('')+'<col style="width:17.5%"></colgroup>';
+function render(){
+  { const so=$('preset').selectedOptions[0], cn=$('ctlName'); if(cn) cn.textContent=so?so.textContent:''; }
+  if(spotUid!==null&&!state.lines.some(l=>l.uid===spotUid)) spotUid=null;
+  const g=$('grid'), TN={FT:'Full time',PT:'Part time',FWA:'Fixed line',VAC:'Vacant line',CAS:'Casual',OT:'Overtime'};
+  const m=evaluate(state); const fnStat=lineStatus(state).out;
+  // Steer empty cells toward unfilled *core* coverage gaps (a real staffing shortfall the
+  // scorecard fails on) so you can't accidentally fill a blank with an unrelated shift while
+  // a core requirement that day still needs covering. Soft/low-priority shortfalls (the
+  // scorecard's "Other shortfall", which is expected to sometimes go unfilled) don't restrict.
+  const coreNeed={};
+  if(steerOn) for(const gp of m.gaps){ if(!isCore(gp.d,gp.id)) continue; (coreNeed[gp.d]=coreNeed[gp.d]||new Set()).add(gp.id); }
+  let h=GRID_COLS+'<thead><tr><th>Type</th><th>Line</th><th>Staff name</th>'+DAYS.map(d=>'<th>'+d+'</th>').join('')+'<th>Shifts</th><th>Paid hrs</th><th>Lock</th><th></th></tr></thead><tbody>';
+  for(const type of ['FT','PT','FWA','VAC','CAS','OT']){
+    const ls=state.lines.filter(l=>l.type===type); if(!ls.length) continue;
+    h+='<tr class="sec"><td colspan="14">'+({FT:'Full time · '+ls.length+'-week rotation · '+lineHdr(cfg.ft),PT:'Part time · '+ls.length+'-week rotation · '+lineHdr(cfg.pt),FWA:'Fixed lines (do not rotate)',VAC:'Vacant lines (rostered positions with no staff member yet — listed in the offer list, never moved by Optimise)',CAS:'Casual pool (no fixed shifts — never moved by Optimise)',OT:'Overtime pool (no fixed shifts — never moved by Optimise)'}[type])+'</td></tr>';
+    for(const l of ls){ const i=state.lines.indexOf(l);
+      h+='<tr data-uid="'+l.uid+'" data-type="'+type+'"'+(spotUid!==null?(l.uid===spotUid?' class="spot"':' class="spotdim"'):'')+'><td class="lab"><span class="dragh" data-drag="'+l.uid+'" title="Drag to move this line up or down within its group" role="button" aria-label="Drag to reorder line '+esc(l.label)+'">&#8942;&#8942;</span>'+TN[type]+'<button class="spotbtn" data-spot="'+l.uid+'" aria-pressed="'+(l.uid===spotUid)+'" title="Spotlight this line (tap again or press Esc to clear)" aria-label="Spotlight line '+esc(l.label)+'">&#9678;</button></td><td class="lab"><input class="lbl" data-lbl="'+i+'" value="'+esc(l.label)+'" aria-label="Line label"></td><td class="lab"><input class="lbl ptoname" list="nameList" data-pto="'+i+'" value="'+esc(l.pto||'')+'" placeholder="Staff name" aria-label="Staff name for line '+esc(l.label)+'"></td>';
+      for(const d of DAYS){
+        const v=l.shifts[d]||''; const full=allowed(d); const rok=restAllowed(d,l);
+        let avail=rok, gapSteer=false;
+        if(!v){
+          const need=coreNeed[d];
+          if(need&&need.size){ const f=rok.filter(o=>need.has(o)); if(f.length){ avail=f; gapSteer=true; } }
+        }
+        const opts=['',...avail]; if(v&&!opts.includes(v)) opts.push(v);
+        const restRestricted=rok.length<full.length;
+        const b=base[l.uid]; const ch=(b&&(b[d]||'')!==v)?' class="changed"':'';
+        const k=v&&sIdx(v)>=0?' k'+(sIdx(v)%8):'';
+        let title='', extra='';
+        if(gapSteer){
+          const names=[...coreNeed[d]].map(lab).join(' / ');
+          title=' title="'+esc(d)+' is still short a core shift ('+esc(names)+'). Fill that gap here or on another line first to unlock other shifts for this cell."';
+          extra=' (steered to fill a '+esc(d)+' shortfall: '+esc(names)+')';
+        } else if(restRestricted){
+          title=' title="Some shifts are hidden here: they would leave less than '+minRestH()+' hours’ rest after '+esc(lab(l.shifts[DAYS[DAYS.indexOf(d)-1]]))+' the day before."';
+          extra=' (some shifts hidden: minimum rest)';
+        }
+        h+='<td'+ch+title+'><select class="cell'+k+(gapSteer?' steer':'')+'" data-i="'+i+'" data-d="'+d+'" aria-label="'+TN[type]+' line '+esc(l.label)+' '+d+extra+'"'+(l.lock?' disabled':'')+'>'+opts.map(o=>'<option value="'+o+'"'+(o===v?' selected':'')+'>'+(o?esc(lab(o)):'—')+'</option>').join('')+'</select>'+noteBtn(l,d)+'</td>';
+      }
+      const k=Object.keys(l.shifts).length, fnBad=fnStat.has(l.uid)&&!fnStat.get(l.uid);
+      const hrs=Object.values(l.shifts).reduce((a,id)=>a+(sh(id)?paid(sh(id)):0),0);
+      h+='<td'+(fnBad?' class="short"':'')+'>'+k+'</td><td>'+hrs.toFixed(1)+'</td><td><input type="checkbox" data-lock="'+i+'"'+(l.lock?' checked':'')+' aria-label="Lock line '+esc(l.label)+'"></td><td><button class="x" data-del="'+i+'" title="Remove line" aria-label="Remove line '+esc(l.label)+'">×</button></td></tr>';
+    }
+  }
+  h+='<tr class="tot"><td colspan="3" class="lab">Lines covered</td>'+DAYS.map(d=>{const r=cfg.shifts.reduce((a,s)=>a+req(d,s.id),0);return '<td'+(m.lines[d]<r?' class="short"':'')+'>'+m.lines[d]+' / '+r+'</td>';}).join('')+'<td colspan="4"></td></tr>';
+  h+='</tbody>';
+  g.innerHTML=h;
+  pinGridTail(g);
+  const c=counts(state); const used=cfg.shifts.filter(s=>DAYS.some(d=>req(d,s.id)||c[d][s.id]));
+  const wg=worstGap(m);
+  let ch=COVER_COLS+'<thead><tr><th>Shift</th>'+DAYS.map(d=>'<th>'+d+'</th>').join('')+'<th class="pad"></th></tr></thead><tbody>';
+  for(const s of used){ ch+='<tr><td class="lab">'+esc(s.start+'–'+s.end)+'</td>'+DAYS.map(d=>{const have=c[d][s.id]||0,n=req(d,s.id); if(!n&&!have) return '<td class="dim">—</td>'; const worst=wg&&wg.d===d&&wg.id===s.id; const cls=(have<n?' short':have>n?' over':'')+(worst?' worstgap':''); const title=worst?' title="Costliest gap to fill — biggest single contributor to the score"':''; return '<td'+(cls?' class="'+cls.trim()+'"':'')+title+'>'+have+' of '+n+(worst?' ★':'')+'</td>';}).join('')+'<td class="pad"></td></tr>';}
+  $('cover').innerHTML=ch+'</tbody>';
+  renderOT(m); renderChanges(); renderNotes(); renderImpact(m); if(cmpOn) renderCompare(m);
+  renderScore(m); $('csv').value=csv(); persist();
+}
+function chip(ok,warn){return ok?'<span class="chip ok">Pass</span>':warn?'<span class="chip warn">Review</span>':'<span class="chip bad">Fails</span>';}
+function renderScore(m){
+  const r=m.rot, core=m.gaps.filter(g=>isCore(g.d,g.id)), soft=m.gaps.filter(g=>!isCore(g.d,g.id));
+  const wg=worstGap(m);
+  const kpis=[
+    [m.covered+' / '+m.required,'lines covered a week'],[r.FT.maxRun+' / '+r.PT.maxRun,'longest run, FT / PT'],
+    [r.PT.weekendLines+' of '+r.PT.n,'PT lines with a weekend'],[r.FT.weekendLines+' of '+r.FT.n,'FT lines with a weekend'],
+    [r.FT.avgHrs.toFixed(1)+' / '+r.PT.avgHrs.toFixed(1),'avg paid hrs a week, FT / PT line'],[changes(state),'shifts changed from start'],
+    [wg?wg.d+' '+lab(wg.id)+(wg.n>1?' ×'+wg.n:''):'—','costliest gap to fill'],[m.hrsSpread.toFixed(1)+'h','widest hrs spread, same line type']
+  ];
+  $('kpis').innerHTML=kpis.map(([n,l])=>'<div class="kpi"><div class="n">'+n+'</div><div class="l">'+l+'</div></div>').join('');
+  const gl=a=>a.map(g=>g.d+' '+lab(g.id)+(g.n>1?' ×'+g.n:'')).join(', ');
+  const wh=(a,n)=>a.length?' Where: '+a.slice(0,n||4).map(esc).join('; ')+(a.length>(n||4)?'; +'+(a.length-(n||4))+' more':'')+'.':'';
+  const items=[
+    [m.wrong.length===0,false,'Line structure',(lineMode()==='off'?'Line structure checking is switched off in Settings.':lineMode()==='each'?'Every full-time line has '+cfg.ft+' shifts and every part-time line '+cfg.pt+'.':'Full-time lines average '+cfg.ft+' shifts a week and part-time '+cfg.pt+', counted across the whole rotation.')+' Blueprint shifts only.'+(m.wrong.length?' '+esc(m.wrong.slice(0,3).join('; '))+(m.wrong.length>3?' …':''):'')],
+    [m.uncov.length===0,true,'Cover hours','Weekdays '+cfg.cw.wd.join('–')+', weekends '+cfg.cw.we.join('–')+'.'+(m.uncov.length?' Nobody on: '+m.uncov.map(u=>u.d+' '+h2t(u.from)+'–'+h2t(u.to)).join(', ')+'':'')],
+    [core.length===0,false,'Core cover','High-priority shifts, and weekend shifts not marked low, filled every day.'+(core.length?' Short: '+gl(core):'')],
+    [soft.length===0,true,'Other shortfall','Short: '+(gl(soft)||'none')+'. Contracted hours cannot cover every line; place gaps on low-demand days.'],
+    maxRunN()>0&&[r.FT.maxRun<=maxRunN()&&r.PT.maxRun<=maxRunN()&&r.FX.maxRun<=maxRunN(),false,'No more than '+maxRunN()+' shifts in a row','Longest run: full-time '+r.FT.maxRun+', part-time '+r.PT.maxRun+(r.FX.maxRun?', fixed '+r.FX.maxRun:'')+' (across the weekly rotation).'+wh(m.runWhere)],
+    [r.PT.maxWk<=1,false,'Part-time weekends spread','Most weekends in a row for a part-timer: '+r.PT.maxWk+'.'+wh(m.wkWhere.filter(x=>x.startsWith('Part')))],
+    [r.FT.maxWk<=2,true,'Full-time weekends','Most weekends in a row for a full-timer: '+r.FT.maxWk+'; '+r.FT.weekendLines+' of '+r.FT.n+' lines include a weekend.'+wh(m.wkWhere.filter(x=>x.startsWith('Full')))],
+    [m.ptSun===0,true,'Sunday covered by full-time staff','Part-time Sunday shifts: '+m.ptSun+'.'+wh(m.ptSunWhere)],
+    minRestH()>0&&[m.minRest===null||m.minRest>=minRestH(),false,'Rest between shifts','Shortest break between shifts: '+(m.minRest===null?'n/a':m.minRest.toFixed(1)+' hours')+' (minimum '+minRestH()+'), across all lines. Shifts finishing after 19:00 each week: full-time '+m.late.FT+', part-time '+m.late.PT+(m.late.FWA?', fixed '+m.late.FWA:'')+'.'+wh(m.restWhere)],
+    [m.ptDays.length>=6,true,'Part-time spread across the week','Part-time shifts on: '+(m.ptDays.join(', ')||'none')+'.'],
+    [m.patDown===0,true,'Matching shifts, latest last','Runs of working days should keep the same or a similar start and finish on the latest shift on the last day (for example 07:30, 07:30, 08:30, 12:00). Times where the next day starts earlier: '+m.patDown+'.'+wh(m.patWhere,6)],
+    [m.singleOffs===0,true,'Minimise single days off','A lone rest day surrounded by working days both sides, across the rotation: '+m.singleOffs+' (full-time '+r.FT.singleOffs+', part-time '+r.PT.singleOffs+(r.FX.singleOffs?', fixed '+r.FX.singleOffs:'')+'). The optimiser favours grouping days off together over isolated single days.'+wh(m.soWhere,6)],
+    [m.hrsSpread<=6,true,'Workload balance','Widest gap between the busiest and quietest line of the same type, this printed week: full-time '+r.FT.hrsSpread.toFixed(1)+'h, part-time '+r.PT.hrsSpread.toFixed(1)+'h.'+wh(m.spreadWhere)]
+  ].filter(Boolean);
+  $('checks').innerHTML=items.map(([ok,warn,t,d])=>'<div class="check">'+chip(ok,warn&&!ok)+'<div><b>'+t+'</b><span>'+d+'</span></div></div>').join('');
+  lastKpis=kpis; lastItems=items;
+  { const f=items.filter(x=>!x[0]&&!x[1]).length, r=items.filter(x=>!x[0]&&x[1]).length, ok=items.length-f-r; const el=$('scoreSum'); if(el) el.innerHTML='<span class="sp ok">'+ok+' pass</span><span class="sp warn">'+r+' review</span><span class="sp bad">'+f+' fail</span><span class="sp">'+esc(kpis[0][0]+' '+kpis[0][1])+'</span>'; }
+}
+let lastKpis=[], lastItems=[];
+const hhmm=t=>t.replace(':','');
+function csv(){
+  const TN={FT:'Full time',PT:'Part time',FWA:'Fixed',VAC:'Vacant',CAS:'Casual',OT:'Overtime'};
+  const rows=[['Type','Line','Staff name',...DAYS,'Paid hrs']];
+  state.lines.forEach(l=>rows.push([TN[l.type],l.label,l.pto||'',...DAYS.map(d=>{const s=sh(l.shifts[d]); return s?hhmm(s.start)+'-'+hhmm(s.end):'';}),+Object.values(l.shifts).reduce((a,id)=>a+(sh(id)?paid(sh(id)):0),0).toFixed(2)]));
+  return rows.map(r=>r.map(x=>/[,"]/.test(String(x))?'"'+String(x).replace(/"/g,'""')+'"':x).join(',')).join('\n');
+}
+// ---- Colour exports (Excel / Word / Print-PDF) ----
+const SWATCH=['#d9ead3','#cfe2f3','#e3e3e3','#fce4d6','#e4dfec','#fff2cc','#d0e0e3','#f4cccc'];
+function rosterRows(){
+  const TN={FT:'Full time',PT:'Part time',FWA:'Fixed line',VAC:'Vacant line',CAS:'Casual',OT:'Overtime'};
+  const rows=[];
+  for(const type of ['FT','PT','FWA','VAC','CAS','OT']){
+    for(const l of state.lines.filter(x=>x.type===type)){
+      const cells=DAYS.map(d=>{const id=l.shifts[d]; if(!id) return {text:'',swatch:-1}; const idx=sIdx(id); return {text:lab(id),swatch:idx>=0?idx%8:-1};});
+      const hrs=Object.values(l.shifts).reduce((a,id)=>a+(sh(id)?paid(sh(id)):0),0);
+      rows.push({type:TN[type],label:l.label,pto:l.pto||'',cells,shifts:Object.keys(l.shifts).length,hrs:hrs.toFixed(1)});
+    }
+  }
+  return rows;
+}
+function coverageRows(){
+  const c=counts(state); const used=cfg.shifts.filter(s=>DAYS.some(d=>req(d,s.id)||c[d][s.id]));
+  return used.map(s=>({label:s.start+'–'+s.end,cells:DAYS.map(d=>{const have=c[d][s.id]||0,n=req(d,s.id); if(!n&&!have) return {text:'—',status:'dim'}; const status=have<n?'short':have>n?'over':'ok'; return {text:have+' of '+n,status};})}));
+}
+function chipSpan(ok,warn){
+  const st=ok?'ok':(warn?'warn':'bad'), fg={ok:'#2f7d4f',warn:'#9a6700',bad:'#b3261e'}[st], txt=ok?'Pass':(warn?'Review':'Fails');
+  return '<span class="pchip" style="background:'+fg+'">'+txt+'</span>';
+}
+function reportTablesHTML(){
+  const now=new Date();
+  const dateStr=now.toLocaleDateString('en-AU',{day:'2-digit',month:'short',year:'numeric'})+' at '+now.toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});
+  let h='<div style="font-family:Arial,Helvetica,sans-serif">';
+  h+='<div style="background:#1f4e79;color:#fff;padding:14px 18px;border-bottom:4px solid #f5a623">'+
+     '<div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase">Roster proposal &middot; Master roster</div>'+
+     '<div style="font-size:22px;font-weight:700">ShiftSketch — '+esc(presetName||'Roster')+'</div>'+
+     '<div style="font-size:12px">Exported '+dateStr+'</div></div>';
+  { const c=changeSummary(); h+='<h2 style="color:#1f4e79;border-bottom:2px solid #f5a623;padding-bottom:4px;font-family:Arial">What changed from the starting roster ('+c.total+' shift'+(c.total===1?'':'s')+')</h2>';
+    h+=c.items.length?'<ul style="font-size:12px;line-height:1.5;margin:6px 0 12px 18px;padding:0">'+c.items.map(x=>'<li><b>'+esc(x.nm)+'</b> &mdash; '+esc(x.txt)+'</li>').join('')+'</ul>':'<p style="font-size:12px">No changes &mdash; this is the starting roster.</p>'; }
+  { const nn=allNotes(); if(nn.length){ h+='<h2 style="color:#1f4e79;border-bottom:2px solid #f5a623;padding-bottom:4px;font-family:Arial">Notes ('+nn.length+')</h2><ul style="font-size:12px;line-height:1.5;margin:6px 0 12px 18px;padding:0">'+nn.map(x=>'<li><b>Line '+esc(x.label)+' &middot; '+x.d+(x.shift?' ('+esc(x.shift)+')':'')+'</b> &mdash; '+esc(x.txt)+'</li>').join('')+'</ul>'; } }
+  if(incScore){
+  h+='<h2 style="color:#1f4e79;border-bottom:2px solid #f5a623;padding-bottom:4px;font-family:Arial">Scorecard summary</h2>';
+  h+='<table class="ptbl"><tr>'+lastKpis.map(([n,l])=>'<td style="text-align:center"><div style="font-size:16px;font-weight:700">'+esc(n)+'</div><div style="font-size:10px;color:#5f6d75">'+esc(l)+'</div></td>').join('')+'</tr></table>';
+  h+='<table class="ptbl"><thead><tr><th>Status</th><th>Check</th><th>Detail</th></tr></thead><tbody>'+
+     lastItems.map(([ok,warn,t,d])=>'<tr><td>'+chipSpan(ok,warn&&!ok)+'</td><td><b>'+esc(t)+'</b></td><td>'+esc(String(d))+'</td></tr>').join('')+'</tbody></table>';
+  }
+  h+='<h2 style="color:#1f4e79;border-bottom:2px solid #f5a623;padding-bottom:4px;font-family:Arial">Master roster (one week of the rotation)</h2>';
+  h+='<table class="ptbl fx" style="table-layout:fixed;width:100%"><colgroup><col width="9%"><col width="6%"><col width="14%">'+DAYS.map(()=>'<col width="8.5%">').join('')+'<col width="5.5%"><col width="6%"></colgroup><thead><tr><th class="l">Type</th><th>Line</th><th class="l">Staff name</th>'+DAYS.map(d=>'<th>'+d+'</th>').join('')+'<th>Shifts</th><th>Paid hrs</th></tr></thead><tbody>';
+  for(const r of rosterRows()) h+='<tr style="height:22px"><td class="l">'+esc(r.type)+'</td><td>'+esc(r.label)+'</td><td class="l">'+esc(r.pto||'')+'</td>'+r.cells.map(c=>'<td'+(c.swatch>=0?' style="background:'+SWATCH[c.swatch]+'"':'')+'>'+esc(c.text||'—')+'</td>').join('')+'<td>'+r.shifts+'</td><td>'+r.hrs+'</td></tr>';
+  h+='</tbody></table>';
+  {const otr=otGaps(evaluate(state));
+   h+='<h2 style="color:#1f4e79;border-bottom:2px solid #f5a623;padding-bottom:4px;font-family:Arial">Overtime offer list (vacant shifts)</h2>';
+   if(!otr.length) h+='<p style="font-size:11px;color:#5f6d75">No vacant shifts at export time.</p>';
+   else { h+='<table class="ptbl fx" style="table-layout:fixed;width:60%"><colgroup><col width="20%"><col width="25%"><col width="25%"><col width="30%"></colgroup><thead><tr><th>Day</th><th>Shift</th><th>Staff needed</th><th>Priority</th></tr></thead><tbody>';
+     for(const g of otr) h+='<tr style="height:22px"><td>'+esc(g.d)+'</td><td>'+esc(lab(g.id))+'</td><td>'+g.n+'</td><td>'+(g.vac?'Vacant line':(isCore(g.d,g.id)?'Core':'Standard'))+'</td></tr>';
+     h+='</tbody></table>'; }
+  }
+  h+='<h2 style="color:#1f4e79;border-bottom:2px solid #f5a623;padding-bottom:4px;font-family:Arial">Shift coverage (have of need)</h2>';
+  h+='<table class="ptbl fx" style="table-layout:fixed;width:100%"><colgroup><col width="16%">'+DAYS.map(()=>'<col width="12%">').join('')+'</colgroup><thead><tr><th class="l">Shift</th>'+DAYS.map(d=>'<th>'+d+'</th>').join('')+'</tr></thead><tbody>';
+  const STC={short:['#fbe4e3','#b3261e'],over:['#fdf1d8','#9a6700'],dim:['#f3f3f3','#8a97a0'],ok:['#ffffff','#1d2a31']};
+  for(const r of coverageRows()) h+='<tr style="height:22px"><td class="l">'+esc(r.label)+'</td>'+r.cells.map(c=>{const [bg,fg]=STC[c.status||'ok']; return '<td style="background:'+bg+';color:'+fg+'">'+esc(c.text)+'</td>';}).join('')+'</tr>';
+  h+='</tbody></table>';
+  h+='<div style="font-size:10px;color:#5f6d75;border-top:1px solid #d5dadd;padding-top:6px;margin-top:4px">Generated by ShiftSketch on '+dateStr+'. For planning use — verify against the current blueprint before publishing.</div>';
+  h+='</div>';
+  return h;
+}
+function xc(text,styleId){return '<Cell'+(styleId?' ss:StyleID="'+styleId+'"':'')+'><Data ss:Type="String">'+esc(text==null?'':text)+'</Data></Cell>';}
+function xrow(cells,h){return '<Row'+(h?' ss:Height="'+h+'"':'')+'>'+cells.join('')+'</Row>';}
+function xsheet(name,rows,widths){return '<Worksheet ss:Name="'+esc(name)+'"><Table>'+(widths||[]).map(w=>'<Column ss:Width="'+w+'"/>').join('')+rows.join('')+'</Table></Worksheet>';}
+function exportExcel(){
+  const styles=['<Style ss:ID="Default" ss:Name="Normal"><Alignment ss:Horizontal="Center" ss:Vertical="Center" ss:WrapText="1"/></Style>','<Style ss:ID="lft"><Alignment ss:Horizontal="Left" ss:Vertical="Center" ss:WrapText="1"/></Style>','<Style ss:ID="hdr"><Font ss:Bold="1" ss:Color="#FFFFFF"/><Interior ss:Color="#1F4E79" ss:Pattern="Solid"/></Style>'];
+  SWATCH.forEach((c,i)=>styles.push('<Style ss:ID="s'+i+'"><Interior ss:Color="'+c.toUpperCase()+'" ss:Pattern="Solid"/></Style>'));
+  styles.push('<Style ss:ID="short"><Interior ss:Color="#FBE4E3" ss:Pattern="Solid"/><Font ss:Color="#B3261E" ss:Bold="1"/></Style>');
+  styles.push('<Style ss:ID="over"><Interior ss:Color="#FDF1D8" ss:Pattern="Solid"/><Font ss:Color="#9A6700"/></Style>');
+  styles.push('<Style ss:ID="dim"><Font ss:Color="#8A97A0"/></Style>');
+  styles.push('<Style ss:ID="ok"><Interior ss:Color="#E3F2E8" ss:Pattern="Solid"/><Font ss:Color="#2F7D4F" ss:Bold="1"/></Style>');
+  styles.push('<Style ss:ID="warn"><Interior ss:Color="#FDF1D8" ss:Pattern="Solid"/><Font ss:Color="#9A6700" ss:Bold="1"/></Style>');
+  styles.push('<Style ss:ID="bad"><Interior ss:Color="#FBE4E3" ss:Pattern="Solid"/><Font ss:Color="#B3261E" ss:Bold="1"/></Style>');
+  const rosterRowsArr=[xrow(['Type','Line','Staff name',...DAYS,'Shifts','Paid hrs'].map(t=>xc(t,'hdr')),22)];
+  for(const r of rosterRows()) rosterRowsArr.push(xrow([xc(r.type,'lft'),xc(r.label),xc(r.pto||'','lft'),...r.cells.map(c=>xc(c.text,c.swatch>=0?'s'+c.swatch:undefined)),xc(r.shifts),xc(r.hrs)],22));
+  const covRowsArr=[xrow(['Shift',...DAYS].map(t=>xc(t,'hdr')),22)];
+  for(const r of coverageRows()) covRowsArr.push(xrow([xc(r.label,'lft'),...r.cells.map(c=>xc(c.text,c.status&&c.status!=='ok'?c.status:undefined))],22));
+  const scoreRowsArr=[xrow(['Status','Check','Detail'].map(t=>xc(t,'hdr')),22)];
+  for(const [ok,warn,t,d] of lastItems){ const st=ok?'ok':(warn&&!ok?'warn':'bad'); scoreRowsArr.push(xrow([xc(ok?'Pass':(warn&&!ok?'Review':'Fails'),st),xc(t,'lft'),xc(String(d),'lft')])); }
+  const otRowsArr=[xrow(['Day','Shift','Staff needed','Priority'].map(t=>xc(t,'hdr')),22)];
+  for(const g of otGaps(evaluate(state))) otRowsArr.push(xrow([xc(g.d),xc(lab(g.id)),xc(g.n),xc(g.vac?'Vacant line':(isCore(g.d,g.id)?'Core':'Standard'))],22));
+  const noteRowsArr=[xrow(['Line','Day','Shift','Note'].map(t=>xc(t,'hdr')),22)];
+  for(const x of allNotes()) noteRowsArr.push(xrow([xc(x.label),xc(x.d),xc(x.shift),xc(x.txt,'lft')]));
+  const xml='<?xml version="1.0" encoding="UTF-8"?>\n<?mso-application progid="Excel.Sheet"?>\n<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">'+
+    '<Styles>'+styles.join('')+'</Styles>'+xsheet('Master roster',rosterRowsArr,[80,50,120,62,62,62,62,62,62,62,52,58])+xsheet('Shift coverage',covRowsArr,[100,70,70,70,70,70,70,70])+xsheet('Overtime offer list',otRowsArr,[70,80,90,110])+(incScore?xsheet('Scorecard',scoreRowsArr,[70,230,560]):'')+(noteRowsArr.length>1?xsheet('Notes',noteRowsArr,[60,60,100,480]):'')+'</Workbook>';
+  download('Roster - '+(presetName||'export')+'.xls',xml,'application/vnd.ms-excel');
+}
+function exportWord(){
+  const html='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">'+
+    '<head><meta charset="utf-8"><title>ShiftSketch export</title>'+
+    '<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]-->'+
+    '<style>body{font-family:Arial,Helvetica,sans-serif;color:#1d2a31}table{border-collapse:collapse;width:100%;margin:0 0 18px}'+
+    'td,th{border:1px solid #999;padding:4px 8px;font-size:10.5pt}th{background:#1f4e79;color:#ffffff}table.fx{table-layout:fixed}.fx td,.fx th{height:22px;text-align:center;vertical-align:middle}.fx td.l,.fx th.l{text-align:left}@page{size:landscape;margin:1.5cm}</style></head><body>'+
+    reportTablesHTML()+'</body></html>';
+  download('Roster - '+(presetName||'export')+'.doc',html,'application/msword');
+}
+function printPdf(){ $('printArea').innerHTML=reportTablesHTML(); setTimeout(()=>window.print(),50); }
+function persist(){try{localStorage.setItem(KEY,JSON.stringify({cfg,lines:state.lines,base,preset:presetName,uidN,steerOn,minChangeOn}));}catch(e){}}
+function getSaved(){try{return JSON.parse(localStorage.getItem(SKEY)||'{}')||{};}catch(e){return {};}}
+function fillPresets(sel){
+  const p=$('preset'), saved=getSaved(); p.innerHTML='';
+  
+  const g1=document.createElement('optgroup'); g1.label='Preloaded rosters'; Object.keys(PRESETS).forEach(n=>g1.appendChild(new Option(n,n))); p.appendChild(g1);
+  const g2=document.createElement('optgroup'); g2.label='Custom'; g2.appendChild(new Option('Blank roster','Blank roster')); p.appendChild(g2);
+  const names=Object.keys(saved); if(names.length){const g3=document.createElement('optgroup'); g3.label='Saved rosters'; names.forEach(n=>g3.appendChild(new Option(n,'saved:'+n))); p.appendChild(g3);}
+  if(sel&&[...p.options].some(o=>o.value===sel)) p.value=sel;
+  $('delSaved').disabled=!p.value.startsWith('saved:');
+}
+let dlNs; const dlReady=(window.claude&&window.claude.use)?window.claude.use('downloads').then(n=>dlNs=n).catch(()=>dlNs=null):Promise.resolve(dlNs=null);
+async function download(name,text,type){
+  await dlReady;
+  if(dlNs){ try{await dlNs.save({filename:name,data:text}); $('status').textContent='Saved '+name+'.'; return true;}
+    catch(e){ $('status').textContent=e&&e.code==='declined'?'Download cancelled.':'Download not available here — copy the text instead.'; return false; } }
+  try{const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type})); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500); $('status').textContent='Download started: '+name+'.'; return true;}catch(e){return false;}
+}
+function exportObj(){return {app:'ShiftSketch',version:2,build:'3.18',name:$('saveName').value||presetName,cfg,lines:state.lines.map(l=>({type:l.type,label:l.label,shifts:l.shifts,lock:l.lock,pto:l.pto||'',notes:l.notes||{}}))};}
+function importObj(o){
+  if(!o||!o.cfg||!Array.isArray(o.lines)||!Array.isArray(o.cfg.shifts)) throw new Error('Not a roster file');
+  const c=clone(o.cfg), d=makeCfg({late:false,sat:true});
+  c.req=c.req||{}; DAYS.forEach(x=>c.req[x]=c.req[x]||{}); c.ft=c.ft||4; c.pt=c.pt||2; c.cw=(c.cw&&c.cw.wd&&c.cw.we)?c.cw:d.cw; c.shifts.forEach(x=>{if(!x.wt) x.wt=1;});
+  const ids=new Set(c.shifts.map(x=>x.id));
+  if(state&&cfg) pushUndo();
+  cfg=c; state={lines:o.lines.map(l=>{const sh_={}; for(const [k,v] of Object.entries(l.shifts||{})) if(ids.has(v)&&DAYS.includes(k)) sh_[k]=v; return newLine(l.type,l.label,sh_,l.lock,l.pto,l.notes);})};
+  state.lines.forEach(l=>rememberName(l.pto)); presetName='Imported'; snapBase(); $('optlog').innerHTML=''; renderAll();
+  $('status').textContent='Imported '+(o.name||'roster')+'. Changes are now counted from this roster. Save it to keep it in the list.';
+}
+// Rebuilds the unlocked Vacant lines of a roster so they hold exactly the shifts real staff cannot cover.
+function vacFits(l,d,id){
+  if(l.shifts[d]) return false;
+  const i=DAYS.indexOf(d), p=i>0?l.shifts[DAYS[i-1]]:null, n=i<6?l.shifts[DAYS[i+1]]:null; if(p&&!restOK(p,id)) return false; if(n&&!restOK(id,n)) return false;
+  const R=maxRunN(); if(R>0){let run=1; for(let k=i-1;k>=0&&l.shifts[DAYS[k]];k--) run++; for(let k=i+1;k<7&&l.shifts[DAYS[k]];k++) run++; if(run>R) return false;}
+  return true;
+}
+// Puts one open shift on a vacant line: an existing unlocked one with room first, otherwise a new vacant line.
+function parkShift(st,d,id){
+  let L=st.lines.find(l=>isVacLine(l)&&!l.lock&&vacFits(l,d,id));
+  if(!L){
+    const nums=st.lines.filter(l=>l.type==='VAC').map(l=>+l.label).filter(n=>!isNaN(n));
+    L=newLine('VAC',String(nums.length?Math.max(...nums)+1:1),{},false,'Vacant'); base[L.uid]={}; addedUids.add(L.uid);
+    const last=st.lines.map(l=>l.type).lastIndexOf('VAC'); const order={FT:0,PT:1,FWA:2,VAC:3,CAS:4,OT:5};
+    let at=last>=0?last+1:st.lines.findIndex(l=>order[l.type]>3); if(at<0) at=st.lines.length;
+    st.lines.splice(at,0,L);
+  }
+  L.shifts[d]=id; return L;
+}
+// A hand edit changed day d from oldId to newId on a staffed line. A shift that is now short is parked on a
+// vacant line; a shift that was sitting on a vacant line and is now covered comes off it.
+function reconcileEdit(d,oldId,newId,pre){
+  const out=[]; const cov=id=>(counts(state)[d][id]||0), was=id=>(counts(pre)[d][id]||0);
+  if(oldId&&oldId!==newId&&sh(oldId)){const need=req(d,oldId); const add=Math.max(0,need-cov(oldId))-Math.max(0,need-was(oldId)); for(let k=0;k<add;k++){const L=parkShift(state,d,oldId); out.push(lab(oldId)+' '+d+' → Vacant line '+L.label);}}
+  if(newId&&newId!==oldId&&sh(newId)){const need=req(d,newId); const rem=Math.max(0,need-was(newId))-Math.max(0,need-cov(newId));
+    for(let k=0;k<rem;k++){const L=state.lines.find(l=>isVacLine(l)&&!l.lock&&l.shifts[d]===newId)||state.lines.find(l=>isVacLine(l)&&l.shifts[d]===newId); if(L){delete L.shifts[d]; out.push(lab(newId)+' '+d+' now covered, taken off Vacant line '+L.label);}}}
+  return out;
+}
+function settleVacant(st){
+  const vac=st.lines.filter(l=>isVacLine(l)&&!l.lock); const locked=st.lines.filter(l=>isVacLine(l)&&l.lock);
+  vac.forEach(l=>{l.shifts={};});
+  const m=evaluate(st); let created=0;
+  const gaps=m.gaps.slice().sort((a,b)=>(isCore(b.d,b.id)?1:0)-(isCore(a.d,a.id)?1:0)||DAYS.indexOf(a.d)-DAYS.indexOf(b.d));  // core vacancies are parked first
+  for(const g of gaps){
+    let need=g.n-locked.filter(l=>l.shifts[g.d]===g.id).length;
+    while(need-->0){ const had=st.lines.length; parkShift(st,g.d,g.id); if(st.lines.length>had) created++; }
+  }
+  return created;
+}
+// One annealing search from a starting roster. Resolves with the best roster it found.
+function anneal(startSt,total,tick){
+  return new Promise(res=>{
+    let best=clone(startSt), bestScore=evaluate(best).score, cur=clone(best), curScore=bestScore, iter=0;
+    const movable=cur.lines.map((l,i)=>i).filter(i=>!cur.lines[i].lock&&cur.lines[i].type!=='CAS'&&cur.lines[i].type!=='OT'&&cur.lines[i].type!=='VAC');
+    if(!movable.length){res({best,bestScore}); return;}
+    function step(){
+      for(let k=0;k<300&&iter<total;k++,iter++){
+        const T=Math.max(0.01,20*(1-iter/total));
+        // Swap move: trade one day's assignment directly between two different lines. This is the
+        // move that clears a vacancy fastest: one line gives up a shift it doesn't need that day,
+        // another line picks it up on a day it does.
+        if(movable.length>=2&&Math.random()<0.35){
+          const i=movable[Math.floor(Math.random()*movable.length)];
+          let j=i,tries=0; while(j===i&&tries++<5) j=movable[Math.floor(Math.random()*movable.length)];
+          if(j===i) continue;
+          const Li=cur.lines[i], Lj=cur.lines[j], d=DAYS[Math.floor(Math.random()*7)];
+          const a=Li.shifts[d]||null, b=Lj.shifts[d]||null;
+          if(a===b) continue;
+          if(b) Li.shifts[d]=b; else delete Li.shifts[d];
+          if(a) Lj.shifts[d]=a; else delete Lj.shifts[d];
+          const sc=evaluate(cur).score;
+          if(sc<=curScore||Math.random()<Math.exp((curScore-sc)/T)){curScore=sc; if(sc<bestScore){bestScore=sc;best=clone(cur);}}
+          else { if(a) Li.shifts[d]=a; else delete Li.shifts[d]; if(b) Lj.shifts[d]=b; else delete Lj.shifts[d]; }
+          continue;
+        }
+        const i=movable[Math.floor(Math.random()*movable.length)], L=cur.lines[i], ds=Object.keys(L.shifts);
+        const need=L.type==='FT'?cfg.ft:L.type==='PT'?cfg.pt:ds.length;
+        let from=null, old=null;
+        if(ds.length&&(ds.length>=need||Math.random()<0.5)){from=ds[Math.floor(Math.random()*ds.length)]; old=L.shifts[from];}
+        const to=DAYS[Math.floor(Math.random()*7)]; let opts=restAllowed(to,L); if(!opts.length) opts=allowed(to); if(!opts.length) continue; const s=opts[Math.floor(Math.random()*opts.length)];
+        if(to!==from&&L.shifts[to]) continue;
+        if(from) delete L.shifts[from]; L.shifts[to]=s;
+        const sc=evaluate(cur).score;
+        if(sc<=curScore||Math.random()<Math.exp((curScore-sc)/T)){curScore=sc; if(sc<bestScore){bestScore=sc;best=clone(cur);}}
+        else {delete L.shifts[to]; if(from) L.shifts[from]=old;}
+      }
+      if(iter<total){tick(iter/total); setTimeout(step,0); return;}
+      res({best,bestScore});
+    }
+    step();
+  });
+}
+const OPT_MODES={quick:{runs:1,iters:6000,label:'Quick'},standard:{runs:5,iters:6000,label:'Standard'},thorough:{runs:6,iters:12000,label:'Thorough'}};
+let optAlts=null, optBefore=null;
+function optLogHTML(cand,i,startScore,beforeState,nCand){
+  const before=evaluate(beforeState), after=evaluate(cand.best), log=[];
+  const bUid=new Map(beforeState.lines.map(l=>[l.uid,l]));
+  cand.best.lines.forEach(l=>{const a=bUid.get(l.uid); if(!a) log.push('New vacant line '+l.label+' added for shifts nobody can cover'); for(const d of DAYS){const x=(a?a.shifts[d]:'')||'',y=l.shifts[d]||''; if(x!==y) log.push((l.type==='VAC'?'Vacant':l.type)+' line '+l.label+' '+d+': '+(x?lab(x):'off')+' → '+(y?lab(y):'off'));}});
+  const vacParked=cand.best.lines.filter(l=>isVacLine(l)).reduce((a,l)=>a+Object.keys(l.shifts).length,0);
+  return {log,before,after,vacParked};
+}
+function showOptResult(i,startScore){
+  const cand=optAlts[i], r=optLogHTML(cand,i,startScore,optBefore.s);
+  const sc=c=>Math.round(c.bestScore);
+  const alts=optAlts.length>1?'<div id="optAlts"><h3 style="font-size:15px;margin:10px 0 4px">Top '+optAlts.length+' results from '+optAlts.runs+' runs</h3>'+optAlts.map((c,k)=>{const e=evaluate(c.best); const nv=c.best.lines.filter(l=>l.type==='VAC').reduce((a,l)=>a+Object.keys(l.shifts).length,0); return '<div class="altrow'+(k===i?' cur':'')+'"><b>Option '+(k+1)+'</b> &middot; score '+sc(c)+' &middot; covered '+e.covered+'/'+e.required+' &middot; '+nv+' on vacant lines'+(k===i?' &middot; <i>on screen now</i>':' <button class="btn" data-alt="'+k+'">Switch to this</button>')+'</div>';}).join('')+'<p class="note">Switching replaces the roster on screen with that option. Undo brings back the previous one.</p></div>':'';
+  $('optlog').innerHTML='<h3 style="font-size:16px">Optimiser changes ('+r.log.length+')</h3><ul class="log">'+r.log.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul><p class="note">Score '+Math.round(startScore)+' → '+sc(cand)+' (lower is better)'+(minChangeOn?', weighted to minimise disruption':'')+'. Review each change before adopting it. '+undoStack.length+' step'+(undoStack.length===1?'':'s')+' of undo available.</p>'+alts;
+  $('status').textContent='Optimised ('+optAlts.mode+', '+optAlts.runs+' run'+(optAlts.runs===1?'':'s')+'): '+r.log.length+' change'+(r.log.length===1?'':'s')+'. Lines covered '+r.before.covered+' → '+r.after.covered+(r.vacParked?'. '+r.vacParked+' shift'+(r.vacParked===1?'':'s')+' still unfilled, held on vacant lines for you to offer out.':'.');
+}
+async function optimise(){
+  const btn=$('opt'); btn.disabled=true; $('status').textContent='Optimising…';
+  const mode=OPT_MODES[($('optMode')||{}).value]||OPT_MODES.standard;
+  const beforeSnap=snapAll(), beforeState=beforeSnap.s, startScore=evaluate(beforeState).score;
+  const cands=[], seen=new Set();
+  for(let r=0;r<mode.runs;r++){
+    const res=await anneal(beforeState,mode.iters,f=>{$('status').textContent='Optimising… run '+(r+1)+' of '+mode.runs+' · '+Math.round(100*f)+'%';});
+    const c=res.best;
+    // vacant lines: what real staff now cover comes off them, what is still short is parked on them
+    settleVacant(c);
+    const key=JSON.stringify(c.lines.map(l=>[l.type,l.shifts]));
+    if(!seen.has(key)){seen.add(key); cands.push({best:c,bestScore:res.bestScore});}
+  }
+  cands.sort((a,b)=>a.bestScore-b.bestScore);
+  const top=cands.slice(0,3); const first=top[0];
+  const diff=optLogHTML(first,0,startScore,beforeState).log.length>0;
+  if(first.bestScore<startScore||diff){
+    state=first.best; pushUndo(beforeSnap);   // pushUndo clears any older alternatives
+    optAlts=top; optAlts.runs=mode.runs; optAlts.mode=mode.label; optBefore=beforeSnap;
+    showOptResult(0,startScore);
+  } else {
+    const b0=evaluate(beforeState), stillShort=b0.gaps.length||b0.uncov.length||b0.wrong.length;
+    $('status').textContent=(stillShort&&minChangeOn)
+      ? 'No small change found within the disruption limit. Untick "Minimise changes when optimising" to let the optimiser make bigger changes to close the remaining gaps.'
+      : 'No improvement found. The roster already meets the rules as well as the optimiser can manage.';
+  }
+  btn.disabled=false; render();
+}
+function switchOpt(k){
+  if(!optAlts||!optAlts[k]) return; const keep=optAlts, bef=optBefore, startScore=evaluate(bef.s).score;
+  const pre=snapAll(); state=clone(keep[k].best); pushUndo(pre);
+  optAlts=keep; optBefore=bef; render(); showOptResult(k,startScore);
+  $('status').textContent='Switched to option '+(k+1)+'. Undo brings back the previous roster.';
+}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-alt]'); if(b) switchOpt(+b.dataset.alt);});
+// events
+fillTemplates(); fillNameList();
+$('setDef').addEventListener('click',()=>{try{const dobj=clone(cfg); dobj.staff=staffMap(); localStorage.setItem(DKEY,JSON.stringify(dobj)); Object.values(dobj.staff).forEach(rememberName); fillTemplates(); $('tpl').value='__mine'; $('status').textContent='Saved these shift times, staff numbers and staff names as your default. Blank rosters start from them, and "My default shift times" is in the template list.';}catch(e){$('status').textContent='This browser would not save a default. Use Export roster file to keep it.';}});
+$('clrDef').addEventListener('click',()=>{try{localStorage.removeItem(DKEY);}catch(e){} fillTemplates(); $('status').textContent='Your default removed. Templates use the standard times (06:30, 07:30, 08:30, 10:30, 12:00).';});
+$('preset').addEventListener('change',e=>{loadPreset(e.target.value); $('delSaved').disabled=!e.target.value.startsWith('saved:'); $('status').textContent='Loaded '+e.target.selectedOptions[0].textContent+'.';});
+$('reset').addEventListener('click',()=>{loadPreset($('preset').value);$('status').textContent='Reloaded.';});
+$('applyTpl').addEventListener('click',()=>applyTemplate($('tpl').value));
+$('bpt').addEventListener('change',e=>{
+  const t=e.target, s=sh(t.dataset.s); if(!s) return; const pre=snapAll();
+  if(t.dataset.f==='start'||t.dataset.f==='end'){ if(!t.value) return; s[t.dataset.f]=t.value; }
+  else if(t.dataset.f==='pri') s.pri=t.value;
+  else if(t.dataset.f==='wt') s.wt=Math.max(0.2,Math.min(5,parseFloat(t.value)||1));
+  else if(t.dataset.f==='req'){ const d=t.dataset.d; cfg.req[d]=cfg.req[d]||{}; const v=Math.max(0,parseInt(t.value||'0',10)||0); if(v) cfg.req[d][s.id]=v; else delete cfg.req[d][s.id]; }
+  pushUndo(pre); renderAll();
+});
+$('bpt').addEventListener('click',e=>{
+  const id=e.target.dataset&&e.target.dataset.rm; if(!id) return; pushUndo();
+  let n=0; state.lines.forEach(l=>{for(const d of DAYS) if(l.shifts[d]===id){delete l.shifts[d]; n++;}});
+  const lb=lab(id); cfg.shifts=cfg.shifts.filter(s=>s.id!==id); DAYS.forEach(d=>{if(cfg.req[d]) delete cfg.req[d][id];});
+  renderAll(); $('status').textContent='Removed shift type '+lb+(n?'; '+n+' rostered shifts cleared.':'.');
+});
+$('addShift').addEventListener('click',()=>{pushUndo(); let k=1; while(sh('S'+k)) k++; cfg.shifts.push({id:'S'+k,start:'09:00',end:'17:00',pri:'normal',wt:1}); renderAll(); $('status').textContent='Added a 09:00–17:00 shift type. Set its times and the lines needed each day.';});
+[['cwS','wd',0],['cwE','wd',1],['ceS','we',0],['ceE','we',1]].forEach(([id,k,i])=>$(id).addEventListener('change',e=>{if(e.target.value){pushUndo(); cfg.cw[k][i]=e.target.value; render();}}));
+$('setBox').addEventListener('change',e=>{const k=e.target.dataset&&e.target.dataset.rl; if(!k) return; pushUndo(); cfg.ruleOpen=cfg.ruleOpen||{};
+  if(e.target.checked){cfg[k]=RULE_DEF[k]; cfg.ruleOpen[k]=false; $('status').textContent='Rule fixed at its default ('+RULE_DEF[k]+'). Untick default to set your own.';}
+  else {cfg.ruleOpen[k]=true; $('status').textContent='Rule unlocked: enter the value for your workplace.';}
+  renderAll();});
+$('ftN').addEventListener('change',e=>{pushUndo(); cfg.ft=Math.max(1,Math.min(7,+e.target.value||4)); render();});
+$('restH').addEventListener('change',e=>{pushUndo(); cfg.rest=Math.max(0,Math.min(24,+e.target.value||0)); render();});
+$('lineModeSel').addEventListener('change',e=>{pushUndo(); cfg.lineMode=e.target.value; render();});
+$('runN').addEventListener('change',e=>{pushUndo(); cfg.maxRun=Math.max(0,Math.min(14,Math.round(+e.target.value||0))); render();});
+$('brkM').addEventListener('change',e=>{pushUndo(); cfg.brk=Math.max(0,Math.min(120,+e.target.value||0)); render();});
+$('brkH').addEventListener('change',e=>{pushUndo(); cfg.brkAfter=Math.max(1,Math.min(24,+e.target.value||6)); render();});
+$('ptN').addEventListener('change',e=>{pushUndo(); cfg.pt=Math.max(1,Math.min(7,+e.target.value||2)); render();});
+function gridChange(e){
+  const t=e.target;
+  if(t.dataset.lock!==undefined){pushUndo(); state.lines[+t.dataset.lock].lock=t.checked; render(); return;}
+  if(t.dataset.lbl!==undefined){pushUndo(); state.lines[+t.dataset.lbl].label=t.value.trim()||'?'; render(); return;}
+  if(t.dataset.pto!==undefined){pushUndo(); state.lines[+t.dataset.pto].pto=t.value.trim(); rememberName(t.value); persist(); return;}
+  if(t.dataset.i!==undefined){pushUndo(); const L=state.lines[+t.dataset.i], d=t.dataset.d, oldId=L.shifts[d]||null, pre=clone(state);
+    if(t.value) L.shifts[d]=t.value; else delete L.shifts[d];
+    const park=(L.type==='VAC'||isVac(L))?[]:reconcileEdit(d,oldId,t.value||null,pre); render();
+    if(park.length) $('status').textContent='Vacant line updated: '+park.join('; ')+'. Undo reverses it.';}
+}
+$('grid').addEventListener('change',gridChange); $('cmpR').addEventListener('change',gridChange);
+$('grid').addEventListener('click',e=>{const sp=e.target.closest&&e.target.closest('[data-spot]'); if(sp){const u=+sp.dataset.spot; spotUid=spotUid===u?null:u; render(); const L=state.lines.find(x=>x.uid===spotUid); $('status').textContent=L?'Spotlight on line '+L.label+'. Tap the button again or press Esc to clear.':'Spotlight cleared.'; return;} const i=e.target.dataset&&e.target.dataset.del; if(i===undefined) return; pushUndo(); const L=state.lines[+i]; if(L.uid===spotUid) spotUid=null; const pre=clone(state); state.lines.splice(+i,1); let park=[]; if(!(L.type==='VAC'||isVac(L))) for(const d of DAYS){ if(L.shifts[d]) park=park.concat(reconcileEdit(d,L.shifts[d],null,pre)); } render(); $('status').textContent='Removed '+L.type+' line '+L.label+'.'+(park.length?' Now open, added to vacant lines: '+park.join('; ')+'.':'');});
+
+(function(){
+  let drag=null;
+  const grid=$('grid');
+  function clear(){grid.querySelectorAll('.dropbefore,.dropafter,.dragging').forEach(r=>r.classList.remove('dropbefore','dropafter','dragging'));}
+  grid.addEventListener('pointerdown',e=>{
+    const h=e.target.closest&&e.target.closest('.dragh'); if(!h||(e.button!==undefined&&e.button>0)) return;
+    const tr=h.closest('tr'); drag={uid:+tr.dataset.uid,type:tr.dataset.type,target:null,after:false,id:e.pointerId,y:e.clientY};
+    try{h.setPointerCapture(e.pointerId);}catch(_){}
+    tr.classList.add('dragging'); document.body.classList.add('dragmode'); e.preventDefault();
+  });
+  grid.addEventListener('pointermove',e=>{
+    if(!drag) return; drag.y=e.clientY;
+    grid.querySelectorAll('.dropbefore,.dropafter').forEach(r=>r.classList.remove('dropbefore','dropafter'));
+    let rows=[...grid.querySelectorAll('tr[data-uid]')].filter(r=>r.dataset.type===drag.type&&+r.dataset.uid!==drag.uid);
+    if(!rows.length){drag.target=null; return;}
+    // nearest row of the same group by vertical position; outside the group it snaps to that group's nearest end
+    let best=null,bd=1e9,after=false;
+    for(const r of rows){const b=r.getBoundingClientRect(); const mid=(b.top+b.bottom)/2; const d=Math.abs(e.clientY-mid); if(d<bd){bd=d;best=r;after=e.clientY>mid;}}
+    drag.target=+best.dataset.uid; drag.after=after; best.classList.add(after?'dropafter':'dropbefore');
+  });
+  function edgeScroll(){ if(!drag) return; const H=window.innerHeight; if(drag.y<70) window.scrollBy(0,-14); else if(drag.y>H-70) window.scrollBy(0,14); requestAnimationFrame(edgeScroll); }
+  grid.addEventListener('pointerdown',e=>{ if(e.target.closest&&e.target.closest('.dragh')) requestAnimationFrame(edgeScroll); });
+  function finish(commit){
+    if(!drag) return; const d=drag; drag=null; document.body.classList.remove('dragmode'); clear();
+    if(!commit||d.target===null) return;
+    const from=state.lines.findIndex(l=>l.uid===d.uid); if(from<0) return;
+    pushUndo(); const [L]=state.lines.splice(from,1);
+    let to=state.lines.findIndex(l=>l.uid===d.target); if(to<0){state.lines.splice(from,0,L); return;} if(d.after) to++;
+    state.lines.splice(to,0,L); render();
+    $('status').textContent='Moved line '+L.label+'. Undo puts it back.';
+  }
+  grid.addEventListener('pointerup',()=>finish(true));
+  grid.addEventListener('pointercancel',()=>finish(false));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&drag) finish(false);});
+})();
+
+// ---- Drag to reorder shift types in the blueprint table ----
+(function(){
+  let drag=null; const bpt=$('bpt');
+  const clr=()=>bpt.querySelectorAll('.dropbefore,.dropafter,.dragging').forEach(r=>r.classList.remove('dropbefore','dropafter','dragging'));
+  bpt.addEventListener('pointerdown',e=>{
+    const h=e.target.closest&&e.target.closest('[data-bdrag]'); if(!h||(e.button!==undefined&&e.button>0)) return;
+    const tr=h.closest('tr'); drag={id:h.dataset.bdrag,target:null,after:false,y:e.clientY};
+    try{h.setPointerCapture(e.pointerId);}catch(_){}
+    tr.classList.add('dragging'); document.body.classList.add('dragmode'); e.preventDefault(); requestAnimationFrame(scr);
+  });
+  bpt.addEventListener('pointermove',e=>{
+    if(!drag) return; drag.y=e.clientY; bpt.querySelectorAll('.dropbefore,.dropafter').forEach(r=>r.classList.remove('dropbefore','dropafter'));
+    const rows=[...bpt.querySelectorAll('tr[data-sid]')].filter(r=>r.dataset.sid!==drag.id); if(!rows.length){drag.target=null; return;}
+    let best=null,bd=1e9,after=false; for(const r of rows){const b=r.getBoundingClientRect(),mid=(b.top+b.bottom)/2,d=Math.abs(e.clientY-mid); if(d<bd){bd=d;best=r;after=e.clientY>mid;}}
+    drag.target=best.dataset.sid; drag.after=after; best.classList.add(after?'dropafter':'dropbefore');
+  });
+  function scr(){ if(!drag) return; const H=innerHeight; if(drag.y<70) scrollBy(0,-14); else if(drag.y>H-70) scrollBy(0,14); requestAnimationFrame(scr); }
+  function finish(commit){
+    if(!drag) return; const d=drag; drag=null; document.body.classList.remove('dragmode'); clr();
+    if(!commit||d.target===null) return;
+    const from=cfg.shifts.findIndex(x=>x.id===d.id); if(from<0) return;
+    const pre=snapAll(); const [S]=cfg.shifts.splice(from,1);
+    let to=cfg.shifts.findIndex(x=>x.id===d.target); if(to<0){cfg.shifts.splice(from,0,S); return;} if(d.after) to++;
+    cfg.shifts.splice(to,0,S); if(to===from){return;}
+    pushUndo(pre); renderAll(); $('status').textContent='Moved shift type '+lab(S.id)+'. Undo puts it back.';
+  }
+  bpt.addEventListener('pointerup',()=>finish(true)); bpt.addEventListener('pointercancel',()=>finish(false));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&drag) finish(false);});
+})();
+
+// ---- Sticky notes on cells ----
+function noteBtn(l,d){const n=(l.notes||{})[d]; return '<button class="nbtn'+(n?' has':'')+'" data-note="'+l.uid+'|'+d+'" title="'+(n?esc(n):'Add a note to this cell')+'" aria-label="'+(n?'Edit note on ':'Add note to ')+esc(l.label)+' '+d+'">'+(n?'&#9679;':'+')+'</button>';}
+let noteAt=null;
+function openNote(uid,d,btn){
+  const L=state.lines.find(x=>x.uid===uid); if(!L) return; noteAt={uid,d};
+  const box=$('noteBox'); $('noteTitle').textContent='Note — line '+L.label+' · '+d+(L.shifts[d]&&sh(L.shifts[d])?' ('+lab(L.shifts[d])+')':'');
+  $('noteText').value=(L.notes||{})[d]||''; $('noteDel').hidden=!(L.notes||{})[d]; box.hidden=false;
+  const r=btn?btn.getBoundingClientRect():{left:200,bottom:200,top:200}; const W=box.offsetWidth||300, H=box.offsetHeight||190;
+  let x=Math.min(Math.max(8,r.left-W+30),innerWidth-W-8), y=r.bottom+6; if(y+H>innerHeight-8) y=Math.max(8,r.top-H-6);
+  box.style.left=x+'px'; box.style.top=y+'px'; $('noteText').focus();
+}
+function closeNote(){$('noteBox').hidden=true; noteAt=null;}
+function saveNote(del){
+  if(!noteAt) return; const L=state.lines.find(x=>x.uid===noteAt.uid); if(!L){closeNote(); return;}
+  const t=del?'':$('noteText').value.trim().slice(0,400); if((L.notes||{})[noteAt.d]===undefined&&!t){closeNote(); return;}
+  pushUndo(); L.notes=L.notes||{}; if(t) L.notes[noteAt.d]=t; else delete L.notes[noteAt.d];
+  const d=noteAt.d; closeNote(); render(); $('status').textContent=(t?'Note saved on line '+L.label+' '+d+'.':'Note removed from line '+L.label+' '+d+'.')+' Undo reverses it.';
+}
+function allNotes(){const o=[]; for(const l of state.lines) for(const d of DAYS) if(l.notes&&l.notes[d]) o.push({uid:l.uid,label:l.label,d,txt:l.notes[d],shift:l.shifts[d]&&sh(l.shifts[d])?lab(l.shifts[d]):''}); return o;}
+function renderNotes(){
+  const n=allNotes(); $('noteCount').textContent=n.length;
+  $('noteList').innerHTML=n.length?n.map(x=>'<li><button class="linkbtn" data-note="'+x.uid+'|'+x.d+'"><b>Line '+esc(x.label)+' · '+x.d+(x.shift?' ('+esc(x.shift)+')':'')+'</b></button> &mdash; '+esc(x.txt)+'</li>').join(''):'<li>No notes yet. Tap the small + in a roster cell to jot a concern against that shift.</li>';
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest&&e.target.closest('[data-note]'); if(b){const [u,d]=b.dataset.note.split('|'); openNote(+u,d,b); return;}
+  if(!$('noteBox').hidden&&!e.target.closest('#noteBox')) closeNote();
+});
+$('noteSave').addEventListener('click',()=>saveNote(false)); $('noteDel').addEventListener('click',()=>saveNote(true)); $('noteCancel').addEventListener('click',closeNote);
+$('noteText').addEventListener('keydown',e=>{if(e.key==='Escape'){closeNote(); e.stopPropagation();} else if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)) saveNote(false);});
+
+function setTab(t){
+  const B=document.body.classList; B.toggle('on-settings',t==='settings'); B.toggle('on-score',t==='score'); B.toggle('on-export',t==='export');
+  [['tabRoster','roster'],['tabSet','settings'],['tabScore','score'],['tabExp','export']].forEach(([id,k])=>$(id).setAttribute('aria-selected',t===k?'true':'false'));
+  if(state) renderAll(); window.scrollTo(0,0);
+}
+$('tabRoster').addEventListener('click',()=>setTab('roster')); $('tabSet').addEventListener('click',()=>setTab('settings')); $('tabScore').addEventListener('click',()=>setTab('score')); $('tabExp').addEventListener('click',()=>setTab('export'));
+function setPresent(on){
+  if(on) setTab('roster');
+  document.body.classList.toggle('present',on); $('presExit').hidden=!on; $('presBtn').setAttribute('aria-pressed',on?'true':'false');
+  try{ if(on&&document.documentElement.requestFullscreen&&!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{}); else if(!on&&document.fullscreenElement) document.exitFullscreen().catch(()=>{}); }catch(_){}
+  $('status').textContent=on?'Presentation view. Press Esc or use Exit presentation to go back.':'Back to the full view.';
+  window.scrollTo(0,0);
+}
+$('presBtn').addEventListener('click',()=>setPresent(true)); $('presExit').addEventListener('click',()=>setPresent(false));
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('present')&&$('noteBox').hidden&&!e.defaultPrevented) setPresent(false);});
+document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&document.body.classList.contains('present')) setPresent(false);});
+
+let _rz=null; function onResize(){clearTimeout(_rz); _rz=setTimeout(()=>{if(state) render();},120);}
+window.addEventListener('resize',onResize); window.addEventListener('orientationchange',onResize);
+function addLine(type){
+  const ls=state.lines.filter(l=>l.type===type); let label;
+  if(type==='FT'){const nums=ls.map(l=>+l.label).filter(n=>!isNaN(n)); label=String(nums.length?Math.max(...nums)+7:1);}
+  else if(type==='PT'){const nums=ls.map(l=>+l.label).filter(n=>!isNaN(n)); label=String(nums.length?Math.max(...nums)+1:1);}
+  else if(type==='CAS'||type==='OT'||type==='VAC'){const nums=ls.map(l=>+l.label).filter(n=>!isNaN(n)); label=String(nums.length?Math.max(...nums)+1:1);}
+  else label='FWA '+(ls.length+1);
+  const L=newLine(type,label,{},false,type==='VAC'?'Vacant':''); base[L.uid]={}; addedUids.add(L.uid);
+  const last=state.lines.map(l=>l.type).lastIndexOf(type); const order={FT:0,PT:1,FWA:2,VAC:3,CAS:4,OT:5};
+  let at=last>=0?last+1:state.lines.findIndex(l=>order[l.type]>order[type]); if(at<0) at=state.lines.length;
+  pushUndo(); state.lines.splice(at,0,L); render(); $('status').textContent='Added '+({FT:'full-time',PT:'part-time',FWA:'fixed',VAC:'vacant',CAS:'casual',OT:'overtime'}[type])+' line '+label+'. Assign it to a shift from the grid, or from the overtime offer list.';
+}
+$('addFT').addEventListener('click',()=>addLine('FT')); $('addPT').addEventListener('click',()=>addLine('PT')); $('addFX').addEventListener('click',()=>addLine('FWA')); $('addVAC').addEventListener('click',()=>addLine('VAC')); $('addCAS').addEventListener('click',()=>addLine('CAS')); $('addOT').addEventListener('click',()=>addLine('OT'));
+$('clearAll').addEventListener('click',()=>{pushUndo(); state.lines.forEach(l=>{if(!l.lock) l.shifts={};}); render(); $('status').textContent='Cleared all unlocked lines. Undo restores them.';});
+$('opt').addEventListener('click',optimise);
+function syncPresetSel(){try{const p=$('preset'); if([...p.options].some(o=>o.value===presetName)) p.value=presetName; $('delSaved').disabled=!p.value.startsWith('saved:');}catch(e){}}
+function doUndo(){ if(!undoStack.length) return; redoStack.push(snapAll()); restoreAll(undoStack.pop()); syncPresetSel(); syncUndo(); $('optlog').innerHTML=''; $('status').textContent='Undone.'+(undoStack.length?' '+undoStack.length+' more step'+(undoStack.length===1?'':'s')+' of undo available.':''); renderAll(); }
+function doRedo(){ if(!redoStack.length) return; undoStack.push(snapAll()); restoreAll(redoStack.pop()); syncPresetSel(); syncUndo(); $('optlog').innerHTML=''; $('status').textContent='Redone.'+(redoStack.length?' '+redoStack.length+' more step'+(redoStack.length===1?'':'s')+' to redo.':''); renderAll(); }
+$('undo').addEventListener('click',doUndo);
+$('redo').addEventListener('click',doRedo);
+document.addEventListener('keydown',e=>{
+  const t=e.target, typing=t&&(t.tagName==='TEXTAREA'||(t.tagName==='INPUT'&&t.type!=='checkbox'));
+  if(e.key==='Escape'&&spotUid!==null){spotUid=null; render(); return;}
+  if(typing||!(e.ctrlKey||e.metaKey)) return;
+  const k=e.key.toLowerCase();
+  if(k==='z'&&!e.shiftKey){e.preventDefault(); doUndo();}
+  else if(k==='y'||(k==='z'&&e.shiftKey)){e.preventDefault(); doRedo();}
+});
+$('copy').addEventListener('click',()=>{const t=$('csv').value; if(navigator.clipboard){navigator.clipboard.writeText(t).then(()=>$('status').textContent='Roster copied as CSV. Paste into Excel.',()=>{$('csv').select();$('status').textContent='Copy blocked here. The CSV is selected: press Ctrl+C.';});} else {$('csv').select();$('status').textContent='The CSV is selected: press Ctrl+C.';}});
+$('copyOT').addEventListener('click',()=>{const t=otText(); if(navigator.clipboard){navigator.clipboard.writeText(t).then(()=>$('status').textContent='Overtime offer list copied. Paste into Teams, email, or an SMS.',()=>{$('status').textContent='Copy blocked here — open the overtime offer list and copy it manually.';});} else {$('status').textContent='Copy not supported here.';}});
+$('dlcsv').addEventListener('click',()=>download(($('saveName').value||presetName.replace('saved:','')||'roster').replace(/[^\w\- ]+/g,'').trim()+'.csv',$('csv').value,'text/csv'));
+
+$('save').addEventListener('click',()=>{
+  const n=$('saveName').value.trim(); if(!n){$('status').textContent='Type a name first.'; $('saveName').focus(); return;}
+  const s=getSaved(); s[n]={cfg:clone(cfg),lines:state.lines.map(l=>({type:l.type,label:l.label,shifts:l.shifts,lock:l.lock,pto:l.pto||'',notes:l.notes||{}}))};
+  try{localStorage.setItem(SKEY,JSON.stringify(s)); pushUndo(); presetName='saved:'+n; fillPresets(presetName); snapBase(); render(); $('status').textContent='Saved "'+n+'" in this browser. Use Export to keep a copy as a file.';}
+  catch(e){$('status').textContent='This browser would not save. Use Export roster file instead.';}
+});
+$('delSaved').addEventListener('click',()=>{const v=$('preset').value; if(!v.startsWith('saved:')) return; const s=getSaved(); delete s[v.slice(6)]; try{localStorage.setItem(SKEY,JSON.stringify(s));}catch(e){} fillPresets('Blank roster'); $('status').textContent='Deleted saved roster "'+v.slice(6)+'". Your current grid is unchanged.';});
+$('exp').addEventListener('click',()=>{const t=JSON.stringify(exportObj(),null,1); $('json').value=t; download(($('saveName').value||'roster').replace(/[^\w\- ]+/g,'').trim()+'.json',t,'application/json');});
+$('impFile').addEventListener('change',e=>{const f=e.target.files[0]; if(!f) return; f.text().then(t=>{try{importObj(JSON.parse(t));}catch(err){$('status').textContent='That file is not a ShiftSketch export.';}}); e.target.value='';});
+$('impText').addEventListener('click',()=>{try{importObj(JSON.parse($('json').value));}catch(err){$('status').textContent='The text in the box is not a ShiftSketch export.';}});
+$('expXlsx').addEventListener('click',()=>{try{exportExcel(); $('status').textContent='Excel export started. If it warns the format doesn’t match the extension, choose Yes/Open anyway.';}catch(e){$('status').textContent='Excel export failed: '+e.message;}});
+$('expDoc').addEventListener('click',()=>{try{exportWord(); $('status').textContent='Word export started. If it warns the format doesn’t match the extension, choose Yes/Open anyway.';}catch(e){$('status').textContent='Word export failed: '+e.message;}});
+$('incScore').addEventListener('change',e=>{incScore=e.target.checked;});
+$('printPdf').addEventListener('click',()=>{try{printPdf();}catch(e){$('status').textContent='Print view failed: '+e.message;}});
+// help modal
+(function(){
+  const modal=$('helpModal');
+  const open=()=>{modal.hidden=false; $('helpClose').focus();};
+  const close=()=>{modal.hidden=true; $('helpBtn').focus();};
+  $('helpBtn').addEventListener('click',open);
+  $('helpClose').addEventListener('click',close);
+  modal.addEventListener('click',e=>{if(e.target===modal) close();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape' && !modal.hidden) close();});
+})();
+// boot
+(function(){let s=null; try{s=JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){}
+  if(s&&s.cfg&&Array.isArray(s.lines)){ cfg=s.cfg; cfg.shifts.forEach(x=>{if(!x.wt) x.wt=1;}); state={lines:s.lines}; base=s.base||{}; uidN=s.uidN||(Math.max(0,...s.lines.map(l=>l.uid||0))+1); presetName=s.preset||''; steerOn=s.steerOn!==false; minChangeOn=!!s.minChangeOn; $('steerToggle').checked=steerOn; $('minChangeToggle').checked=minChangeOn; fillPresets(presetName); renderAll(); $('status').textContent='Restored your last working roster.'; }
+  else { fillPresets('Blank roster'); loadPreset('Blank roster'); $('status').textContent='Started a blank roster. Add lines, set your shift times, then build your proposal.'; }
+})();
+$('steerToggle').addEventListener('change',e=>{steerOn=e.target.checked; render(); $('status').textContent=steerOn?'Gap steering turned on: empty cells will be limited to unfilled core shifts.':'Gap steering turned off: every empty cell offers the full shift menu, even when a day is short.';});
+$('minChangeToggle').addEventListener('change',e=>{minChangeOn=e.target.checked; persist(); $('status').textContent=minChangeOn?'The optimiser will now weigh disruption more heavily and prefer the smallest set of changes.':'The optimiser will now prioritise the lowest score, even if that means more changes.';});
+
+
+(function(){function sum(){try{var g=function(i){return document.getElementById(i).value};var e=document.getElementById('setSum');if(e)e.textContent='Cover '+g('cwS')+'–'+g('cwE')+' · FT '+g('ftN')+'/wk · PT '+g('ptN')+'/wk · rest '+g('restH')+'h · max '+g('runN')+' in a row · break '+g('brkM')+'m'}catch(x){}}
+document.addEventListener('input',sum);document.addEventListener('change',sum);setInterval(sum,1000);setTimeout(sum,200)})();
+</script>
+<script>if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}</script>
+</body>
+</html>
