@@ -230,6 +230,7 @@ select.steer{box-shadow:inset 0 0 0 2px var(--warn);background:var(--warn-bg)}
 .ptbl{width:100%;border-collapse:collapse;font-size:11px;margin:0 0 16px}
 .ptbl th,.ptbl td{border:1px solid #999;padding:3px 7px;text-align:left;color:#1d2a31}
 .ptbl th{background:#1f4e79;color:#fff;font-family:"Barlow Semi Condensed",sans-serif}
+.ptbl tr{page-break-inside:avoid;break-inside:avoid}.ptbl thead{display:table-header-group}
 .pchip{display:inline-block;padding:1px 9px;border-radius:10px;font-size:10px;font-weight:700;color:#fff}
 @media print{
   body *{visibility:hidden}
@@ -494,7 +495,7 @@ td.worstgap{box-shadow:inset 0 0 0 2px var(--flag)!important;position:relative}
       <textarea id="csv" readonly></textarea>
       <label class="toggle" for="incScore" style="margin-top:6px"><input type="checkbox" id="incScore">Include the scorecard in print and exports (off by default so the roster prints clean)</label>
       <div class="actions" style="margin-top:4px">
-        <button class="btn" id="expXlsx" title="A colour-coded Excel workbook: master roster, shift coverage and scorecard">Export to Excel</button>
+        <button class="btn" id="expXlsx" title="A colour-coded Excel workbook (.xlsx): master roster, shift coverage and vacant shifts. Tick the scorecard option to add the scorecard sheet.">Export to Excel</button>
         <button class="btn" id="expDoc" title="A colour-coded Word document with the same tables">Export to Word</button>
         <button class="btn primary" id="printPdf" title="Opens the print dialog — choose &quot;Save as PDF&quot; as the destination">Print / Save as PDF</button>
       </div>
@@ -516,7 +517,7 @@ td.worstgap{box-shadow:inset 0 0 0 2px var(--flag)!important;position:relative}
   <div class="actions"><button class="btn primary" id="noteSave">Save note</button><button class="btn" id="noteDel">Delete</button><button class="btn" id="noteCancel">Close</button></div>
 </div>
 <div id="printArea" aria-hidden="true"></div>
-<p class="note pres-hide" style="text-align:center;margin:24px 0 8px"><a href="privacy.html">Privacy</a> &middot; ShiftSketch v3.22 works offline and keeps everything on your device only.</p>
+<p class="note pres-hide" style="text-align:center;margin:24px 0 8px"><a href="privacy.html">Privacy</a> &middot; ShiftSketch v3.23 works offline and keeps everything on your device only.</p>
 
 <script>
 const PRESETS={"Sample roster A": {"FT": [["1", {"Mon": "12:00", "Tue": "12:00", "Sat": "08:30", "Sun": "08:30"}], ["8", {"Mon": "07:30", "Tue": "07:30", "Sat": "08:30", "Sun": "08:30"}], ["15", {"Wed": "07:30", "Thu": "07:30", "Fri": "07:30", "Sat": "07:30"}], ["22", {"Tue": "07:30", "Wed": "12:00", "Thu": "12:00", "Fri": "12:00"}], ["29", {"Mon": "08:30", "Tue": "08:30", "Fri": "08:30", "Sat": "08:30", "Sun": "07:30"}], ["36", {"Thu": "08:30", "Fri": "08:30", "Sat": "08:30"}], ["43", {"Tue": "08:30", "Wed": "08:30", "Thu": "07:30", "Fri": "08:30"}], ["50", {"Tue": "08:30", "Wed": "12:00", "Thu": "12:00", "Fri": "12:00"}], ["57", {"Mon": "07:30", "Tue": "12:00", "Wed": "08:30", "Thu": "08:30"}]], "PT": [["1", {"Wed": "08:30", "Sun": "07:30"}], ["2", {"Mon": "12:00", "Fri": "06:30"}], ["3", {"Thu": "08:30", "Fri": "07:30"}], ["4", {"Wed": "08:30", "Thu": "06:30"}], ["5", {"Mon": "08:30", "Wed": "07:30"}], ["6", {"Thu": "06:30", "Fri": "06:30"}], ["7", {"Fri": "08:30", "Sat": "07:30"}], ["8", {"Mon": "08:30", "Tue": "06:30"}]], "FWA": {}, "CAS": [["1", {"Mon": "06:30", "Tue": "06:30", "Wed": "06:30"}, ""]], "OT": [["1", {"Mon": "06:30", "Tue": "06:30"}, "Vacant Offer"], ["2", {"Mon": "06:30", "Tue": "06:30", "Wed": "06:30"}, "Vacant offer"]], "late": true}, "Sample roster B": {"FT": [["1", {"Mon": "12:00", "Tue": "12:00", "Sat": "08:30", "Sun": "08:30"}], ["8", {"Mon": "07:30", "Tue": "07:30", "Sat": "08:30", "Sun": "08:30"}], ["15", {"Wed": "07:30", "Thu": "07:30", "Fri": "08:30", "Sat": "07:30"}], ["22", {"Tue": "07:30", "Wed": "12:00", "Thu": "12:00", "Fri": "12:00"}], ["29", {"Mon": "08:30", "Tue": "08:30", "Fri": "08:30", "Sat": "08:30", "Sun": "07:30"}], ["36", {"Thu": "08:30", "Fri": "07:30", "Sat": "08:30"}], ["43", {"Tue": "08:30", "Wed": "08:30", "Thu": "07:30", "Fri": "08:30"}], ["50", {"Tue": "08:30", "Wed": "12:00", "Thu": "12:00", "Fri": "12:00"}], ["57", {"Mon": "07:30", "Tue": "12:00", "Wed": "08:30", "Thu": "08:30"}]], "PT": [["1", {"Wed": "08:30", "Sun": "07:30"}], ["2", {"Mon": "12:00", "Fri": "06:30"}], ["3", {"Thu": "08:30", "Fri": "07:30"}], ["4", {"Wed": "08:30", "Thu": "06:30"}], ["5", {"Mon": "08:30", "Wed": "07:30"}], ["6", {"Thu": "06:30", "Fri": "06:30"}], ["7", {"Fri": "08:30", "Sat": "07:30"}], ["8", {"Mon": "08:30", "Tue": "06:30"}]], "FWA": {}, "CAS": [["1", {"Mon": "06:30", "Tue": "06:30", "Wed": "06:30"}, ""]], "OT": [["1", {"Mon": "06:30", "Tue": "06:30"}, "Vacant Offer"], ["2", {"Mon": "06:30", "Tue": "06:30", "Wed": "06:30"}, "Vacant offer"]], "late": true}, "Sample current roster": {"FT": [["1", {"Mon": "08:30", "Tue": "08:30", "Wed": "08:30", "Thu": "08:30"}], ["8", {"Tue": "07:30", "Wed": "08:30", "Sat": "08:30", "Sun": "08:30"}], ["15", {"Mon": "08:30", "Tue": "08:30", "Wed": "08:30", "Thu": "08:30"}], ["22", {"Tue": "08:30", "Wed": "08:30", "Thu": "08:30", "Fri": "08:30"}], ["29", {"Tue": "06:30", "Wed": "06:30", "Sat": "07:30", "Sun": "07:30"}], ["36", {"Mon": "08:30", "Tue": "08:30", "Sat": "07:30", "Sun": "07:30"}], ["43", {"Tue": "06:30", "Wed": "06:30", "Thu": "06:30", "Fri": "06:30"}], ["50", {"Tue": "07:30", "Wed": "07:30", "Thu": "07:30", "Fri": "07:30"}], ["57", {"Tue": "08:30", "Wed": "08:30", "Thu": "08:30", "Fri": "08:30"}]], "PT": [["1", {"Sat": "08:30", "Sun": "08:30"}], ["8", {"Mon": "07:30", "Fri": "08:30"}], ["15", {"Mon": "07:30", "Fri": "08:30"}], ["22", {"Wed": "07:30", "Fri": "06:30"}], ["29", {"Mon": "08:30", "Fri": "08:30"}], ["36", {"Mon": "06:30", "Fri": "08:30"}], ["43", {"Mon": "08:30", "Fri": "07:30"}], ["50", {"Mon": "06:30", "Wed": "08:30"}]], "FWA": {}, "late": false}, "Option A": {"FT": [["1", {"Mon": "08:30", "Tue": "08:30", "Wed": "08:30", "Thu": "08:30"}], ["8", {"Tue": "07:30", "Wed": "08:30", "Sat": "08:30", "Sun": "08:30"}], ["15", {"Mon": "08:30", "Tue": "08:30", "Wed": "08:30", "Thu": "08:30"}], ["22", {"Tue": "08:30", "Wed": "08:30", "Thu": "08:30", "Fri": "08:30"}], ["29", {"Tue": "06:30", "Wed": "06:30", "Sat": "07:30", "Sun": "07:30"}], ["36", {"Mon": "08:30", "Tue": "08:30", "Sat": "07:30", "Sun": "07:30"}], ["43", {"Tue": "06:30", "Wed": "06:30", "Thu": "06:30", "Fri": "06:30"}], ["50", {"Tue": "07:30", "Wed": "07:30", "Thu": "07:30", "Fri": "07:30"}], ["57", {"Tue": "08:30", "Wed": "08:30", "Thu": "08:30", "Fri": "08:30"}]], "PT": [["1", {"Fri": "08:30", "Sat": "08:30"}], ["2", {"Mon": "06:30", "Thu": "06:30"}], ["3", {"Wed": "07:30", "Sat": "08:30"}], ["4", {"Mon": "07:30", "Thu": "07:30"}], ["5", {"Wed": "08:30", "Sat": "08:30"}], ["6", {"Mon": "06:30", "Fri": "06:30"}], ["7", {"Fri": "08:30", "Sun": "08:30"}], ["8", {"Mon": "07:30", "Fri": "07:30"}]], "FWA": {}, "late": false}, "Option B": {"FT": [["1", {"Mon": "08:30", "Tue": "08:30", "Wed": "08:30", "Fri": "08:30"}], ["8", {"Tue": "07:30", "Wed": "08:30", "Sat": "08:30", "Sun": "08:30"}], ["15", {"Mon": "08:30", "Tue": "08:30", "Thu": "08:30", "Sun": "08:30"}], ["22", {"Tue": "08:30", "Wed": "08:30", "Thu": "08:30", "Fri": "08:30"}], ["29", {"Mon": "06:30", "Wed": "06:30", "Sat": "07:30", "Sun": "07:30"}], ["36", {"Mon": "08:30", "Tue": "08:30", "Sat": "07:30", "Sun": "07:30"}], ["43", {"Tue": "06:30", "Wed": "06:30", "Thu": "06:30", "Fri": "06:30"}], ["50", {"Mon": "07:30", "Wed": "07:30", "Thu": "07:30", "Fri": "07:30"}], ["57", {"Wed": "08:30", "Thu": "08:30", "Fri": "08:30", "Sat": "08:30"}]], "PT": [["1", {"Wed": "07:30", "Sat": "08:30"}], ["2", {"Tue": "06:30", "Thu": "06:30"}], ["3", {"Mon": "06:30", "Fri": "06:30"}], ["4", {"Fri": "08:30", "Sat": "08:30"}], ["5", {"Tue": "07:30", "Thu": "07:30"}], ["6", {"Mon": "07:30", "Fri": "07:30"}], ["7", {"Fri": "08:30", "Wed": "08:30"}], ["8", {"Tue": "08:30", "Fri": "08:30"}]], "FWA": {}, "late": false}, "Option C1 (late shift)": {"FT": [["1", {"Mon": "12:00", "Tue": "08:30", "Wed": "08:30", "Fri": "08:30"}], ["8", {"Tue": "07:30", "Wed": "08:30", "Sat": "08:30", "Sun": "08:30"}], ["15", {"Mon": "12:00", "Tue": "12:00", "Thu": "08:30", "Sun": "08:30"}], ["22", {"Tue": "12:00", "Wed": "12:00", "Thu": "12:00", "Fri": "12:00"}], ["29", {"Mon": "06:30", "Wed": "06:30", "Sat": "07:30", "Sun": "07:30"}], ["36", {"Mon": "08:30", "Tue": "08:30", "Sat": "07:30", "Sun": "07:30"}], ["43", {"Tue": "06:30", "Wed": "06:30", "Thu": "06:30", "Fri": "06:30"}], ["50", {"Mon": "07:30", "Wed": "07:30", "Thu": "07:30", "Fri": "07:30"}], ["57", {"Wed": "12:00", "Thu": "12:00", "Fri": "12:00", "Sat": "08:30"}]], "PT": [["1", {"Wed": "07:30", "Sat": "08:30"}], ["2", {"Tue": "06:30", "Thu": "06:30"}], ["3", {"Mon": "06:30", "Fri": "06:30"}], ["4", {"Fri": "08:30", "Sat": "08:30"}], ["5", {"Tue": "07:30", "Thu": "07:30"}], ["6", {"Mon": "07:30", "Fri": "07:30"}], ["7", {"Fri": "08:30", "Wed": "08:30"}], ["8", {"Tue": "08:30", "Fri": "08:30"}]], "FWA": {}, "late": true}, "Option C2 (late shift)": {"FT": [["1", {"Mon": "12:00", "Tue": "08:30", "Wed": "08:30", "Fri": "08:30"}], ["8", {"Tue": "07:30", "Wed": "08:30", "Sat": "08:30", "Sun": "08:30"}], ["15", {"Mon": "12:00", "Tue": "12:00", "Thu": "08:30", "Sun": "08:30"}], ["22", {"Tue": "12:00", "Wed": "12:00", "Thu": "12:00", "Fri": "08:30"}], ["29", {"Mon": "06:30", "Wed": "06:30", "Sat": "07:30", "Sun": "07:30"}], ["36", {"Mon": "08:30", "Tue": "08:30", "Sat": "07:30", "Sun": "07:30"}], ["43", {"Tue": "06:30", "Wed": "06:30", "Thu": "06:30", "Fri": "06:30"}], ["50", {"Mon": "07:30", "Wed": "07:30", "Thu": "07:30", "Fri": "07:30"}], ["57", {"Wed": "12:00", "Thu": "12:00", "Fri": "08:30", "Sat": "08:30"}]], "PT": [["1", {"Wed": "07:30", "Sat": "08:30"}], ["2", {"Tue": "06:30", "Thu": "06:30"}], ["3", {"Mon": "06:30", "Fri": "06:30"}], ["4", {"Fri": "12:00", "Sat": "08:30"}], ["5", {"Tue": "07:30", "Thu": "07:30"}], ["6", {"Mon": "07:30", "Fri": "07:30"}], ["7", {"Fri": "08:30", "Wed": "08:30"}], ["8", {"Tue": "08:30", "Fri": "12:00"}]], "FWA": {}, "late": true}};
@@ -1055,81 +1056,122 @@ function coverageRows(){
   const c=counts(state); const used=cfg.shifts.filter(s=>DAYS.some(d=>req(d,s.id)||c[d][s.id]));
   return used.map(s=>({label:s.start+'–'+s.end,cells:DAYS.map(d=>{const have=c[d][s.id]||0,n=req(d,s.id); if(!n&&!have) return {text:'—',status:'dim'}; const status=have<n?'short':have>n?'over':'ok'; return {text:have+' of '+n,status};})}));
 }
-function chipSpan(ok,warn){
-  const st=ok?'ok':(warn?'warn':'bad'), fg={ok:'#2f7d4f',warn:'#9a6700',bad:'#b3261e'}[st], txt=ok?'Pass':(warn?'Review':'Fails');
-  return '<span class="pchip" style="background:'+fg+'">'+txt+'</span>';
+function niceName(n){return String(n||'Roster').replace(/^(saved|full):/,'');}
+function chipCell(ok,warn){
+  const st=ok?'ok':(warn?'warn':'bad'), bg={ok:'#2f7d4f',warn:'#9a6700',bad:'#b3261e'}[st], txt=ok?'Pass':(warn?'Review':'Fails');
+  return '<td style="background:'+bg+';color:#ffffff;font-weight:700;text-align:center;width:9%">'+txt+'</td>';
 }
 function reportTablesHTML(){
   const now=new Date();
   const dateStr=now.toLocaleDateString('en-AU',{day:'2-digit',month:'short',year:'numeric'})+' at '+now.toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});
+  const H2=t=>'<h2 style="color:#1f4e79;border-bottom:2px solid #f5a623;padding-bottom:4px;margin:18px 0 8px;font-family:Arial,Helvetica,sans-serif;font-size:15pt;page-break-after:avoid">'+t+'</h2>';
   let h='<div style="font-family:Arial,Helvetica,sans-serif">';
-  h+='<div style="background:#1f4e79;color:#fff;padding:14px 18px;border-bottom:4px solid #f5a623">'+
-     '<div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase">Roster proposal &middot; Master roster</div>'+
-     '<div style="font-size:22px;font-weight:700">ShiftSketch — '+esc(presetName||'Roster')+'</div>'+
-     '<div style="font-size:12px">Exported '+dateStr+'</div></div>';
-  { const c=changeSummary(); h+='<h2 style="color:#1f4e79;border-bottom:2px solid #f5a623;padding-bottom:4px;font-family:Arial">What changed from the starting roster ('+c.total+' shift'+(c.total===1?'':'s')+')</h2>';
-    h+=c.items.length?'<ul style="font-size:12px;line-height:1.5;margin:6px 0 12px 18px;padding:0">'+c.items.map(x=>'<li><b>'+esc(x.nm)+'</b> &mdash; '+esc(x.txt)+'</li>').join('')+'</ul>':'<p style="font-size:12px">No changes &mdash; this is the starting roster.</p>'; }
-  { const nn=allNotes(); if(nn.length){ h+='<h2 style="color:#1f4e79;border-bottom:2px solid #f5a623;padding-bottom:4px;font-family:Arial">Notes ('+nn.length+')</h2><ul style="font-size:12px;line-height:1.5;margin:6px 0 12px 18px;padding:0">'+nn.map(x=>'<li><b>Line '+esc(x.label)+' &middot; '+x.d+(x.shift?' ('+esc(x.shift)+')':'')+'</b> &mdash; '+esc(x.txt)+'</li>').join('')+'</ul>'; } }
-  if(incScore){
-  h+='<h2 style="color:#1f4e79;border-bottom:2px solid #f5a623;padding-bottom:4px;font-family:Arial">Scorecard summary</h2>';
-  h+='<table class="ptbl"><tr>'+lastKpis.map(([n,l])=>'<td style="text-align:center"><div style="font-size:16px;font-weight:700">'+esc(n)+'</div><div style="font-size:10px;color:#5f6d75">'+esc(l)+'</div></td>').join('')+'</tr></table>';
-  h+='<table class="ptbl"><thead><tr><th>Status</th><th>Check</th><th>Detail</th></tr></thead><tbody>'+
-     lastItems.map(([ok,warn,t,d])=>'<tr><td>'+chipSpan(ok,warn&&!ok)+'</td><td><b>'+esc(t)+'</b></td><td>'+esc(String(d))+'</td></tr>').join('')+'</tbody></table>';
-  }
-  h+='<h2 style="color:#1f4e79;border-bottom:2px solid #f5a623;padding-bottom:4px;font-family:Arial">Master roster (one week of the rotation)</h2>';
-  h+='<table class="ptbl fx" style="table-layout:fixed;width:100%"><colgroup><col width="9%"><col width="6%"><col width="14%">'+DAYS.map(()=>'<col width="8.5%">').join('')+'<col width="5.5%"><col width="6%"></colgroup><thead><tr><th class="l">Type</th><th>Line</th><th class="l">Staff name</th>'+DAYS.map(d=>'<th>'+d+'</th>').join('')+'<th>Shifts</th><th>Paid hrs</th></tr></thead><tbody>';
-  for(const r of rosterRows()) h+='<tr style="height:22px"><td class="l">'+esc(r.type)+'</td><td>'+esc(r.label)+'</td><td class="l">'+esc(r.pto||'')+'</td>'+r.cells.map(c=>'<td'+(c.swatch>=0?' style="background:'+SWATCH[c.swatch]+'"':'')+'>'+esc(c.text||'—')+'</td>').join('')+'<td>'+r.shifts+'</td><td>'+r.hrs+'</td></tr>';
+  // banner as a one-cell table so Word keeps the colour
+  h+='<table style="width:100%;border-collapse:collapse;margin:0 0 6px"><tr><td style="background:#1f4e79;color:#ffffff;padding:12px 16px;border:0;border-bottom:4px solid #f5a623">'+
+     '<div style="font-size:10pt;letter-spacing:1px;text-transform:uppercase;color:#d6e2ef">Roster proposal &middot; Master roster</div>'+
+     '<div style="font-size:20pt;font-weight:700;color:#ffffff">ShiftSketch &mdash; '+esc(niceName(presetName))+'</div>'+
+     '<div style="font-size:10pt;color:#d6e2ef">Exported '+dateStr+'</div></td></tr></table>';
+  // 1. the roster itself
+  h+=H2('Master roster (one week of the rotation)');
+  h+='<table class="ptbl fx" width="100%" style="table-layout:fixed;width:100%"><colgroup><col width="10%"><col width="9%"><col width="12%">'+DAYS.map(()=>'<col width="8.3%">').join('')+'<col width="6%"><col width="6.9%"></colgroup><thead><tr><th class="l" width="10%">Type</th><th width="9%">Line</th><th class="l" width="12%">Staff name</th>'+DAYS.map(d=>'<th width="8.3%">'+d+'</th>').join('')+'<th width="6%">Shifts</th><th width="6.9%">Paid hrs</th></tr></thead><tbody>';
+  for(const r of rosterRows()) h+='<tr style="height:22px;page-break-inside:avoid"><td class="l">'+esc(r.type)+'</td><td>'+esc(r.label)+'</td><td class="l">'+esc(r.pto||'')+'</td>'+r.cells.map(c=>'<td'+(c.swatch>=0?' style="background:'+SWATCH[c.swatch]+'"':'')+'>'+esc(c.text||'—')+'</td>').join('')+'<td>'+r.shifts+'</td><td>'+r.hrs+'</td></tr>';
   h+='</tbody></table>';
+  // 2. cover
+  h+=H2('Shift coverage (have of need)');
+  h+='<table class="ptbl fx" style="table-layout:fixed;width:100%"><colgroup><col width="16%">'+DAYS.map(()=>'<col width="12%">').join('')+'</colgroup><thead><tr><th class="l" width="16%">Shift</th>'+DAYS.map(d=>'<th width="12%">'+d+'</th>').join('')+'</tr></thead><tbody>';
+  const STC={short:['#fbe4e3','#b3261e'],over:['#fdf1d8','#9a6700'],dim:['#f3f3f3','#8a97a0'],ok:['#ffffff','#1d2a31']};
+  for(const r of coverageRows()) h+='<tr style="height:22px;page-break-inside:avoid"><td class="l">'+esc(r.label)+'</td>'+r.cells.map(c=>{const [bg,fg]=STC[c.status||'ok']; return '<td style="background:'+bg+';color:'+fg+(c.status==='short'?';font-weight:700':'')+'">'+esc(c.text)+'</td>';}).join('')+'</tr>';
+  h+='</tbody></table>';
+  // 3. vacant shifts
   {const otr=otGaps(evaluate(state));
-   h+='<h2 style="color:#1f4e79;border-bottom:2px solid #f5a623;padding-bottom:4px;font-family:Arial">Overtime offer list (vacant shifts)</h2>';
-   if(!otr.length) h+='<p style="font-size:11px;color:#5f6d75">No vacant shifts at export time.</p>';
+   h+=H2('Overtime offer list (vacant shifts)');
+   if(!otr.length) h+='<p style="font-size:10pt;color:#5f6d75;margin:4px 0">No vacant shifts at export time.</p>';
    else { h+='<table class="ptbl fx" style="table-layout:fixed;width:60%"><colgroup><col width="20%"><col width="25%"><col width="25%"><col width="30%"></colgroup><thead><tr><th>Day</th><th>Shift</th><th>Staff needed</th><th>Priority</th></tr></thead><tbody>';
-     for(const g of otr) h+='<tr style="height:22px"><td>'+esc(g.d)+'</td><td>'+esc(lab(g.id))+'</td><td>'+g.n+'</td><td>'+(g.vac?'Vacant line':(isCore(g.d,g.id)?'Core':'Standard'))+'</td></tr>';
+     for(const g of otr) h+='<tr style="height:22px;page-break-inside:avoid"><td>'+esc(g.d)+'</td><td>'+esc(lab(g.id))+'</td><td>'+g.n+'</td><td>'+(g.vac?'Vacant line':(isCore(g.d,g.id)?'Core':'Standard'))+'</td></tr>';
      h+='</tbody></table>'; }
   }
-  h+='<h2 style="color:#1f4e79;border-bottom:2px solid #f5a623;padding-bottom:4px;font-family:Arial">Shift coverage (have of need)</h2>';
-  h+='<table class="ptbl fx" style="table-layout:fixed;width:100%"><colgroup><col width="16%">'+DAYS.map(()=>'<col width="12%">').join('')+'</colgroup><thead><tr><th class="l">Shift</th>'+DAYS.map(d=>'<th>'+d+'</th>').join('')+'</tr></thead><tbody>';
-  const STC={short:['#fbe4e3','#b3261e'],over:['#fdf1d8','#9a6700'],dim:['#f3f3f3','#8a97a0'],ok:['#ffffff','#1d2a31']};
-  for(const r of coverageRows()) h+='<tr style="height:22px"><td class="l">'+esc(r.label)+'</td>'+r.cells.map(c=>{const [bg,fg]=STC[c.status||'ok']; return '<td style="background:'+bg+';color:'+fg+'">'+esc(c.text)+'</td>';}).join('')+'</tr>';
-  h+='</tbody></table>';
-  h+='<div style="font-size:10px;color:#5f6d75;border-top:1px solid #d5dadd;padding-top:6px;margin-top:4px">Generated by ShiftSketch on '+dateStr+'. For planning use — verify against the current blueprint before publishing.</div>';
+  // 4. only when there is something to say
+  { const c=changeSummary();
+    if(c.items.length){ h+=H2('What changed from the starting roster ('+c.total+' shift'+(c.total===1?'':'s')+')');
+      h+='<ul style="font-size:10pt;line-height:1.5;margin:6px 0 12px 18px;padding:0">'+c.items.map(x=>'<li><b>'+esc(x.nm)+'</b> &mdash; '+esc(x.txt)+'</li>').join('')+'</ul>'; } }
+  { const nn=allNotes(); if(nn.length){ h+=H2('Notes ('+nn.length+')')+'<ul style="font-size:10pt;line-height:1.5;margin:6px 0 12px 18px;padding:0">'+nn.map(x=>'<li><b>Line '+esc(x.label)+' &middot; '+x.d+(x.shift?' ('+esc(x.shift)+')':'')+'</b> &mdash; '+esc(x.txt)+'</li>').join('')+'</ul>'; } }
+  // 5. scorecard, optional
+  if(incScore){
+    h+=H2('Scorecard summary');
+    h+='<table class="ptbl"><tr>'+lastKpis.map(([n,l])=>'<td style="text-align:center"><div style="font-size:13pt;font-weight:700">'+esc(n)+'</div><div style="font-size:8pt;color:#5f6d75">'+esc(l)+'</div></td>').join('')+'</tr></table>';
+    h+='<table class="ptbl"><thead><tr><th>Status</th><th>Check</th><th>Detail</th></tr></thead><tbody>'+
+       lastItems.map(([ok,warn,t,d])=>'<tr style="page-break-inside:avoid">'+chipCell(ok,warn&&!ok)+'<td style="width:22%"><b>'+esc(t)+'</b></td><td>'+esc(String(d))+'</td></tr>').join('')+'</tbody></table>';
+  }
+  h+='<div style="font-size:9pt;color:#5f6d75;border-top:1px solid #d5dadd;padding-top:6px;margin-top:10px">Generated by ShiftSketch on '+dateStr+'. For planning use &mdash; verify against the current blueprint before publishing.</div>';
   h+='</div>';
   return h;
 }
-function xc(text,styleId){return '<Cell'+(styleId?' ss:StyleID="'+styleId+'"':'')+'><Data ss:Type="String">'+esc(text==null?'':text)+'</Data></Cell>';}
-function xrow(cells,h){return '<Row'+(h?' ss:Height="'+h+'"':'')+'>'+cells.join('')+'</Row>';}
-function xsheet(name,rows,widths){return '<Worksheet ss:Name="'+esc(name)+'"><Table>'+(widths||[]).map(w=>'<Column ss:Width="'+w+'"/>').join('')+rows.join('')+'</Table></Worksheet>';}
+const CRC_T=(()=>{const t=[];for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0;}return t;})();
+function crc32(u){let c=0xFFFFFFFF;for(let i=0;i<u.length;i++)c=CRC_T[(c^u[i])&255]^(c>>>8);return (c^0xFFFFFFFF)>>>0;}
+function zipStore(files){
+  const te=new TextEncoder(), parts=[], central=[]; let off=0;
+  for(const f of files){
+    const nm=te.encode(f.name), d=typeof f.data==='string'?te.encode(f.data):f.data, crc=crc32(d);
+    const lh=new DataView(new ArrayBuffer(30)); lh.setUint32(0,0x04034b50,true); lh.setUint16(4,20,true); lh.setUint16(6,0x0800,true); lh.setUint16(8,0,true); lh.setUint16(10,0,true); lh.setUint16(12,33,true); lh.setUint32(14,crc,true); lh.setUint32(18,d.length,true); lh.setUint32(22,d.length,true); lh.setUint16(26,nm.length,true); lh.setUint16(28,0,true);
+    parts.push(new Uint8Array(lh.buffer),nm,d);
+    const ch=new DataView(new ArrayBuffer(46)); ch.setUint32(0,0x02014b50,true); ch.setUint16(4,20,true); ch.setUint16(6,20,true); ch.setUint16(8,0x0800,true); ch.setUint16(10,0,true); ch.setUint16(12,0,true); ch.setUint16(14,33,true); ch.setUint32(16,crc,true); ch.setUint32(20,d.length,true); ch.setUint32(24,d.length,true); ch.setUint16(28,nm.length,true); ch.setUint32(42,off,true);
+    central.push(new Uint8Array(ch.buffer),nm);
+    off+=30+nm.length+d.length;
+  }
+  const csize=central.reduce((a,p)=>a+p.length,0);
+  const eo=new DataView(new ArrayBuffer(22)); eo.setUint32(0,0x06054b50,true); eo.setUint16(8,files.length,true); eo.setUint16(10,files.length,true); eo.setUint32(12,csize,true); eo.setUint32(16,off,true);
+  const all=[...parts,...central,new Uint8Array(eo.buffer)], out=new Uint8Array(all.reduce((a,p)=>a+p.length,0)); let o=0; for(const p of all){out.set(p,o); o+=p.length;} return out;
+}
 function exportExcel(){
-  const styles=['<Style ss:ID="Default" ss:Name="Normal"><Alignment ss:Horizontal="Center" ss:Vertical="Center" ss:WrapText="1"/></Style>','<Style ss:ID="lft"><Alignment ss:Horizontal="Left" ss:Vertical="Center" ss:WrapText="1"/></Style>','<Style ss:ID="hdr"><Font ss:Bold="1" ss:Color="#FFFFFF"/><Interior ss:Color="#1F4E79" ss:Pattern="Solid"/></Style>'];
-  SWATCH.forEach((c,i)=>styles.push('<Style ss:ID="s'+i+'"><Interior ss:Color="'+c.toUpperCase()+'" ss:Pattern="Solid"/></Style>'));
-  styles.push('<Style ss:ID="short"><Interior ss:Color="#FBE4E3" ss:Pattern="Solid"/><Font ss:Color="#B3261E" ss:Bold="1"/></Style>');
-  styles.push('<Style ss:ID="over"><Interior ss:Color="#FDF1D8" ss:Pattern="Solid"/><Font ss:Color="#9A6700"/></Style>');
-  styles.push('<Style ss:ID="dim"><Font ss:Color="#8A97A0"/></Style>');
-  styles.push('<Style ss:ID="ok"><Interior ss:Color="#E3F2E8" ss:Pattern="Solid"/><Font ss:Color="#2F7D4F" ss:Bold="1"/></Style>');
-  styles.push('<Style ss:ID="warn"><Interior ss:Color="#FDF1D8" ss:Pattern="Solid"/><Font ss:Color="#9A6700" ss:Bold="1"/></Style>');
-  styles.push('<Style ss:ID="bad"><Interior ss:Color="#FBE4E3" ss:Pattern="Solid"/><Font ss:Color="#B3261E" ss:Bold="1"/></Style>');
-  const rosterRowsArr=[xrow(['Type','Line','Staff name',...DAYS,'Shifts','Paid hrs'].map(t=>xc(t,'hdr')),22)];
-  for(const r of rosterRows()) rosterRowsArr.push(xrow([xc(r.type,'lft'),xc(r.label),xc(r.pto||'','lft'),...r.cells.map(c=>xc(c.text,c.swatch>=0?'s'+c.swatch:undefined)),xc(r.shifts),xc(r.hrs)],22));
-  const covRowsArr=[xrow(['Shift',...DAYS].map(t=>xc(t,'hdr')),22)];
-  for(const r of coverageRows()) covRowsArr.push(xrow([xc(r.label,'lft'),...r.cells.map(c=>xc(c.text,c.status&&c.status!=='ok'?c.status:undefined))],22));
-  const scoreRowsArr=[xrow(['Status','Check','Detail'].map(t=>xc(t,'hdr')),22)];
-  for(const [ok,warn,t,d] of lastItems){ const st=ok?'ok':(warn&&!ok?'warn':'bad'); scoreRowsArr.push(xrow([xc(ok?'Pass':(warn&&!ok?'Review':'Fails'),st),xc(t,'lft'),xc(String(d),'lft')])); }
-  const otRowsArr=[xrow(['Day','Shift','Staff needed','Priority'].map(t=>xc(t,'hdr')),22)];
-  for(const g of otGaps(evaluate(state))) otRowsArr.push(xrow([xc(g.d),xc(lab(g.id)),xc(g.n),xc(g.vac?'Vacant line':(isCore(g.d,g.id)?'Core':'Standard'))],22));
-  const noteRowsArr=[xrow(['Line','Day','Shift','Note'].map(t=>xc(t,'hdr')),22)];
-  for(const x of allNotes()) noteRowsArr.push(xrow([xc(x.label),xc(x.d),xc(x.shift),xc(x.txt,'lft')]));
-  const xml='<?xml version="1.0" encoding="UTF-8"?>\n<?mso-application progid="Excel.Sheet"?>\n<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">'+
-    '<Styles>'+styles.join('')+'</Styles>'+xsheet('Master roster',rosterRowsArr,[80,50,120,62,62,62,62,62,62,62,52,58])+xsheet('Shift coverage',covRowsArr,[100,70,70,70,70,70,70,70])+xsheet('Overtime offer list',otRowsArr,[70,80,90,110])+(incScore?xsheet('Scorecard',scoreRowsArr,[70,230,560]):'')+(noteRowsArr.length>1?xsheet('Notes',noteRowsArr,[60,60,100,480]):'')+'</Workbook>';
-  download('Roster - '+(presetName||'export')+'.xls',xml,'application/vnd.ms-excel');
+  const X=(t)=>String(t==null?'':t).replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g,'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const fonts=['<font><sz val="10"/><color rgb="FF1D2A31"/><name val="Arial"/></font>'], fills=['<fill><patternFill patternType="none"/></fill>','<fill><patternFill patternType="gray125"/></fill>'], xfs=['<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>'], reg={};
+  const fontId=o=>{const x='<font>'+(o.b?'<b/>':'')+'<sz val="'+(o.sz||10)+'"/><color rgb="FF'+(o.c||'1D2A31')+'"/><name val="Arial"/></font>'; let i=fonts.indexOf(x); if(i<0){fonts.push(x); i=fonts.length-1;} return i;};
+  const fillId=h=>{if(!h) return 0; const x='<fill><patternFill patternType="solid"><fgColor rgb="FF'+h.replace('#','').toUpperCase()+'"/><bgColor indexed="64"/></patternFill></fill>'; let i=fills.indexOf(x); if(i<0){fills.push(x); i=fills.length-1;} return i;};
+  const sty=o=>{const k=JSON.stringify(o); if(reg[k]!==undefined) return reg[k]; const x='<xf numFmtId="0" fontId="'+fontId(o.f||{})+'" fillId="'+fillId(o.fill)+'" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="'+(o.h||'center')+'" vertical="center"'+(o.wrap===false?'':' wrapText="1"')+'/></xf>'; xfs.push(x); reg[k]=xfs.length-1; return reg[k];};
+  const HDR=sty({f:{b:1,c:'FFFFFF'},fill:'1F4E79'}), HDRL=sty({f:{b:1,c:'FFFFFF'},fill:'1F4E79',h:'left'}), C=sty({}), L=sty({h:'left'});
+  const col=n=>{let s='';n++;while(n>0){const m=(n-1)%26;s=String.fromCharCode(65+m)+s;n=Math.floor((n-1)/26);}return s;};
+  const cell=(r,c,v,st)=>{const ref=col(c)+(r+1); if(v===''||v==null) return '<c r="'+ref+'" s="'+st+'"/>'; return typeof v==='number'?'<c r="'+ref+'" s="'+st+'"><v>'+v+'</v></c>':'<c r="'+ref+'" s="'+st+'" t="inlineStr"><is><t xml:space="preserve">'+X(v)+'</t></is></c>';};
+  const sheet=(rows,widths,ht)=>'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><sheetViews><sheetView workbookViewId="0" showGridLines="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><sheetFormatPr defaultRowHeight="18"/><cols>'+widths.map((w,i)=>'<col min="'+(i+1)+'" max="'+(i+1)+'" width="'+w+'" customWidth="1"/>').join('')+'</cols><sheetData>'+rows.map((r,i)=>'<row r="'+(i+1)+'"'+(ht?' ht="'+ht+'" customHeight="1"':'')+'>'+r.map((c,j)=>cell(i,j,c[0],c[1])).join('')+'</row>').join('')+'</sheetData><pageMargins left="0.5" right="0.5" top="0.6" bottom="0.6" header="0.3" footer="0.3"/><pageSetup orientation="landscape" fitToWidth="1" fitToHeight="0"/></worksheet>';
+  const SWS=SWATCH.map(h=>sty({fill:h,f:{b:1}}));
+  const cov={short:sty({fill:'FBE4E3',f:{b:1,c:'B3261E'}}),over:sty({fill:'FDF1D8',f:{c:'9A6700'}}),dim:sty({f:{c:'8A97A0'}})};
+  const stat={ok:sty({fill:'E3F2E8',f:{b:1,c:'2F7D4F'}}),warn:sty({fill:'FDF1D8',f:{b:1,c:'9A6700'}}),bad:sty({fill:'FBE4E3',f:{b:1,c:'B3261E'}})};
+  const sheets=[];
+  // Master roster
+  { const rows=[['Type','Line','Staff name',...DAYS,'Shifts','Paid hrs'].map((t,i)=>[t,i===0||i===2?HDRL:HDR])];
+    for(const r of rosterRows()) rows.push([[r.type,L],[r.label,C],[r.pto||'',L],...r.cells.map(c=>[c.text,c.swatch>=0?SWS[c.swatch]:C]),[+r.shifts,C],[+r.hrs,sty({})]]);
+    sheets.push(['Master roster',sheet(rows,[13,10,20,10,10,10,10,10,10,10,9,10],22)]); }
+  // Coverage
+  { const rows=[['Shift',...DAYS].map((t,i)=>[t,i?HDR:HDRL])];
+    for(const r of coverageRows()) rows.push([[r.label,L],...r.cells.map(c=>[c.text,c.status&&c.status!=='ok'?cov[c.status]:C])]);
+    sheets.push(['Shift coverage',sheet(rows,[16,11,11,11,11,11,11,11],22)]); }
+  // Overtime
+  { const rows=[['Day','Shift','Staff needed','Priority'].map(t=>[t,HDR])];
+    for(const g of otGaps(evaluate(state))) rows.push([[g.d,C],[lab(g.id),C],[+g.n,C],[g.vac?'Vacant line':(isCore(g.d,g.id)?'Core':'Standard'),C]]);
+    sheets.push(['Overtime offer list',sheet(rows,[10,14,14,16],22)]); }
+  // Scorecard
+  if(incScore){ const rows=[['Status','Check','Detail'].map((t,i)=>[t,i===0?HDR:HDRL])];
+    for(const [ok,warn,t,d] of lastItems){ const k=ok?'ok':(warn&&!ok?'warn':'bad'); rows.push([[ok?'Pass':(warn&&!ok?'Review':'Fails'),stat[k]],[t,sty({h:'left',f:{b:1}})],[String(d),L]]); }
+    sheets.push(['Scorecard',sheet(rows,[10,34,100])]); }
+  // Notes
+  { const nn=allNotes(); if(nn.length){ const rows=[['Line','Day','Shift','Note'].map((t,i)=>[t,i===3?HDRL:HDR])]; for(const x of nn) rows.push([[x.label,C],[x.d,C],[x.shift||'',C],[x.txt,L]]); sheets.push(['Notes',sheet(rows,[10,8,14,80])]); } }
+  const files=[
+    {name:'[Content_Types].xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>'+sheets.map((_,i)=>'<Override PartName="/xl/worksheets/sheet'+(i+1)+'.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>').join('')+'</Types>'},
+    {name:'_rels/.rels',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'},
+    {name:'xl/workbook.xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>'+sheets.map((s,i)=>'<sheet name="'+X(s[0])+'" sheetId="'+(i+1)+'" r:id="rId'+(i+1)+'"/>').join('')+'</sheets></workbook>'},
+    {name:'xl/_rels/workbook.xml.rels',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+sheets.map((_,i)=>'<Relationship Id="rId'+(i+1)+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet'+(i+1)+'.xml"/>').join('')+'<Relationship Id="rId'+(sheets.length+1)+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>'},
+    {name:'xl/styles.xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="'+fonts.length+'">'+fonts.join('')+'</fonts><fills count="'+fills.length+'">'+fills.join('')+'</fills><borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FFB0B7BB"/></left><right style="thin"><color rgb="FFB0B7BB"/></right><top style="thin"><color rgb="FFB0B7BB"/></top><bottom style="thin"><color rgb="FFB0B7BB"/></bottom><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="'+xfs.length+'">'+xfs.join('')+'</cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>'},
+    ...sheets.map((s,i)=>({name:'xl/worksheets/sheet'+(i+1)+'.xml',data:s[1]}))
+  ];
+  download('Roster - '+niceName(presetName)+'.xlsx',zipStore(files),'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 }
 function exportWord(){
   const html='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">'+
     '<head><meta charset="utf-8"><title>ShiftSketch export</title>'+
     '<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]-->'+
     '<style>body{font-family:Arial,Helvetica,sans-serif;color:#1d2a31}table{border-collapse:collapse;width:100%;margin:0 0 18px}'+
-    'td,th{border:1px solid #999;padding:4px 8px;font-size:10.5pt}th{background:#1f4e79;color:#ffffff}table.fx{table-layout:fixed}.fx td,.fx th{height:22px;text-align:center;vertical-align:middle}.fx td.l,.fx th.l{text-align:left}@page{size:landscape;margin:1.5cm}</style></head><body>'+
+    'td,th{border:1px solid #999;padding:4px 8px;font-size:10.5pt}th{background:#1f4e79;color:#ffffff;font-weight:700}tr{page-break-inside:avoid}thead{display:table-header-group}table.fx{table-layout:fixed}.fx td,.fx th{height:22px;text-align:center;vertical-align:middle}.fx td.l,.fx th.l{text-align:left}@page{size:landscape;margin:1.5cm}</style></head><body>'+
     reportTablesHTML()+'</body></html>';
-  download('Roster - '+(presetName||'export')+'.doc',html,'application/msword');
+  download('Roster - '+niceName(presetName)+'.doc',html,'application/msword');
 }
 function printPdf(){ $('printArea').innerHTML=reportTablesHTML(); setTimeout(()=>window.print(),50); }
 function persist(){try{localStorage.setItem(KEY,JSON.stringify({cfg,lines:state.lines,base,preset:presetName,uidN,steerOn,minChangeOn}));}catch(e){}}
@@ -1497,7 +1539,7 @@ $('delSaved').addEventListener('click',()=>{const v=$('preset').value; if(!v.sta
 $('exp').addEventListener('click',()=>{const t=JSON.stringify(exportObj(),null,1); $('json').value=t; download(($('saveName').value||'roster').replace(/[^\w\- ]+/g,'').trim()+'.json',t,'application/json');});
 $('impFile').addEventListener('change',e=>{const f=e.target.files[0]; if(!f) return; f.text().then(t=>{try{importObj(JSON.parse(t));}catch(err){$('status').textContent='That file is not a ShiftSketch export.';}}); e.target.value='';});
 $('impText').addEventListener('click',()=>{try{importObj(JSON.parse($('json').value));}catch(err){$('status').textContent='The text in the box is not a ShiftSketch export.';}});
-$('expXlsx').addEventListener('click',()=>{try{exportExcel(); $('status').textContent='Excel export started. If it warns the format doesn’t match the extension, choose Yes/Open anyway.';}catch(e){$('status').textContent='Excel export failed: '+e.message;}});
+$('expXlsx').addEventListener('click',()=>{try{exportExcel(); $('status').textContent='Excel workbook (.xlsx) downloaded.';}catch(e){$('status').textContent='Excel export failed: '+e.message;}});
 $('expDoc').addEventListener('click',()=>{try{exportWord(); $('status').textContent='Word export started. If it warns the format doesn’t match the extension, choose Yes/Open anyway.';}catch(e){$('status').textContent='Word export failed: '+e.message;}});
 $('incScore').addEventListener('change',e=>{incScore=e.target.checked;});
 $('printPdf').addEventListener('click',()=>{try{printPdf();}catch(e){$('status').textContent='Print view failed: '+e.message;}});
