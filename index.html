@@ -28,12 +28,12 @@
   color-scheme:dark; --bg:#141a1d; --panel:#1c2429; --ink:#e6ecef; --muted:#9aa8b0; --line:#2f3a40; --soft:#243037;
   --brand:#8fb8de; --accent:#f5b84a; --accent-ink:#f7c56f; --flag:#ff5a5b;
   --ok:#6fcf97; --ok-bg:#16301f; --warn:#f2c14e; --warn-bg:#352a10; --bad:#ff8a8a; --bad-bg:#3a1c1c;
-  --s0630:#2e4a2b; --s0730:#24405c; --s0830:#3a4247; --s1200:#3d3552; --s1030:#553a28; --gap:#5a2626; --cellink:#e6ecef;}}
+  --s0630:#1f5a34; --s0730:#1f4a85; --s0830:#5b6369; --s1200:#7a2b62; --s1030:#8a4012; --gap:#5a2626; --cellink:#e6ecef;}}
 :root[data-theme="dark"]{
   color-scheme:dark; --bg:#141a1d; --panel:#1c2429; --ink:#e6ecef; --muted:#9aa8b0; --line:#2f3a40; --soft:#243037;
   --brand:#8fb8de; --accent:#f5b84a; --accent-ink:#f7c56f; --flag:#ff5a5b;
   --ok:#6fcf97; --ok-bg:#16301f; --warn:#f2c14e; --warn-bg:#352a10; --bad:#ff8a8a; --bad-bg:#3a1c1c;
-  --s0630:#2e4a2b; --s0730:#24405c; --s0830:#3a4247; --s1200:#3d3552; --s1030:#553a28; --gap:#5a2626; --cellink:#e6ecef;}
+  --s0630:#1f5a34; --s0730:#1f4a85; --s0830:#5b6369; --s1200:#7a2b62; --s1030:#8a4012; --gap:#5a2626; --cellink:#e6ecef;}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:15px;line-height:1.45;margin:0;padding-inline:16px;padding-block:20px 48px}
 .wrap{max-width:1560px;margin:0 auto;display:grid;gap:18px}
@@ -183,8 +183,8 @@ textarea{width:100%;min-height:90px;font:12px/1.4 ui-monospace,Menlo,Consolas,mo
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
 :root{--c0:#d9ead3;--c1:#cfe2f3;--c2:#e3e3e3;--c3:#fce4d6;--c4:#e4dfec;--c5:#fff2cc;--c6:#d0e0e3;--c7:#f4cccc}
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){--c0:#2e4a2b;--c1:#24405c;--c2:#3a4247;--c3:#553a28;--c4:#3d3552;--c5:#4d4420;--c6:#23444a;--c7:#4d2626}}
-:root[data-theme="dark"]{--c0:#2e4a2b;--c1:#24405c;--c2:#3a4247;--c3:#553a28;--c4:#3d3552;--c5:#4d4420;--c6:#23444a;--c7:#4d2626}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){--c0:#1f5a34;--c1:#1f4a85;--c2:#5b6369;--c3:#8a4012;--c4:#7a2b62;--c5:#7d7418;--c6:#1d7480;--c7:#8a2a2a}}
+:root[data-theme="dark"]{--c0:#1f5a34;--c1:#1f4a85;--c2:#5b6369;--c3:#8a4012;--c4:#7a2b62;--c5:#7d7418;--c6:#1d7480;--c7:#8a2a2a}
 .k0{background:var(--c0)!important}.k1{background:var(--c1)!important}.k2{background:var(--c2)!important}.k3{background:var(--c3)!important}
 .k4{background:var(--c4)!important}.k5{background:var(--c5)!important}.k6{background:var(--c6)!important}.k7{background:var(--c7)!important}
 input.tm{width:92px;padding:3px 4px;border:1px solid var(--line);border-radius:4px;background:var(--panel)}
@@ -242,6 +242,11 @@ td.out{color:var(--muted);background:var(--soft)}
 td.dim{color:var(--muted)}
 td.worstgap{box-shadow:inset 0 0 0 2px var(--flag)!important;position:relative}
 .section-gap{height:2px;background:var(--soft);border:none;margin:2px 0}
+.tipbox{position:fixed;z-index:200;max-width:280px;padding:7px 10px;border-radius:6px;background:var(--panel);color:var(--ink);border:1px solid var(--brand);box-shadow:0 6px 20px rgba(0,0,0,.3);font-size:12.5px;line-height:1.4;pointer-events:none;opacity:0;transition:opacity .12s}
+.tipbox.on{opacity:1}
+[data-tip]{cursor:help}
+button[data-tip],summary[data-tip],label[data-tip]{cursor:pointer}
+@media print{.tipbox{display:none}}
 </style>
 </head>
 <body>
@@ -255,7 +260,7 @@ td.worstgap{box-shadow:inset 0 0 0 2px var(--flag)!important;position:relative}
       </div>
       <div class="row" style="gap:8px"><button class="btn" id="presBtn" title="Clean, enlarged view for a projector or meeting-room screen (Esc to leave)">Present</button><button class="btn ghost" id="helpBtn" aria-haspopup="dialog" aria-controls="helpModal">Help</button></div>
     </div>
-    <p class="sub pres-hide">Build and test master rosters against the blueprint and the rules you set: a minimum rest between shifts, a cap on shifts in a row, contracted hours only, and weekends spread out. Start from a blank roster, set your own shift times, edit any shift, or let the optimiser suggest changes.</p>
+    <p class="sub pres-hide">Build and test master rosters against your shift blueprint and your rules: minimum rest between shifts, a cap on shifts in a row, contracted hours, and weekends shared fairly. Start from a blank roster, set your own shift times, edit any shift by hand, or let Optimise suggest changes.</p>
   </header>
 
   <nav class="tabs pres-hide" role="tablist" aria-label="ShiftSketch sections"><button class="tab" id="tabRoster" role="tab" aria-selected="true" aria-controls="rosterPane">1.&nbsp;Roster</button><button class="tab" id="tabSet" role="tab" aria-selected="false" aria-controls="setBox">2.&nbsp;Rules &amp; Shifts</button><button class="tab" id="tabScore" role="tab" aria-selected="false" aria-controls="scoreBox">3.&nbsp;Scorecard</button><button class="tab" id="tabExp" role="tab" aria-selected="false" aria-controls="expPanel">4.&nbsp;Export</button></nav>
@@ -270,85 +275,104 @@ td.worstgap{box-shadow:inset 0 0 0 2px var(--flag)!important;position:relative}
         <button class="close" id="helpClose" aria-label="Close">&times;</button>
       </div>
 
-      <h3>How to use</h3>
+      <h3>How to use ShiftSketch</h3>
       <ul>
-        <li><b>1. Roster.</b> Start here. Use the Starting roster dropdown to choose a blank roster or one you saved earlier. Then change any cell directly, add or remove lines, tick Lock to protect a line, or click Optimise for suggested changes (review before keeping). Save the roster under a name when you are happy with it.</li>
-        <li><b>2. Rules &amp; Shifts.</b> Cover hours, shifts per week, minimum rest, max shifts in a row and the unpaid break. Then pick a template or edit each shift&rsquo;s start/finish time and how many lines are needed per day. This changes every rostered shift of that type at once. Set these before you Optimise.</li>
-        <li><b>3. Scorecard.</b> Check how the roster measures up against your rules: the checks, the positives and negatives, and what changed from the starting roster.</li>
-        <li><b>4. Export.</b> Print, or export to PDF, Word, Excel (CSV) or a file to keep or share.</li>
+        <li><b>1. Roster.</b> Choose a starting roster (blank, a preloaded example, or one you saved). Edit any cell, add or remove lines, tick Lock to protect a line, or press Optimise to get suggested changes. Review the suggestion before you keep it, then save the roster under a name.</li>
+        <li><b>2. Rules &amp; Shifts.</b> Set your cover hours, roster rules (shifts per week, minimum rest, maximum shifts in a row) and the unpaid break. Then set each shift&rsquo;s start and finish time and how many staff it needs each day. Do this before you press Optimise so the suggestions follow your rules.</li>
+        <li><b>3. Scorecard.</b> See how the roster measures up against your rules: the checks, the positives and negatives, and what has changed from the starting roster.</li>
+        <li><b>4. Export.</b> Print the roster, or export it to PDF, Word, Excel or CSV, or as a file to keep or share.</li>
       </ul>
 
-      <h3>Key controls</h3>
+      <h3>Building the roster</h3>
       <table>
-        <tr><td>1. Roster / 2. Rules &amp; Shifts tabs</td><td>Roster is the build view. Rules &amp; Shifts holds the cover hours, roster rules, paid hours, shift types, times and the blueprint. Each roster rule has a <b>default</b> tick box: ticked fixes it at the standard value, unticked lets you enter your own for your workplace agreement.</td></tr>
-        <tr><td>Include the scorecard in print and exports</td><td>Under the Export tab. Off by default, so the PDF, Word and Excel files hold the roster, coverage and changes only. Tick it to add the scorecard.</td></tr>
-        <tr><td>Reload</td><td>Reverts to the starting roster, discarding unsaved edits.</td></tr>
-        <tr><td>Optimise</td><td>Suggests shift changes to reduce gaps and rule breaks. The dropdown beside it sets the search effort: Quick (one search, a couple of seconds), Standard (best of 5 searches, the default) or Thorough (best of 6 longer searches). It keeps the best result and lists the top three underneath, so you can switch to another option with one tap. Undo brings back the previous roster.</td></tr>
-        <tr><td>Undo / Redo</td><td>Steps back (or forward) through everything you do, one step at a time: cell edits, added or removed lines, Lock, line and staff names, notes, dragging, shift times, staff-per-day numbers, priorities and weights, adding or removing shift types, every setting in Rules & Shifts, applying a template, loading, reloading, importing or saving a roster, Clear all and Optimise. Keyboard: Ctrl+Z and Ctrl+Y.</td></tr>
-        <tr><td>Present</td><td>Clean, enlarged view for a projector or meeting-room screen: hides the settings, help text and export panel. Press Esc or use Exit presentation to come back.</td></tr>
-        <tr><td>Cover against the blueprint / Scorecard</td><td>Cover against the blueprint sits directly under the roster, with the Scorecard below it. Both can be opened and closed.</td></tr>
-        <tr><td>Drag handle (&#8942;&#8942;)</td><td>Press and drag a line to move it up or down within its group (full-time, part-time and so on). The order sets the rotation, so moving a line changes which weeks pair up. Undo reverses it. The same handle on each row of the Shift times and blueprint table moves a shift type up or down.</td></tr>
-        <tr><td>Note (small + in a cell)</td><td>Jot a concern against a specific shift. Notes show as a yellow dot, are listed under the roster, saved with the roster, and printed in the PDF.</td></tr>
-        <tr><td>Compare / Back to build</td><td>Switches the roster into two side-by-side panes: the current (starting) roster on the left, locked, and your proposal on the right, still editable. Rows line up so you can read across, and any cell that differs from the current roster is outlined on both sides. Below the panes, a Positives and Negatives summary shows how the proposal measures up against the current roster (shifts covered, isolated single days off, longest runs, weekend days worked, longest stretches off, rest breaks and hours spread), and the scorecard sits underneath at full width. Press the button again to return to the normal view.</td></tr>
-        <tr><td>What changed</td><td>Below the coverage table: a plain-English list of every change against the starting roster, per line (for example &ldquo;Tue: 07:30 &rarr; off&rdquo;), with weekend days gained or lost and paid hours before and after. The same list is printed at the top of the PDF, so the reader sees the proposal before the grid.</td></tr>
-        <tr><td>Tabs</td><td><b>Roster</b> holds the grid, cover and changes. <b>Rules &amp; Shifts</b> holds cover hours, rules and shift times. <b>Scorecard</b> holds the checks, positives and negatives. <b>Export</b> holds the print, Excel, Word and file options. Presentation view keeps the scorecard under the roster.</td></tr>
-        <tr><td>Collapsible panels</td><td>Panels open and close when you tap their heading, so you can keep just what you need on screen.</td></tr>
-        <tr><td>Roster settings panel (Cover hours, Roster rules, Paid hours)</td><td>Sits under Roster controls. Three cards: Cover hours (weekday and weekend start and end), Roster rules (FT and PT shifts per week, minimum rest, max shifts in a row) and Paid hours (unpaid break and the shift length it applies to). A one-line summary shows when the panel is closed. Set minimum rest or max shifts in a row to 0 to switch that rule off. The unpaid break is taken off shifts of the length you set. Cover hours are the hours the roster must always have someone on.</td></tr>
-        <tr><td>Line structure</td><td>Set in Rules &amp; Shifts. <b>Average across the rotation</b> (default): all full-time lines together, and all part-time lines together, add up to the shifts-per-week target times the number of lines, so individual lines can differ. <b>Every line</b>: each line has exactly the target. <b>Off</b>: not checked. No pairing of lines is assumed.</td></tr>
-        <tr><td>&#9678; Spotlight</td><td>Tap the &#9678; button on a line to dim every other line, so the team can focus on one person&rsquo;s pattern. Tap it again, or press Esc, to clear.</td></tr>
-        <tr><td>Minimise changes when optimising</td><td>When ticked, the optimiser weighs disruption more heavily and prefers the smallest set of edits to today&rsquo;s roster over a lower-scoring but more disruptive rewrite. Off by default, since a roster with real gaps often needs bigger changes.</td></tr>
-        <tr><td>Save this roster as / Delete saved</td><td>Stores the current roster under a name in the dropdown; Delete removes a saved one.</td></tr>
-        <tr><td>Starting roster presets</td><td>The Starting roster dropdown lists Preloaded rosters (Sample roster A and 2, Sample current roster, Options A, B, C1 and C2), Blank roster, and any rosters you have saved.</td></tr>
-        <tr><td>Set as my default / Reset default</td><td>Under the blueprint table. Remembers your shift times and blueprint so a new blank roster starts from them next time.</td></tr>
-        <tr><td>+ Full-time / Part-time / Fixed line, Clear all shifts</td><td>Add or remove roster lines. Fixed lines do not rotate.</td></tr>
-        <tr><td>+ Vacant line</td><td>Adds a line for a rostered position with no staff member yet (the staff name starts as &ldquo;Vacant&rdquo;). Any line typed as Vacant, or with a staff name starting &ldquo;Vacant&rdquo;, is treated as unfilled: its shifts do <b>not</b> count as cover, so they stay on the overtime offer list and show as &ldquo;Vacant line&rdquo; there. Optimise looks after unlocked vacant lines for you: shifts real staff can now cover are taken off them, and anything still uncovered is parked on them (a new vacant line is added only if none has room). Lock a vacant line to keep it exactly as you set it. When you edit the roster by hand, a shift you take off or change on a staffed line, or a line you delete, is added to a vacant line automatically; if you then cover a shift that sits on a vacant line it comes off it. Undo reverses both together.</td></tr>
-        <tr><td>+ Casual line / + Overtime line</td><td>Each adds a pool line with no fixed shift count &mdash; assign it directly in the grid to record a casual or overtime pickup against a vacant shift. Optimise never moves or assigns these lines.</td></tr>
-        <tr><td>Overtime offer list</td><td>Below the coverage table: every shift the blueprint still needs, ready to offer out. Copy offer text puts it in a plain-text block (day, shift, staff needed) to paste into Teams, email or SMS. A row drops off once a line covers it.</td></tr>
-        <tr><td>Staff name (column on each line)</td><td>A free-text field to record which person is currently on that line &mdash; separate from the Line number, which is the rotation position. Included in CSV, Excel and Word exports.</td></tr>
-        <tr><td>+ Add shift type / Weight ×</td><td>Adds a new shift time to the blueprint. Weight × scales how much a gap in that shift counts against the score &mdash; raise it above 1 to have the optimiser fill that shift&rsquo;s gaps ahead of other shifts at the same priority.</td></tr>
-        <tr><td>Lock (checkbox on a line)</td><td>Stops the optimiser moving that line.</td></tr>
-        <tr><td>Export roster file / Import file / Import from text</td><td>Saves or loads a complete roster and blueprint as a file, to keep or send to someone else.</td></tr>
-        <tr><td>Copy CSV / Download CSV</td><td>Gets the roster as a spreadsheet-ready table.</td></tr>
-        <tr><td>Export to Excel / Export to Word</td><td>Full-colour master roster, shift coverage and scorecard as an .xls or .doc file &mdash; matches the on-screen shift colours, with a generated-on date and time in the footer. Opens directly in Excel/Word (a one-time format warning is normal &mdash; choose Open anyway).</td></tr>
-        <tr><td>Print / Save as PDF</td><td>Opens your browser&rsquo;s print dialog with the same colour-formatted tables. Choose &ldquo;Save as PDF&rdquo; as the destination instead of a printer. The report opens with the What changed summary, then the scorecard and roster.</td></tr>
+        <tr><td>Starting roster</td><td>The roster you begin from: a blank roster, a preloaded example, or one you saved earlier. Press <b>Reload</b> to discard unsaved edits and return to it.</td></tr>
+        <tr><td>Undo / Redo</td><td>Steps back or forward through your changes one at a time, including cell edits, added or removed lines, Lock, names, notes, shift times, settings, loading, importing and Optimise. Keyboard: Ctrl+Z and Ctrl+Y.</td></tr>
+        <tr><td>Line types</td><td>A line is one position in the roster (one person&rsquo;s pattern). <b>Full-time</b> and <b>Part-time</b> lines rotate week to week in the order listed, top to bottom. <b>Fixed</b> lines (for example a flexible work arrangement) do not rotate. Use <b>+ Full-time line</b>, <b>+ Part-time line</b> and <b>+ Fixed line</b> to add them, and <b>Clear all shifts</b> to empty the grid.</td></tr>
+        <tr><td>Staff name</td><td>Type the name of the person on a line. It is separate from the line number, which is the rotation position. Names are included in CSV, Excel and Word exports.</td></tr>
+        <tr><td>Lock</td><td>Tick Lock on a line to stop Optimise changing it.</td></tr>
+        <tr><td>Drag handle (&#8942;&#8942;)</td><td>Drag a line up or down within its group. The order sets the rotation, so moving a line changes which weeks pair up. On the shift times table the same handle reorders shift types.</td></tr>
+        <tr><td>Cell note (small +)</td><td>Records a concern against one shift. Notes appear as a yellow dot, are listed under the roster, are saved with the roster and are printed in the PDF.</td></tr>
+        <tr><td>Spotlight (&#9678;)</td><td>Dims every other line so you can focus on one person&rsquo;s pattern. Press it again, or press Esc, to clear.</td></tr>
+        <tr><td>Steer empty cells</td><td>When ticked, an empty cell only offers the shifts that are still short that day. See Tips for the detail.</td></tr>
+      </table>
+
+      <h3>Optimising</h3>
+      <table>
+        <tr><td>Optimise</td><td>Suggests shift changes that reduce coverage gaps and rule breaks. It keeps the best result and lists the top three underneath, so you can switch to another option with one tap. Use Undo to return to the previous roster.</td></tr>
+        <tr><td>Search effort</td><td>The dropdown beside Optimise. <b>Quick</b> runs one search (a couple of seconds). <b>Standard</b> (default) keeps the best of 5 searches. <b>Thorough</b> keeps the best of 6 longer searches.</td></tr>
+        <tr><td>Minimise changes</td><td>When ticked, Optimise weighs disruption more heavily and prefers the smallest set of edits to the current roster. Off by default, because a roster with real gaps often needs bigger changes.</td></tr>
+        <tr><td>Compare</td><td>Shows two panes side by side: the current (starting) roster on the left, locked, and your proposal on the right, still editable. Rows line up, and any cell that differs is outlined on both sides. A summary underneath compares the two, and the scorecard sits below at full width. Press <b>Back to build</b> to return to the normal view.</td></tr>
+      </table>
+
+      <h3>Vacancies and overtime</h3>
+      <table>
+        <tr><td>+ Vacant line</td><td>A rostered position with no staff member yet (the staff name starts as &ldquo;Vacant&rdquo;). Its shifts never count as cover, so they stay on the overtime offer list. Optimise parks any shift it cannot cover on an unlocked vacant line, and takes it off again when real staff can cover it. Lock a vacant line to keep it exactly as you set it. Edits you make by hand are moved on or off vacant lines automatically, and Undo reverses both together.</td></tr>
+        <tr><td>+ Casual / + Overtime line</td><td>A pool line with no fixed shift count. Assign it to a vacant shift in the grid to record a casual or overtime pickup. Optimise never moves or assigns these lines.</td></tr>
+        <tr><td>Overtime offer list</td><td>Every shift the blueprint still needs, shown with its day, full start&ndash;finish time and the number of staff required. A row drops off the list once a line covers it.</td></tr>
+        <tr><td>Copy offer text</td><td>Copies the offer list as plain text to paste into Teams, email or SMS.</td></tr>
+      </table>
+
+      <h3>Reviewing the result</h3>
+      <table>
+        <tr><td>Cover against the blueprint</td><td>Compares the staff on each shift, each day, with the number the blueprint needs. The costliest unfilled gap is marked with a star (&#9733;); fix it first if you are editing by hand.</td></tr>
+        <tr><td>What changed</td><td>A plain-English list of every change from the starting roster, per line (for example &ldquo;Tue: 07:30 &rarr; off&rdquo;), with weekend days gained or lost and paid hours before and after. It is also printed at the top of the PDF.</td></tr>
+        <tr><td>Scorecard</td><td>Checks the roster against your rules. Where a check shows Review or Fails, its detail names the lines and days behind it.</td></tr>
+        <tr><td>Present</td><td>A clean, enlarged view for a projector or meeting-room screen. It hides settings, help text and the export panel. Press Esc or choose Exit presentation to return.</td></tr>
+        <tr><td>Collapsible panels</td><td>Click a panel heading to open or close it.</td></tr>
+      </table>
+
+      <h3>Rules &amp; Shifts</h3>
+      <table>
+        <tr><td>Cover hours</td><td>The hours someone must always be on. This drives the cover check in the scorecard. Nothing is checked outside these hours.</td></tr>
+        <tr><td>Roster rules</td><td>Shifts per week (full-time and part-time), minimum rest between shifts, and maximum shifts in a row. Tick <b>default</b> to use the standard value, or untick it to enter your own. Set minimum rest or maximum in a row to 0 to switch that rule off.</td></tr>
+        <tr><td>Line structure check</td><td><b>Average across the rotation</b> (default): all full-time lines together, and all part-time lines together, add up to the target shifts per week times the number of lines, so individual lines can differ. <b>Every line hits the target</b>: each line has exactly the target. <b>Off</b>: not checked.</td></tr>
+        <tr><td>Paid hours</td><td>Paid hours are finish minus start, less the unpaid break. The break comes off shifts of the length you set or longer.</td></tr>
+        <tr><td>Shift types and blueprint</td><td>Each shift&rsquo;s start and finish time, and the number of lines (one line is one person) needed each day. Changing a time moves every rostered shift of that type. <b>Apply template</b> loads a ready-made set. <b>+ Add shift type</b> adds a new shift time.</td></tr>
+        <tr><td>Priority and Weight &times;</td><td>These control how much a gap in that shift counts against the score. Raise Weight above 1 to have Optimise fill that shift&rsquo;s gaps ahead of other shifts at the same priority.</td></tr>
+        <tr><td>Set as my default</td><td>Remembers your shift times and blueprint so a new blank roster starts from them. <b>Reset default</b> clears it.</td></tr>
+      </table>
+
+      <h3>Saving, exporting and importing</h3>
+      <table>
+        <tr><td>Save this roster as</td><td>Stores the roster under a name in the Starting roster dropdown, in this browser only. <b>Delete saved</b> removes it.</td></tr>
+        <tr><td>Print / Save as PDF</td><td>Opens your browser&rsquo;s print dialog with the colour-coded tables. Choose &ldquo;Save as PDF&rdquo; as the destination. The report opens with What changed, then the roster and coverage.</td></tr>
+        <tr><td>Export to Excel / Word</td><td>A colour-coded file with the master roster, shift coverage and vacant shifts, matching the on-screen shift colours. Excel and Word may show a one-time &ldquo;format does not match&rdquo; warning; choose Open anyway.</td></tr>
+        <tr><td>Include the scorecard</td><td>Off by default, so print and exports hold the roster, coverage and changes only. Tick it to add the scorecard.</td></tr>
+        <tr><td>Copy / Download CSV</td><td>Gives you the roster as a spreadsheet-ready table.</td></tr>
+        <tr><td>Export / Import roster file</td><td>Saves or loads a complete roster, shift times and blueprint as a file, to keep as a backup or send to someone else. <b>Import from text</b> loads roster text you paste in.</td></tr>
       </table>
 
       <h3>What Optimise checks</h3>
       <ul>
-        <li>Fills blueprint gaps first, weighted so high-priority shifts are covered before low-priority ones.</li>
-        <li>Caps runs at your maximum shifts in a row, and limits how many weekends in a row part-time and full-time lines can work.</li>
-        <li>Requires at least your minimum rest (hours) between the end of one shift and the start of the next.</li>
-        <li>Limits part-time Sunday work, and checks that every half-hour of your set &ldquo;cover hours&rdquo; has someone on.</li>
-        <li>Favours grouping days off together: a lone rest day boxed in by working days on both sides (across the whole rotation, wrapping week to week) counts against a roster, so runs of 2+ days off are preferred where the blueprint allows it.</li>
-        <li>Weighs each shift type&rsquo;s gaps by its Weight × setting on top of its priority, so you can push the optimiser to close one shift&rsquo;s shortfalls before another&rsquo;s.</li>
-        <li>Favours an even spread of paid hours across lines of the same type this printed week &mdash; a line running noticeably heavier or lighter than the others counts against the roster.</li>
-        <li>Tries direct swaps between two lines (one gives up a shift it doesn&rsquo;t need that day, another picks it up on a day it does) as well as moving a single line&rsquo;s own shifts &mdash; swaps usually clear a vacancy faster than a chain of one-line moves.</li>
-        <li>Makes the smallest set of changes that still improves the roster &mdash; it won&rsquo;t reshuffle lines that don&rsquo;t need to move. Tick &ldquo;Minimise changes when optimising&rdquo; to weigh this much more heavily, for a smaller, gentler suggestion.</li>
-        <li>Keeps shifts matching inside a run of working days, with the latest shift last: 07:30, 07:30, 08:30, 12:00 is ideal. Starting earlier the day after a later shift counts against a roster, and so does hopping between different shifts.</li>
-        <li>Keeps the line structure you chose in Rules &amp; Shifts (rotation average, every line, or off).</li>
-        <li>Never moves Locked, Casual or Overtime lines.</li>
-        <li>Fills gaps from the vacant lines where it can: when real staff can pick up a shift that was sitting on a vacant line, it moves it across. Whatever it can&rsquo;t cover with your rostered lines is parked on a vacant line (existing ones first, a new one only if needed), so it shows on the overtime offer list ready to offer out. Vacant shifts never count as cover.</li>
+        <li><b>Coverage first.</b> It fills blueprint gaps, weighted so high-priority shifts are covered before low-priority ones, and uses each shift&rsquo;s Weight &times; setting on top of that.</li>
+        <li><b>Rest and runs.</b> It requires your minimum rest between shifts, caps shifts in a row, and limits how many weekends in a row part-time and full-time lines can work.</li>
+        <li><b>Cover hours.</b> It checks that every half-hour of your cover hours has someone on, and limits part-time Sunday work.</li>
+        <li><b>Days off together.</b> A lone rest day between working days (across the whole rotation, wrapping week to week) counts against a roster, so runs of two or more days off are preferred.</li>
+        <li><b>Consistent shifts.</b> It keeps shifts matching within a run of working days, with the latest shift last (07:30, 07:30, 08:30, 12:00 is ideal). Starting earlier the day after a later shift counts against a roster, and so does hopping between different shifts.</li>
+        <li><b>Even hours.</b> It favours an even spread of paid hours across lines of the same type in the printed week.</li>
+        <li><b>Line structure.</b> It keeps the line structure you chose in Rules &amp; Shifts.</li>
+        <li><b>Smallest change.</b> It tries direct swaps between two lines as well as moving one line&rsquo;s own shifts, and makes the smallest set of changes that still improves the roster. Tick Minimise changes for an even gentler suggestion.</li>
+        <li><b>Protected lines.</b> It never moves Locked, Casual or Overtime lines.</li>
+        <li><b>Vacant shifts.</b> It moves shifts from vacant lines to real staff where it can, and parks anything it cannot cover on a vacant line so it shows on the overtime offer list. Vacant shifts never count as cover.</li>
       </ul>
 
       <h3>Tips</h3>
       <ul>
-        <li>The roster grid hard-blocks your minimum rest rule: after you assign a shift, the next day&rsquo;s dropdown for that line only shows shifts that leave enough of a break (e.g. with 10.5 hours of rest, after a 12:00&ndash;22:00 shift only 08:30 or later is offered the next day). Hover a restricted cell to see why options are missing.</li>
-        <li>Empty cells are also steered toward open coverage gaps (amber highlight): while a shift that day is still short of its blueprint number, blank cells only offer the shift(s) still short, so a full shift is not offered again. Fill the gaps (here or on another line) and the full shift menu returns. Casual and Overtime lines are steered the same way, so they only offer shifts that are still vacant. Vacant lines are never restricted. Untick &ldquo;Steer empty cells toward coverage gaps&rdquo; above the roster to turn this off and get the full shift menu everywhere.</li>
-        <li>When a scorecard check shows Review or Fails, its detail names the specific lines and days behind it (for example which line breaks the rest rule, or which day is a lone day off), so you know where to look in the grid.</li>
-        <li>Set the &ldquo;Cover hours&rdquo; (in the Roster settings panel) to the hours you need covered &mdash; this drives the cover check in the scorecard.</li>
-        <li>The Shift coverage table marks the single costliest unfilled gap with a star (&#9733;) &mdash; the one shortfall doing the most damage to the score, worth fixing first if you&rsquo;re editing by hand.</li>
-        <li>To fill a vacant shift with a casual or overtime pickup: add a Casual or Overtime line, check the overtime offer list for what&rsquo;s still open, then assign that shift to the new line directly in the grid and type the person&rsquo;s name into its Staff name column.</li>
-        <li>For a fully custom roster: start from &ldquo;Blank roster&rdquo;, set your shift times and blueprint, then add lines.</li>
-        <li>Nothing is saved automatically except what you Save or Set as default (stored in this browser only) &mdash; use Export roster file for a backup you can keep or move to another computer.</li>
+        <li><b>Rest rule in the grid.</b> After you assign a shift, the next day&rsquo;s dropdown for that line only shows shifts that leave enough rest. For example, with 10.5 hours of rest, after a 12:00&ndash;22:00 shift only 08:30 or later is offered the next day. Hover a restricted cell to see why options are missing.</li>
+        <li><b>Steering to gaps.</b> While a shift that day is still short of its blueprint number, empty cells (shown with an amber highlight) only offer the shift or shifts still short, so a full shift is not offered again. Fill the gaps, here or on another line, and the full menu returns. Casual and Overtime lines are steered the same way. Vacant lines are never restricted. Untick &ldquo;Steer empty cells toward coverage gaps&rdquo; above the roster to see the full menu everywhere.</li>
+        <li><b>Filling a vacancy with a pickup.</b> Add a Casual or Overtime line, check the overtime offer list for what is still open, assign that shift to the new line in the grid, and type the person&rsquo;s name into the Staff name column.</li>
+        <li><b>Custom rosters.</b> Start from &ldquo;Blank roster&rdquo;, set your shift times and blueprint, then add lines.</li>
+        <li><b>Shift colours.</b> Each shift type has its own colour in the grid, coverage table, print and exports. The legend above the grid shows which is which.</li>
+        <li><b>Saving.</b> Nothing is saved automatically except what you Save or Set as default, and that is stored in this browser only. Use Export roster file for a backup you can keep or move to another computer.</li>
       </ul>
     </div>
   </div>
 
   <section class="steps pres-hide rostab" aria-label="How to use: four steps, one per tab">
-    <div class="step"><b>1. Roster</b>Start here. Choose a blank or saved roster, then edit shifts, lock lines and press Optimise. Save it under a name when you are happy.</div>
-    <div class="step"><b>2. Rules &amp; Shifts</b>Set cover hours, roster rules, shift times and staff per day. Do this before you Optimise, so the optimiser works to your rules.</div>
-    <div class="step"><b>3. Scorecard</b>Check how the roster measures up against your rules, and see what the optimiser changed.</div>
-    <div class="step"><b>4. Export</b>Print it, or export to PDF, Word, Excel (CSV) or a file to keep or share.</div>
+    <div class="step"><b>1. Roster</b>Start here. Choose a starting roster, edit shifts, lock lines you want to protect, and press Optimise. Save it under a name when you are happy.</div>
+    <div class="step"><b>2. Rules &amp; Shifts</b>Set cover hours, roster rules, shift times and staff needed per day. Do this before you press Optimise so the suggestions follow your rules.</div>
+    <div class="step"><b>3. Scorecard</b>See how the roster measures up against your rules, and what has changed from the starting roster.</div>
+    <div class="step"><b>4. Export</b>Print the roster, or export it to PDF, Word, Excel or CSV, or as a file to keep or share.</div>
   </section>
 
   <details class="panel fold rostab" id="ctlBox" open>
@@ -374,13 +398,13 @@ td.worstgap{box-shadow:inset 0 0 0 2px var(--flag)!important;position:relative}
     <div class="setgrid">
       <div class="setcard">
         <h4>Cover hours</h4>
-        <p class="note">Someone must be on during these hours. Nothing is checked outside them.</p>
+        <p class="note">The hours someone must always be on. Nothing is checked outside these hours.</p>
         <div class="setrow"><label class="note" for="cwS">Weekdays</label><span class="pair"><input type="time" id="cwS" class="tm" step="1800"><span class="note">to</span><input type="time" id="cwE" class="tm" step="1800" aria-label="Weekday service end"></span></div>
         <div class="setrow"><label class="note" for="ceS">Weekends</label><span class="pair"><input type="time" id="ceS" class="tm" step="1800"><span class="note">to</span><input type="time" id="ceE" class="tm" step="1800" aria-label="Weekend service end"></span></div>
       </div>
       <div class="setcard">
         <h4>Roster rules</h4>
-        <p class="note">Tick <b>default</b> to fix a rule at its standard value (4 and 2 shifts a week, 10.5 hours rest, 4 in a row). Untick it to enter your own number for your workplace agreement. Set rest or max in a row to 0 to switch that rule off.</p>
+        <p class="note">Tick <b>default</b> to use the standard value (4 full-time and 2 part-time shifts a week, 10.5 hours rest, 4 shifts in a row). Untick it to enter your own number to match your workplace agreement. Set rest or max in a row to 0 to switch that rule off.</p>
         <div class="setrow"><label class="note" for="ftN">Shifts per week, full-time</label><span class="pair"><label class="lockrule"><input type="checkbox" data-rl="ft" aria-label="Use default for Shifts per week, full-time"> default</label><input type="number" id="ftN" class="num" min="1" max="7"></span></div>
         <div class="setrow"><label class="note" for="ptN">Shifts per week, part-time</label><span class="pair"><label class="lockrule"><input type="checkbox" data-rl="pt" aria-label="Use default for Shifts per week, part-time"> default</label><input type="number" id="ptN" class="num" min="1" max="7"></span></div>
         <div class="setrow"><label class="note" for="restH">Minimum rest between shifts (hours)</label><span class="pair"><label class="lockrule"><input type="checkbox" data-rl="rest" aria-label="Use default for Minimum rest between shifts (hours)"> default</label><input type="number" id="restH" class="num" min="0" max="24" step="0.5"></span></div>
@@ -389,7 +413,7 @@ td.worstgap{box-shadow:inset 0 0 0 2px var(--flag)!important;position:relative}
       </div>
       <div class="setcard">
         <h4>Staff lines</h4>
-        <p class="note">Lines are added and removed on the Roster tab, under the roster grid. A new roster starts blank and you add your own lines.</p>
+        <p class="note">A summary of the lines in your roster. Add and remove lines on the Roster tab, under the grid.</p>
         <div class="setrow"><span class="note">Full-time lines</span><b id="stFT">0</b></div>
         <div class="setrow"><span class="note">Part-time lines</span><b id="stPT">0</b></div>
         <div class="setrow"><span class="note">Fixed, vacant, casual and overtime lines</span><b id="stOther">0</b></div>
@@ -406,7 +430,7 @@ td.worstgap{box-shadow:inset 0 0 0 2px var(--flag)!important;position:relative}
   <details class="panel fold pres-hide settab" id="shiftBox" open>
       <summary><span class="sch">Shift types, times and blueprint</span></summary>
     <div style="display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap">
-      <div><p class="note" style="margin:2px 0 0">Number of lines (staff) needed each day for each shift &mdash; one line is one person. Starter times are loaded by default; change a start or finish time and every rostered shift of that type moves with it. Set as my default keeps your times for future rosters.</p></div>
+      <div><p class="note" style="margin:2px 0 0">How many lines (one line is one person) each shift needs on each day. Starter times are loaded by default. Change a start or finish time and every rostered shift of that type moves with it. Use Set as my default to keep your times for future rosters.</p></div>
       <div class="row"><select id="tpl" class="big" aria-label="Blueprint template"></select><button class="btn" id="applyTpl">Apply template</button></div>
     </div>
     <div class="scroll"><table id="bpt"></table></div>
@@ -443,7 +467,7 @@ td.worstgap{box-shadow:inset 0 0 0 2px var(--flag)!important;position:relative}
         <button class="btn" id="addOT" title="A pool line with no fixed shifts — assign it to a vacant shift to record an overtime pickup. Never touched by Optimise.">+ Overtime line</button>
         <button class="btn" id="clearAll">Clear all shifts</button>
       </div>
-      <p class="note">Full-time and part-time lines rotate weekly in the order listed (top to bottom). Fixed lines, such as a flexible work arrangement, do not rotate. Casual and Overtime lines are pools with no fixed shift count — Optimise never moves or assigns them; use them to record who picks up a shift from the overtime offer list below. Tick the lock box to stop the optimiser moving a line. Rename a line by editing its label, and type the rostered person's name into the Staff name column.</p>
+      <p class="note">Full-time and part-time lines rotate weekly in the order listed (top to bottom). Fixed lines, such as a flexible work arrangement, do not rotate. Casual and Overtime lines are pools with no fixed shifts: Optimise never moves them, so use them to record who picks up a shift from the overtime offer list below. Tick Lock to stop Optimise changing a line. Edit a line&rsquo;s label to rename it, and type the person&rsquo;s name into the Staff name column.</p>
     </section>
 
     <div id="optlog"></div>
@@ -457,18 +481,18 @@ td.worstgap{box-shadow:inset 0 0 0 2px var(--flag)!important;position:relative}
     <section class="panel">
       <details id="otBox">
         <summary>Overtime offer list &mdash; <span id="otCount">0</span> vacant shift(s) to offer</summary>
-        <p class="note">Every shift the blueprint still needs, unfilled by the lines above &mdash; ready to offer out as overtime or to a casual. Add a Casual or Overtime line and assign it directly in the grid once someone accepts a shift; it will drop off this list.</p>
+        <p class="note">Every shift the blueprint still needs that the lines above do not cover, ready to offer as overtime or to a casual. Once someone accepts a shift, add a Casual or Overtime line and assign it in the grid; the shift then drops off this list.</p>
         <div class="scroll"><table id="ot"></table></div>
         <div class="actions" style="margin-top:6px"><button class="btn" id="copyOT">Copy offer text</button></div>
       </details>
       <details id="notesBox" open>
         <summary>Notes on cells &mdash; <span id="noteCount">0</span></summary>
-        <p class="note">Concerns jotted against a specific shift in the grid. Tap a note's name to edit it. Notes are saved with the roster and printed in the PDF.</p>
+        <p class="note">Concerns recorded against specific shifts in the grid. Click a note to edit it. Notes are saved with the roster and printed in the PDF.</p>
         <ul id="noteList" class="log" style="max-height:none"></ul>
       </details>
       <details id="chgBox" open>
         <summary>What changed from the starting roster &mdash; <span id="chgCount">0</span> shift(s)</summary>
-        <p class="note">A plain-English summary of every change against the starting roster. It is also printed at the top of the PDF, so the reader sees the proposal before the grid.</p>
+        <p class="note">A plain-English list of every change from the starting roster. It is also printed at the top of the PDF, so the reader sees the proposal before the grid.</p>
         <ul id="chgList" class="log" style="max-height:none"></ul>
       </details>
     </section>
@@ -491,18 +515,18 @@ td.worstgap{box-shadow:inset 0 0 0 2px var(--flag)!important;position:relative}
     <details class="panel fold pres-hide" id="expPanel" open>
       <summary><span class="sch">Save and export</span></summary>
       <div class="actions"><button class="btn" id="copy">Copy CSV</button><button class="btn" id="dlcsv">Download CSV</button></div>
-      <label class="note" for="csv">CSV (select all and copy if the buttons do not work)</label>
+      <label class="note" for="csv">CSV text (select all and copy it if the buttons do not work)</label>
       <textarea id="csv" readonly></textarea>
-      <label class="toggle" for="incScore" style="margin-top:6px"><input type="checkbox" id="incScore">Include the scorecard in print and exports (off by default so the roster prints clean)</label>
+      <label class="toggle" for="incScore" style="margin-top:6px"><input type="checkbox" id="incScore">Include the scorecard in print and exports (off by default, so the roster prints cleanly)</label>
       <div class="actions" style="margin-top:4px">
         <button class="btn" id="expXlsx" title="A colour-coded Excel workbook (.xlsx): master roster, shift coverage and vacant shifts. Tick the scorecard option to add the scorecard sheet.">Export to Excel</button>
         <button class="btn" id="expDoc" title="A colour-coded Word document with the same tables">Export to Word</button>
         <button class="btn primary" id="printPdf" title="Opens the print dialog — choose &quot;Save as PDF&quot; as the destination">Print / Save as PDF</button>
       </div>
-      <p class="note" style="margin-top:2px">Excel and Word files may show a one-time "format doesn't match extension" warning &mdash; choose Yes/Open anyway; it's expected for a colour-formatted export like this.</p>
+      <p class="note" style="margin-top:2px">Excel and Word may show a one-time &ldquo;format does not match the file extension&rdquo; warning. This is expected for a colour-formatted export: choose Yes or Open anyway.</p>
       <details>
         <summary>Export or import a roster</summary>
-        <p class="note">Export saves the roster, shift times and blueprint as a file you can keep, email or load on another computer.</p>
+        <p class="note">Export saves the roster, shift times and blueprint as a file you can keep, email, or load on another computer.</p>
         <div class="actions"><button class="btn" id="exp">Export roster file</button><label class="btn" for="impFile" style="font-weight:600">Import file</label><input type="file" id="impFile" accept=".json,application/json" hidden><button class="btn" id="impText">Import from text</button></div>
         <textarea id="json" aria-label="Roster JSON" placeholder="Exported roster text appears here. Paste roster text here and press Import from text."></textarea>
       </details>
@@ -517,7 +541,7 @@ td.worstgap{box-shadow:inset 0 0 0 2px var(--flag)!important;position:relative}
   <div class="actions"><button class="btn primary" id="noteSave">Save note</button><button class="btn" id="noteDel">Delete</button><button class="btn" id="noteCancel">Close</button></div>
 </div>
 <div id="printArea" aria-hidden="true"></div>
-<p class="note pres-hide" style="text-align:center;margin:24px 0 8px"><a href="privacy.html">Privacy</a> &middot; ShiftSketch v3.25 works offline and keeps everything on your device only.</p>
+<p class="note pres-hide" style="text-align:center;margin:24px 0 8px"><a href="privacy.html">Privacy</a> &middot; ShiftSketch v3.26 works offline and keeps everything on your device only.</p>
 
 <script>
 const PRESETS={"Sample roster A": {"FT": [["1", {"Mon": "12:00", "Tue": "12:00", "Sat": "08:30", "Sun": "08:30"}], ["8", {"Mon": "07:30", "Tue": "07:30", "Sat": "08:30", "Sun": "08:30"}], ["15", {"Wed": "07:30", "Thu": "07:30", "Fri": "07:30", "Sat": "07:30"}], ["22", {"Tue": "07:30", "Wed": "12:00", "Thu": "12:00", "Fri": "12:00"}], ["29", {"Mon": "08:30", "Tue": "08:30", "Fri": "08:30", "Sat": "08:30", "Sun": "07:30"}], ["36", {"Thu": "08:30", "Fri": "08:30", "Sat": "08:30"}], ["43", {"Tue": "08:30", "Wed": "08:30", "Thu": "07:30", "Fri": "08:30"}], ["50", {"Tue": "08:30", "Wed": "12:00", "Thu": "12:00", "Fri": "12:00"}], ["57", {"Mon": "07:30", "Tue": "12:00", "Wed": "08:30", "Thu": "08:30"}]], "PT": [["1", {"Wed": "08:30", "Sun": "07:30"}], ["2", {"Mon": "12:00", "Fri": "06:30"}], ["3", {"Thu": "08:30", "Fri": "07:30"}], ["4", {"Wed": "08:30", "Thu": "06:30"}], ["5", {"Mon": "08:30", "Wed": "07:30"}], ["6", {"Thu": "06:30", "Fri": "06:30"}], ["7", {"Fri": "08:30", "Sat": "07:30"}], ["8", {"Mon": "08:30", "Tue": "06:30"}]], "FWA": {}, "CAS": [["1", {"Mon": "06:30", "Tue": "06:30", "Wed": "06:30"}, ""]], "OT": [["1", {"Mon": "06:30", "Tue": "06:30"}, "Vacant Offer"], ["2", {"Mon": "06:30", "Tue": "06:30", "Wed": "06:30"}, "Vacant offer"]], "late": true}, "Sample roster B": {"FT": [["1", {"Mon": "12:00", "Tue": "12:00", "Sat": "08:30", "Sun": "08:30"}], ["8", {"Mon": "07:30", "Tue": "07:30", "Sat": "08:30", "Sun": "08:30"}], ["15", {"Wed": "07:30", "Thu": "07:30", "Fri": "08:30", "Sat": "07:30"}], ["22", {"Tue": "07:30", "Wed": "12:00", "Thu": "12:00", "Fri": "12:00"}], ["29", {"Mon": "08:30", "Tue": "08:30", "Fri": "08:30", "Sat": "08:30", "Sun": "07:30"}], ["36", {"Thu": "08:30", "Fri": "07:30", "Sat": "08:30"}], ["43", {"Tue": "08:30", "Wed": "08:30", "Thu": "07:30", "Fri": "08:30"}], ["50", {"Tue": "08:30", "Wed": "12:00", "Thu": "12:00", "Fri": "12:00"}], ["57", {"Mon": "07:30", "Tue": "12:00", "Wed": "08:30", "Thu": "08:30"}]], "PT": [["1", {"Wed": "08:30", "Sun": "07:30"}], ["2", {"Mon": "12:00", "Fri": "06:30"}], ["3", {"Thu": "08:30", "Fri": "07:30"}], ["4", {"Wed": "08:30", "Thu": "06:30"}], ["5", {"Mon": "08:30", "Wed": "07:30"}], ["6", {"Thu": "06:30", "Fri": "06:30"}], ["7", {"Fri": "08:30", "Sat": "07:30"}], ["8", {"Mon": "08:30", "Tue": "06:30"}]], "FWA": {}, "CAS": [["1", {"Mon": "06:30", "Tue": "06:30", "Wed": "06:30"}, ""]], "OT": [["1", {"Mon": "06:30", "Tue": "06:30"}, "Vacant Offer"], ["2", {"Mon": "06:30", "Tue": "06:30", "Wed": "06:30"}, "Vacant offer"]], "late": true}, "Sample current roster": {"FT": [["1", {"Mon": "08:30", "Tue": "08:30", "Wed": "08:30", "Thu": "08:30"}], ["8", {"Tue": "07:30", "Wed": "08:30", "Sat": "08:30", "Sun": "08:30"}], ["15", {"Mon": "08:30", "Tue": "08:30", "Wed": "08:30", "Thu": "08:30"}], ["22", {"Tue": "08:30", "Wed": "08:30", "Thu": "08:30", "Fri": "08:30"}], ["29", {"Tue": "06:30", "Wed": "06:30", "Sat": "07:30", "Sun": "07:30"}], ["36", {"Mon": "08:30", "Tue": "08:30", "Sat": "07:30", "Sun": "07:30"}], ["43", {"Tue": "06:30", "Wed": "06:30", "Thu": "06:30", "Fri": "06:30"}], ["50", {"Tue": "07:30", "Wed": "07:30", "Thu": "07:30", "Fri": "07:30"}], ["57", {"Tue": "08:30", "Wed": "08:30", "Thu": "08:30", "Fri": "08:30"}]], "PT": [["1", {"Sat": "08:30", "Sun": "08:30"}], ["8", {"Mon": "07:30", "Fri": "08:30"}], ["15", {"Mon": "07:30", "Fri": "08:30"}], ["22", {"Wed": "07:30", "Fri": "06:30"}], ["29", {"Mon": "08:30", "Fri": "08:30"}], ["36", {"Mon": "06:30", "Fri": "08:30"}], ["43", {"Mon": "08:30", "Fri": "07:30"}], ["50", {"Mon": "06:30", "Wed": "08:30"}]], "FWA": {}, "late": false}, "Option A": {"FT": [["1", {"Mon": "08:30", "Tue": "08:30", "Wed": "08:30", "Thu": "08:30"}], ["8", {"Tue": "07:30", "Wed": "08:30", "Sat": "08:30", "Sun": "08:30"}], ["15", {"Mon": "08:30", "Tue": "08:30", "Wed": "08:30", "Thu": "08:30"}], ["22", {"Tue": "08:30", "Wed": "08:30", "Thu": "08:30", "Fri": "08:30"}], ["29", {"Tue": "06:30", "Wed": "06:30", "Sat": "07:30", "Sun": "07:30"}], ["36", {"Mon": "08:30", "Tue": "08:30", "Sat": "07:30", "Sun": "07:30"}], ["43", {"Tue": "06:30", "Wed": "06:30", "Thu": "06:30", "Fri": "06:30"}], ["50", {"Tue": "07:30", "Wed": "07:30", "Thu": "07:30", "Fri": "07:30"}], ["57", {"Tue": "08:30", "Wed": "08:30", "Thu": "08:30", "Fri": "08:30"}]], "PT": [["1", {"Fri": "08:30", "Sat": "08:30"}], ["2", {"Mon": "06:30", "Thu": "06:30"}], ["3", {"Wed": "07:30", "Sat": "08:30"}], ["4", {"Mon": "07:30", "Thu": "07:30"}], ["5", {"Wed": "08:30", "Sat": "08:30"}], ["6", {"Mon": "06:30", "Fri": "06:30"}], ["7", {"Fri": "08:30", "Sun": "08:30"}], ["8", {"Mon": "07:30", "Fri": "07:30"}]], "FWA": {}, "late": false}, "Option B": {"FT": [["1", {"Mon": "08:30", "Tue": "08:30", "Wed": "08:30", "Fri": "08:30"}], ["8", {"Tue": "07:30", "Wed": "08:30", "Sat": "08:30", "Sun": "08:30"}], ["15", {"Mon": "08:30", "Tue": "08:30", "Thu": "08:30", "Sun": "08:30"}], ["22", {"Tue": "08:30", "Wed": "08:30", "Thu": "08:30", "Fri": "08:30"}], ["29", {"Mon": "06:30", "Wed": "06:30", "Sat": "07:30", "Sun": "07:30"}], ["36", {"Mon": "08:30", "Tue": "08:30", "Sat": "07:30", "Sun": "07:30"}], ["43", {"Tue": "06:30", "Wed": "06:30", "Thu": "06:30", "Fri": "06:30"}], ["50", {"Mon": "07:30", "Wed": "07:30", "Thu": "07:30", "Fri": "07:30"}], ["57", {"Wed": "08:30", "Thu": "08:30", "Fri": "08:30", "Sat": "08:30"}]], "PT": [["1", {"Wed": "07:30", "Sat": "08:30"}], ["2", {"Tue": "06:30", "Thu": "06:30"}], ["3", {"Mon": "06:30", "Fri": "06:30"}], ["4", {"Fri": "08:30", "Sat": "08:30"}], ["5", {"Tue": "07:30", "Thu": "07:30"}], ["6", {"Mon": "07:30", "Fri": "07:30"}], ["7", {"Fri": "08:30", "Wed": "08:30"}], ["8", {"Tue": "08:30", "Fri": "08:30"}]], "FWA": {}, "late": false}, "Option C1 (late shift)": {"FT": [["1", {"Mon": "12:00", "Tue": "08:30", "Wed": "08:30", "Fri": "08:30"}], ["8", {"Tue": "07:30", "Wed": "08:30", "Sat": "08:30", "Sun": "08:30"}], ["15", {"Mon": "12:00", "Tue": "12:00", "Thu": "08:30", "Sun": "08:30"}], ["22", {"Tue": "12:00", "Wed": "12:00", "Thu": "12:00", "Fri": "12:00"}], ["29", {"Mon": "06:30", "Wed": "06:30", "Sat": "07:30", "Sun": "07:30"}], ["36", {"Mon": "08:30", "Tue": "08:30", "Sat": "07:30", "Sun": "07:30"}], ["43", {"Tue": "06:30", "Wed": "06:30", "Thu": "06:30", "Fri": "06:30"}], ["50", {"Mon": "07:30", "Wed": "07:30", "Thu": "07:30", "Fri": "07:30"}], ["57", {"Wed": "12:00", "Thu": "12:00", "Fri": "12:00", "Sat": "08:30"}]], "PT": [["1", {"Wed": "07:30", "Sat": "08:30"}], ["2", {"Tue": "06:30", "Thu": "06:30"}], ["3", {"Mon": "06:30", "Fri": "06:30"}], ["4", {"Fri": "08:30", "Sat": "08:30"}], ["5", {"Tue": "07:30", "Thu": "07:30"}], ["6", {"Mon": "07:30", "Fri": "07:30"}], ["7", {"Fri": "08:30", "Wed": "08:30"}], ["8", {"Tue": "08:30", "Fri": "08:30"}]], "FWA": {}, "late": true}, "Option C2 (late shift)": {"FT": [["1", {"Mon": "12:00", "Tue": "08:30", "Wed": "08:30", "Fri": "08:30"}], ["8", {"Tue": "07:30", "Wed": "08:30", "Sat": "08:30", "Sun": "08:30"}], ["15", {"Mon": "12:00", "Tue": "12:00", "Thu": "08:30", "Sun": "08:30"}], ["22", {"Tue": "12:00", "Wed": "12:00", "Thu": "12:00", "Fri": "08:30"}], ["29", {"Mon": "06:30", "Wed": "06:30", "Sat": "07:30", "Sun": "07:30"}], ["36", {"Mon": "08:30", "Tue": "08:30", "Sat": "07:30", "Sun": "07:30"}], ["43", {"Tue": "06:30", "Wed": "06:30", "Thu": "06:30", "Fri": "06:30"}], ["50", {"Mon": "07:30", "Wed": "07:30", "Thu": "07:30", "Fri": "07:30"}], ["57", {"Wed": "12:00", "Thu": "12:00", "Fri": "08:30", "Sat": "08:30"}]], "PT": [["1", {"Wed": "07:30", "Sat": "08:30"}], ["2", {"Tue": "06:30", "Thu": "06:30"}], ["3", {"Mon": "06:30", "Fri": "06:30"}], ["4", {"Fri": "12:00", "Sat": "08:30"}], ["5", {"Tue": "07:30", "Thu": "07:30"}], ["6", {"Mon": "07:30", "Fri": "07:30"}], ["7", {"Fri": "08:30", "Wed": "08:30"}], ["8", {"Tue": "08:30", "Fri": "12:00"}]], "FWA": {}, "late": true}};
@@ -954,10 +978,10 @@ function render(){
   // Vacant lines are never steered (they exist to park unfilled shifts).
   const gapNeed={};
   if(steerOn) for(const gp of m.gaps){ (gapNeed[gp.d]=gapNeed[gp.d]||new Set()).add(gp.id); }
-  let h=GRID_COLS+'<thead><tr><th>Type</th><th>Line</th><th>Staff name</th>'+DAYS.map(d=>'<th>'+d+'</th>').join('')+'<th>Shifts</th><th>Paid hrs</th><th>Lock</th><th></th></tr></thead><tbody>';
+  let h=GRID_COLS+'<thead><tr><th data-tip="The kind of line: Full time and Part time rotate week to week, Fixed lines do not rotate, Vacant lines are unfilled positions, and Casual and Overtime lines are pools for pickups.">Type</th><th data-tip="The line number: its position in the rotation.">Line</th><th data-tip="The person currently on this line. Included in exports.">Staff name</th>'+DAYS.map(d=>'<th>'+d+'</th>').join('')+'<th>Shifts</th><th data-tip="Paid hours for the week: finish minus start, less the unpaid break.">Paid hrs</th><th data-tip="Tick to stop Optimise changing this line.">Lock</th><th></th></tr></thead><tbody>';
   for(const type of ['FT','PT','FWA','VAC','CAS','OT']){
     const ls=state.lines.filter(l=>l.type===type); if(!ls.length) continue;
-    h+='<tr class="sec"><td colspan="14">'+({FT:'Full time · '+ls.length+'-week rotation · '+lineHdr(cfg.ft),PT:'Part time · '+ls.length+'-week rotation · '+lineHdr(cfg.pt),FWA:'Fixed lines (do not rotate)',VAC:'Vacant lines (rostered positions with no staff member yet — listed in the offer list, never moved by Optimise)',CAS:'Casual pool (no fixed shifts — never moved by Optimise)',OT:'Overtime pool (no fixed shifts — never moved by Optimise)'}[type])+'</td></tr>';
+    h+='<tr class="sec"><td colspan="14">'+({FT:'Full time · '+ls.length+'-week rotation · '+lineHdr(cfg.ft),PT:'Part time · '+ls.length+'-week rotation · '+lineHdr(cfg.pt),FWA:'Fixed lines (do not rotate)',VAC:'Vacant lines (positions with no staff member yet — their shifts never count as cover and appear on the overtime offer list)',CAS:'Casual pool (no fixed shifts — never moved by Optimise)',OT:'Overtime pool (no fixed shifts — never moved by Optimise)'}[type])+'</td></tr>';
     for(const l of ls){ const i=state.lines.indexOf(l);
       h+='<tr data-uid="'+l.uid+'" data-type="'+type+'"'+(spotUid!==null?(l.uid===spotUid?' class="spot"':' class="spotdim"'):'')+'><td class="lab"><span class="dragh" data-drag="'+l.uid+'" title="Drag to move this line up or down within its group" role="button" aria-label="Drag to reorder line '+esc(l.label)+'">&#8942;&#8942;</span>'+TN[type]+'<button class="spotbtn" data-spot="'+l.uid+'" aria-pressed="'+(l.uid===spotUid)+'" title="Spotlight this line (tap again or press Esc to clear)" aria-label="Spotlight line '+esc(l.label)+'">&#9678;</button></td><td class="lab"><input class="lbl" data-lbl="'+i+'" value="'+esc(l.label)+'" aria-label="Line label"></td><td class="lab"><input class="lbl ptoname" list="nameList" data-pto="'+i+'" value="'+esc(l.pto||'')+'" placeholder="Staff name" aria-label="Staff name for line '+esc(l.label)+'"></td>';
       for(const d of DAYS){
@@ -1193,7 +1217,7 @@ async function download(name,text,type){
     catch(e){ $('status').textContent=e&&e.code==='declined'?'Download cancelled.':'Download not available here — copy the text instead.'; return false; } }
   try{const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type})); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500); $('status').textContent='Download started: '+name+'.'; return true;}catch(e){return false;}
 }
-function exportObj(){return {app:'ShiftSketch',version:2,build:'3.25',name:$('saveName').value||presetName,cfg,lines:state.lines.map(l=>({type:l.type,label:l.label,shifts:l.shifts,lock:l.lock,pto:l.pto||'',notes:l.notes||{}}))};}
+function exportObj(){return {app:'ShiftSketch',version:2,build:'3.26',name:$('saveName').value||presetName,cfg,lines:state.lines.map(l=>({type:l.type,label:l.label,shifts:l.shifts,lock:l.lock,pto:l.pto||'',notes:l.notes||{}}))};}
 function importObj(o){
   if(!o||!o.cfg||!Array.isArray(o.lines)||!Array.isArray(o.cfg.shifts)) throw new Error('Not a roster file');
   const c=clone(o.cfg), d=makeCfg({late:false,sat:true});
@@ -1544,6 +1568,68 @@ $('expXlsx').addEventListener('click',()=>{try{exportExcel(); $('status').textCo
 $('expDoc').addEventListener('click',()=>{try{exportWord(); $('status').textContent='Word export started. If it warns the format doesn’t match the extension, choose Yes/Open anyway.';}catch(e){$('status').textContent='Word export failed: '+e.message;}});
 $('incScore').addEventListener('change',e=>{incScore=e.target.checked;});
 $('printPdf').addEventListener('click',()=>{try{printPdf();}catch(e){$('status').textContent='Print view failed: '+e.message;}});
+
+// hover tooltips: small floating info boxes on key controls and headings only
+(function(){
+  const TIPS={
+    '#opt':'Suggests shift changes that close coverage gaps and fix rule breaks. Review the result before keeping it, and use Undo to go back.',
+    '#optMode':'How hard Optimise searches. Quick is fastest. Standard keeps the best of 5 searches. Thorough tries more combinations and takes longer.',
+    '#reset':'Discards unsaved edits and returns to the starting roster.',
+    '#undo':'Undo the last change (Ctrl+Z).',
+    '#redo':'Redo the change you undid (Ctrl+Y).',
+    '#cmpBtn':'Shows the current roster and your proposal side by side. Differences are outlined.',
+    '#preset':'The roster you start from: blank, a preloaded example, or one you saved.',
+    '#save':'Saves the roster under this name, in this browser only.',
+    '#presBtn':'A clean, enlarged view for a projector or meeting-room screen. Press Esc to leave.',
+    '#steerToggle':'When on, an empty cell only offers the shifts still short that day. Once every shift that day is full, the whole menu returns.',
+    '#minChangeToggle':'When on, Optimise prefers the smallest set of changes to the current roster over a bigger rewrite.',
+    '#addFT':'Adds a full-time line. Full-time lines rotate weekly in the order listed.',
+    '#addPT':'Adds a part-time line. Part-time lines rotate weekly in the order listed.',
+    '#addFX':'Adds a fixed line, such as a flexible work arrangement. It does not rotate.',
+    '#addVAC':'Adds a position with no staff member yet. Its shifts do not count as cover and stay on the overtime offer list. Optimise parks uncovered shifts here and takes them off when real staff can cover them.',
+    '#addCAS':'Adds a casual pool line with no fixed shifts. Assign it to a vacant shift to record a casual pickup. Optimise never moves it.',
+    '#addOT':'Adds an overtime pool line with no fixed shifts. Assign it to a vacant shift to record an overtime pickup. Optimise never moves it.',
+    '#clearAll':'Empties every shift in the grid. You can Undo this.',
+    '#copyOT':'Copies the offer list as plain text to paste into Teams, email or SMS.',
+    '#applyTpl':'Loads the chosen set of shift times and staff numbers into the blueprint.',
+    '#addShift':'Adds a new shift type. Set its times and the staff needed each day.',
+    '#setDef':'Remembers your shift times and blueprint for new blank rosters.',
+    '#clrDef':'Clears your saved default and returns to the starter shift times.',
+    '#expXlsx':'A colour-coded Excel workbook: master roster, shift coverage and vacant shifts. Tick the scorecard option to add the scorecard sheet.',
+    '#expDoc':'A colour-coded Word document with the same tables.',
+    '#printPdf':'Opens the print dialog. Choose Save as PDF as the destination.',
+    '#exp':'Saves the roster, shift times and blueprint as a file to keep or send.',
+    '#ctlBox>summary':'Choose the starting roster, then Optimise, Undo, Compare and Save.',
+    '#setBox>summary':'Cover hours, roster rules and paid hours. Set these before you Optimise.',
+    '#shiftBox>summary':'Each shift\'s start and finish time, and how many staff it needs each day.',
+    '#otBox>summary':'Every shift the blueprint still needs, ready to offer out as overtime or to a casual. A row drops off once a line covers it.',
+    '#notesBox>summary':'Concerns recorded against specific shifts in the grid. Saved with the roster and printed in the PDF.',
+    '#chgBox>summary':'A plain-English list of every change from the starting roster.',
+    '#scoreBox>summary':'How the roster measures up against your rules.',
+    '#expPanel>summary':'Copy, download, print or export the roster.'
+  };
+  const apply=()=>{
+    for(const k in TIPS){ const el=document.querySelector(k); if(el){ el.setAttribute('data-tip',TIPS[k]); el.removeAttribute('title'); } }
+    const cv=document.getElementById('cover'); const cs=cv&&cv.closest('details')&&cv.closest('details').querySelector('summary');
+    if(cs){ cs.setAttribute('data-tip','The staff on each shift, each day, compared with the number the blueprint needs. A star marks the costliest gap.'); }
+    const mr=[...document.querySelectorAll('h2')].find(h=>/^Master roster/.test(h.textContent));
+    if(mr) mr.setAttribute('data-tip','One week of the rotation. Edit any cell. Colours show the shift type.');
+  };
+  apply();
+  const box=document.createElement('div'); box.className='tipbox'; box.setAttribute('role','tooltip'); document.body.appendChild(box);
+  let timer=null, cur=null;
+  const hide=()=>{ clearTimeout(timer); timer=null; cur=null; box.classList.remove('on'); };
+  const show=el=>{
+    box.textContent=el.getAttribute('data-tip'); box.style.left='0px'; box.style.top='0px'; box.classList.add('on');
+    const r=el.getBoundingClientRect(), w=box.offsetWidth, h=box.offsetHeight;
+    let x=Math.max(8,Math.min(r.left,innerWidth-w-8)), y=r.bottom+8; if(y+h>innerHeight-8) y=Math.max(8,r.top-h-8);
+    box.style.left=x+'px'; box.style.top=y+'px';
+  };
+  const arm=el=>{ if(el===cur) return; hide(); cur=el; timer=setTimeout(()=>show(el),350); };
+  document.addEventListener('mouseover',e=>{ const el=e.target.closest&&e.target.closest('[data-tip]'); if(el&&!document.body.classList.contains('present')) arm(el); else if(!el) hide(); });
+  document.addEventListener('focusin',e=>{ const el=e.target.closest&&e.target.closest('[data-tip]'); if(el) arm(el); });
+  ['focusout','mousedown','scroll','keydown'].forEach(ev=>document.addEventListener(ev,hide,true));
+})();
 // help modal
 (function(){
   const modal=$('helpModal');
